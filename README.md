@@ -1,4 +1,4 @@
-crawl-anywhere-crawler
-======================
+crawl-anywhere
+==============
 
-Crawl-Anywhere - Crawler module
+Crawl-Anywhere

@@ -1,0 +1,18 @@
+Apache Commons				
+	home    : http://commons.apache.org/lang/ 
+	license : http://www.apache.org/licenses/
+	
+Apache HttpComponents    	
+	home    : http://hc.apache.org/ 
+	license : http://www.apache.org/licenses/
+
+FasterXML / jackson-core 	- https://github.com/FasterXML/jackson-core/wiki
+
+Junit                    	- http://junit.sourceforge.net/cpl-v10.html
+
+MongoDB                  	- http://www.mongodb.org/display/DOCS/Licensing
+
+
+
+
+

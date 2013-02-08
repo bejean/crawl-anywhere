@@ -1,0 +1,7 @@
+{ "_id" : "users", "seq" : 1 }
+{ "_id" : "plugins", "seq" : 3 }
+{ "_id" : "accounts", "seq" : 1 }
+{ "_id" : "engines", "seq" : 1 }
+{ "_id" : "targets", "seq" : 1 }
+{ "_id" : "sources", "seq" : 0 }
+{ "_id" : "sources_log", "seq" : 0 }

@@ -1,0 +1,333 @@
+html, body {
+    font-family: Arial, Verdana, Helvetica, Geneva, sans-serif;   
+    font-size: 0.9em;
+    background: #FFFFFF ;
+    margin: 10px 0 ;
+    padding: 0 ;
+    text-align: center ;
+}
+
+img
+{
+    border-style: none;
+}
+
+div#header
+{
+    border: 2px solid #808080;
+    background-color: #808080;    
+}
+
+div#footer
+{
+    border: 2px solid #808080;
+    background-color: #808080; 
+    text-align: center ;   
+    clear: both;
+}
+
+div#conteneur {
+    width:990px; 
+    margin:0 auto;  
+    text-align: left ;
+    /*vertical-align: top; */   
+    border: 2px solid #FFFFFF ;
+    background: #fff ;
+}
+
+div#contenu h2
+{
+    padding-left: 5px ;
+    line-height: 25px ;
+    font-size: 1.4em ;
+    color: #505050 ;
+    border-bottom: 1px solid #505050 ;
+}
+
+div#contenu h2 img
+{
+    border : 0;
+}
+
+div#manage_menu
+{
+    height: 35px ;
+    line-height: 35px ;
+	text-align: center ;   
+    vertical-align: middle;   
+}
+
+.nob 
+{
+    border: none;
+}
+
+div#sources_options td 
+{
+	background: #FFFFFF ;
+    border: solid #808080;
+    border-width: 1px 1px 1px 1px; 
+    padding: 0px;
+	text-align: left ;
+    vertical-align: top;    
+}
+
+table 
+{
+    border: solid #808080;
+    border-width: 2px 2px 2px 2px;
+    width: 95%;
+    padding:0px;
+    border-collapse:collapse; 
+}
+
+td 
+{
+	background: #FFFFFF ;
+    border: solid #808080;
+    border-width: 1px 1px 1px 1px; 
+    padding: 4px;
+    text-align: left ;
+    vertical-align: top;    
+}
+
+td.head 
+{
+    border: solid #808080;
+    border-width: 1px 0px 0px 1px;
+    padding: 4px;
+    text-align: left ;
+    vertical-align: top;    
+    background-color: #808080;
+    color: #FFFFFF;   
+    width: 180px; 
+    font-weight: bold ;
+}
+
+td.head_light 
+{
+    border: solid #E5E5E5;
+    border-width: 1px 0px 0px 1px;
+    padding: 4px;
+    text-align: left ;
+    vertical-align: top;    
+    background-color: #E5E5E5;
+    color: #000000;   
+    width: 80px; 
+    font-weight: bold ;
+}
+
+th 
+{
+    border: solid #808080;
+    border-width: 1px 0px 0px 1px;
+    padding: 4px;
+    text-align: left ;
+    vertical-align: top;    
+    background-color: #808080;
+    color: #FFFFFF;   
+    width: 100px; 
+    font-weight: bold ;
+}
+
+th.checkbox
+{
+    width: 20px; 
+    text-align: center ;
+}
+
+td.checkbox
+{
+    width: 20px; 
+    text-align: center ;
+}
+
+th.status
+{
+    width: 30px; 
+}
+
+td.status
+{
+    width: 30px; 
+}
+
+th.action
+{
+    width: 100px; 
+}
+
+td.action
+{
+    width: 100px; 
+}
+
+td.date 
+{
+    width: 50px; 
+}
+
+td.count 
+{
+    width: 50px; 
+}
+
+td.name 
+{
+    width: 300px; 
+}
+
+td.url 
+{
+    width: 300px; 
+}
+
+.editInputText {
+    border:2px inset grey;
+    background-color: #ffffff;
+    padding: 0px;
+    text-align: left;
+    font-size: 12px;
+    color: #000000;
+    width: 95%;  
+}
+
+.editInputTextMedium2 {
+    border:2px inset grey;
+    background-color: #ffffff;
+    padding: 0px;
+    text-align: left;
+    font-size: 12px;
+    color: #000000;
+    width: 600px;  
+}
+
+.editInputTextMedium3 {
+    border:2px inset grey;
+    background-color: #ffffff;
+    padding: 0px;
+    text-align: left;
+    font-size: 12px;
+    color: #000000;
+    width: 500px;  
+}
+
+.editInputTextMedium {
+    border:2px inset grey;
+    background-color: #ffffff;
+    padding: 0px;
+    text-align: left;
+    font-size: 12px;
+    color: #000000;
+    width: 200px;  
+}
+
+.editInputTextSmall {
+    border:2px inset grey;
+    background-color: #ffffff;
+    padding: 0px;
+    text-align: left;
+    font-size: 12px;
+    color: #000000;
+    width: 100px;  
+}
+
+.editInputSelect {
+    border:2px inset grey;
+    background-color: #ffffff;
+    padding: 0px;
+    text-align: left;
+    font-size: 12px;
+    color: #000000;
+}
+
+.editInputTextarea {
+    border:2px inset grey;
+    background-color: #ffffff;
+    padding: 0px;
+    text-align: left;
+    font-family: Arial, Verdana, Helvetica, Geneva, sans-serif;   
+    font-size: 12px;
+    color: #000000;
+}
+
+
+div#login table 
+{
+    border: solid #808080;
+    border-width: 2px 2px 2px 2px;
+    width: 45%;
+    padding:0px;
+    border-collapse:collapse; 
+}
+
+.nobr { white-space: nowrap; }
+
+#user_list, #user_details {
+   float: left;
+   width: 20%;
+   margin: 1% 0 1% 1%;
+   padding: 1%;
+   color: #000;
+}
+#user_details {
+   float: right;
+   width: 70%;
+   margin: 1% 1% 1% 0;
+}
+
+#target_list, #target_details {
+   float: left;
+   width: 20%;
+   margin: 1% 0 1% 1%;
+   padding: 1%;
+   color: #000;
+}
+#target_details {
+   float: right;
+   width: 70%;
+   margin: 1% 1% 1% 0;
+}
+
+#account_list, #account_details {
+   float: left;
+   width: 20%;
+   margin: 1% 0 1% 1%;
+   padding: 1%;
+   color: #000;
+}
+#account_details {
+   float: right;
+   width: 70%;
+   margin: 1% 1% 1% 0;
+}
+
+#engine_list, #engine_details {
+   float: left;
+   width: 20%;
+   margin: 1% 0 1% 1%;
+   padding: 1%;
+   color: #000;
+}
+#engine_details {
+   float: right;
+   width: 70%;
+   margin: 1% 1% 1% 0;
+}
+
+div#account_selector {
+	//text-align:right;
+	 width: 100%;
+
+   }
+
+div#account_selector div
+{
+	width: 100%;
+	padding-top: 10px ;
+    padding-bottom: 10px ;
+    background: #FFFFFF;
+   	float: right ;
+    text-align: right;
+}
+

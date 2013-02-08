@@ -1,0 +1,44 @@
+#nav a, 
+#footer #footer-widgets h3,
+#featured.home h2 ,
+#logo .site-title a{ text-shadow:#000 1px 2px 0;}
+
+#featured.home p { text-shadow:#000 0px 1px 0;}
+a.button span { text-shadow:#fff 0px 1px 0;}
+a.button span:hover { text-shadow:yellow 0px 0px 2px;}
+
+#featured #page-title h2, 
+#page-title h1, 
+#featured span.archive_header { text-shadow:#000 1px 1px 0; }
+
+.more_entries a,
+.more_entries .wp-pagenavi a:hover,
+.more_entries .wp-pagenavi span.pages { text-shadow: #fff 0px 1px 0px; }
+
+#comments .comment-head .avatar img, 
+#breadcrumb.home a.thumb{ border-radius:3px; -moz-border-radius:3px; -webkit-border-radius:3px;  }
+#comments .reply a, 
+#commentform input.txt, 
+#commentform textarea,
+#commentform #submit, 
+#searchform, #nav li ul,
+#mini-features .btn,
+#nav li:hover, 
+#nav li.current_page_item,
+#nav li.current_page_parent,
+.gform_wrapper .top_label input.large,
+.gform_wrapper .top_label select.large,
+.gform_wrapper .top_label textarea.textarea,
+.gform_wrapper input,
+.port-cat a{ border-radius:10px; -moz-border-radius:10px; -webkit-border-radius:10px;  }
+
+#sidebar, #twitter, #info-box { border-radius:8px; -moz-border-radius:8px; -webkit-border-radius:8px;  }
+
+#nav li ul li a  { text-shadow:none;}
+
+#nav li:hover, #nav li.current_page_item, #nav li.current_page_parent { background: rgba(0, 0, 0, 0.3); }
+
+#featured.home .play {opacity:0.7; }
+#featured a.button:hover { opacity:0.95; }
+#breadcrumb.home a.thumb:hover { opacity:1; }
+.more_entries a:hover { opacity:0.8; }

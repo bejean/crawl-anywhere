@@ -1,0 +1,67 @@
+div#sources_selector
+{
+    text-align: center ;
+}
+
+div#sources_count
+{
+    text-align: center ;
+}
+
+div#sources_options
+{
+    text-align: left ;
+    width : 50%;
+	margin : auto; 
+}
+
+div#sources_options table td
+{
+    border: none; 
+}
+
+div#sources_advanced_options
+{
+    text-align: left ;
+    width : 50%;
+	margin : auto; 
+}
+
+div#source_details table 
+{
+    border: solid #808080;
+    border-width: 1px 1px 1px 1px;
+    width: 95%;
+}
+
+.menu_button_on_right 
+{
+    text-align: right ;       
+}
+
+input.input_text_small
+{
+    width: 100px
+}
+
+input.input_text_medium
+{
+    width: 200px
+}
+
+input.input_text_large
+{
+    width: 400px
+}
+
+.help {
+	font-style:italic;
+	font-size: 0.9em;
+}
+
+div#scan-rss-dialog-rss
+{
+	display: block;
+	max-height: 300px;
+	overflow: scroll;
+}

@@ -1,0 +1,1 @@
+{ "id" : 1, "type" : "cnx", "name" : "Web", "mnemo" : "web", "class_php" : "SourceWeb", "class_java" : "fr.eolya.crawler.connectors.web.WebConnector" }

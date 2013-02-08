@@ -1,0 +1,68 @@
+#menu
+{
+    background: #E5E5E5;
+}
+
+ul#menu
+{
+    height: 35px ;
+    margin: 0 ;
+    padding: 0 ;
+    background: #E5E5E5;
+    list-style-type: none ;
+    border-left: 2px solid #505050 ;
+}
+
+ul#menu li
+{
+    width: 120px ;
+	float: left ;
+    text-align: center ;
+}
+
+ul#menu li.active
+{
+    background: #A0A0A0;
+}
+
+/*
+ul#menu li.mnu_mysolrserver
+{
+    width: 200px ;
+	float: left ;
+    text-align: center ;
+}
+*/
+
+ul#menu li.large
+{
+    width: 200px ;
+	float: left ;
+    text-align: center ;
+}
+
+/*
+ul#menu li.mnu_mysolrserver_active
+{
+    width: 200px ;
+    background: #A0A0A0;
+}
+*/
+
+ul#menu li a
+{
+    line-height: 35px ;
+    font-size: 1.1em ;
+    font-weight: bold ;
+    letter-spacing: 1.5px ;
+    color: #505050 ;
+    display: block ;
+    text-decoration: none ;
+    border-right: 2px solid #505050 ;
+}
+
+ul#menu li a:hover
+{
+    /* background: url(bg_menu.gif) repeat-x 0 0 ; */
+    background: #A0A0A0;
+}

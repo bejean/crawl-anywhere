@@ -1,0 +1,170 @@
+#conteneur {
+margin: 0px auto;
+width: 960px;
+background-color: white;
+border: 0 solid white;
+box-shadow: 0 0 10px #AAA;
+-moz-box-shadow: 0 0 10px #AAAAAA;
+-webkit-box-shadow: 0 0 10px #AAA;
+padding: 10px 20px 10px 20px;
+}
+
+#header_logo {
+	width: 80px;
+	float: left;
+	height: 55px;
+}
+
+/* 
+Redefinition des classes de menu
+*/
+
+#menu
+{
+    background: none;
+	margin-top: 10px;
+}
+
+ul#menu
+{
+    background: none;
+	border-left: none;
+	height: 24px;
+	margin: 10px 0 0 -10px;
+}
+
+ul#menu li
+{
+    width: 160px ;
+	float: left ;
+    text-align: center ;
+	margin: 0 10px 0 10px;
+}
+
+ul#menu li.large
+{
+    width: 160px ;
+}
+
+ul#menu li a
+{
+    background: transparent url('../images/oval-gray150.png') no-repeat top center;
+	height: 24px ;
+	border: none;
+	font-weight: normal;
+	line-height: 1.5;
+	color: #25A6DD;
+	letter-spacing: normal;
+	
+	font-family: Arial;
+	font-size: 125%;
+}
+
+ul#menu li.active
+{
+   	background: transparent;	
+}
+
+ul#menu li.active a
+{
+   	font-weight: bolder;	
+}
+
+ul#menu li a:hover
+{
+    background: transparent url('../images/oval-gray150.png') no-repeat top center;
+}
+/* 
+WOO CUSTOM STYLESHEET
+---------------------
+
+Instructions:
+
+Add your custom styles here instead of style.css so it 
+is easier to update the theme. Simply copy an existing 
+style from style.css to this file, and modify it to 
+your liking.
+
+*/
+
+#featured { 
+	display: none;
+}
+
+body  {
+	background:none;
+	margin: 0;
+	padding: 10px 20px;
+	font-family: Verdana, "Bitstream Vera Sans", "Lucida Grande", sans-serif;
+	font-size: .8em;
+	line-height: 1.25;
+	color: black;
+	background: white;
+/*
+	min-width: 960px;
+	font: 14px "Myriad Pro", "Trebuchet MS", "Helvetica Neue", Helvetica, Arial, Sans-Serif;
+	line-height: 1.5;
+	color: #333;
+	*/
+}
+
+#header{
+	background:none;
+	padding: 0px;
+	clear:both;
+	position:relative;
+	z-index:10;
+}
+
+#top{
+	background:none;
+	min-height:0;
+}
+
+#logo {
+	min-width: 600px;
+}
+
+#logo .site-title a, #logo .site-description  {
+	color: #A3CB51;
+	font-weight: normal;
+	text-shadow: none;
+	font-size: 1.6em;
+	line-height: 1.25em;
+	font-family: georgia;
+}
+
+#content {
+	padding: 0px;
+	margin-top: 10px;
+}
+
+.entry h2 {
+	color: #A3CB51;
+	font-weight: bold;	
+}
+
+.entry table th, td.head{
+	background:transparent;
+	color: #25A6DD;
+}
+#footer {
+	background: none;
+	padding: 0;
+	font-size: normal;
+	border-top: none;
+	
+	margin-top: 10px;
+	text-align:center
+}
+
+#footer #footer-credits {
+	background: none;
+	padding: 0;
+	margin: 0;
+}
+
+#footer #credit, #footer #copyright {
+	color: initial;
+	float:none;
+}

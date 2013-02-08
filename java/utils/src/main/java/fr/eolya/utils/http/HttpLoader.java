@@ -94,12 +94,12 @@ public class HttpLoader {
 
 	private String redirection;
 
-	private long maxContentLength = 0;
+	private long maxContentLength;
 
 	private HashMap<String,String> responseHeader;
 
-	public int errorCode = LOAD_ERROR;
-	public String errorMessage = "";
+	public int errorCode;
+	public String errorMessage;
 
 	public static final int LOAD_ERROR = -1;
 	public static final int LOAD_SUCCESS = 0;
@@ -118,6 +118,9 @@ public class HttpLoader {
 		followRedirect = false;
 		maxContentLength = 0;
 		responseHeader = null;
+		maxContentLength = 0;
+		errorCode = LOAD_ERROR;
+		errorMessage = "";
 	}
 
 	public void setProxyHost(String proxyHost) {

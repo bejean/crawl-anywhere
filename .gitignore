@@ -43,3 +43,30 @@ doc/
 # PDT-specific
 .buildpath
 
+web/search/src/config/config-demo-taligentia.ini
+web/search/src/config/config-mysolrserver-default.ini
+web/search/src/config/config-mysolrserver-demo-perso-taligentia.ini
+web/search/src/config/config-mysolrserver-demo-taligentia.ini
+web/search/src/config/config-mysolrserver-dev.ini
+web/search/src/config/config-mysolrserver-perso-dev.ini
+web/search/src/config/config-mysolrserver-test-taligentia.ini
+web/crawler/src/pub/themes/mss
+web/crawler/src/pub/themes/taligentia
+web/crawler/src/config/config-hurisearch.ini
+web/crawler/src/config/config-mysolrserver-default.ini
+web/crawler/src/config/config-mysolrserver-dev.ini
+web/crawler/src/config/config-mysolrserver-perso-dev.ini
+web/crawler/src/config/config-mysolrserver-taligentia-demo.ini
+web/crawler/src/config/config-mysolrserver-taligentia-perso-demo.ini
+web/crawler/src/config/config-mysolrserver-taligentia-test.ini
+web/crawler/src/config/config-mysolrserver-wiizio-demo.ini
+web/crawler/src/config/config-social-computing.ini
+web/crawler/src/config/config-taligentia-demo.ini
+web/crawler/src/config/config-taligentia-test.ini
+web/crawler/src/config/config-wiizio-demo.ini
+web/crawler/src/config/config.ini-crawl-anywhere
+web/crawler/src/config/win
+web/crawler/src/config/preprod
+web/crawler/src/config/prod
+web/search/src/pub/themes/taligentia
+web/search/src/pub/themes/amnesty

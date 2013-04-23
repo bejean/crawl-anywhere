@@ -23,6 +23,7 @@ cp -r $DEV/*.txt $DISTRIB/.
 # install
 #=============================================
 mkdir $DISTRIB/install
+mkdir $DISTRIB/install/crawler
 cp -r $DEV/install/* $DISTRIB/install/.
 
 #=============================================
@@ -51,9 +52,6 @@ mkdir $DISTRIB/scripts
 #=============================================
 mkdir $DISTRIB/bin
 mkdir $DISTRIB/lib
-mkdir $DISTRIB/install/bin
-mkdir $DISTRIB/install/crawler
-mkdir $DISTRIB/install/tomcat
 
 # utils
 cd $DEV/java/utils
@@ -62,7 +60,6 @@ mvn install -Dmaven.test.skip=true
 rm -rf $DEV/java/utils/target/dependency
 mvn dependency:copy-dependencies
 cp target/utils-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-utils-$VERSION.jar
-cp target/utils-0.0.1-SNAPSHOT.jar $DISTRIB/install/bin/crawler/eolya-utils-$VERSION.jar
 
 # crawler
 cd $DEV/java/crawler
@@ -71,7 +68,6 @@ mvn install -Dmaven.test.skip=true
 rm -rf $DEV/java/crawler/target/dependency
 mvn dependency:copy-dependencies
 cp target/crawler-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-crawler-$VERSION.jar
-cp target/crawler-0.0.1-SNAPSHOT.jar $DISTRIB/install/bin/crawler/eolya-crawler-$VERSION.jar
 
 # simplepipeline
 cd $DEV/java/simplepipeline
@@ -80,7 +76,6 @@ mvn install -Dmaven.test.skip=true
 rm -rf $DEV/java/simplepipeline/dependency
 mvn dependency:copy-dependencies
 cp target/pipeline-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-pipeline-$VERSION.jar
-cp target/pipeline-0.0.1-SNAPSHOT.jar $DISTRIB/install/bin/crawler/eolya-pipeline-$VERSION.jar
  
 # indexer
 cd $DEV/java/indexer
@@ -89,7 +84,6 @@ mvn install -Dmaven.test.skip=true
 rm -rf $DEV/java/indexer/dependency
 mvn dependency:copy-dependencies
 cp target/indexer-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-indexer-$VERSION.jar
-cp target/indexer-0.0.1-SNAPSHOT.jar $DISTRIB/install/bin/crawler/eolya-indexer-$VERSION.jar
 
 # solr3
 
@@ -135,21 +129,21 @@ find $DISTRIB/web -name '.svn' -exec rm -rf {} \;
 # bin / config
 #=============================================
 mkdir -p $DISTRIB/config/crawler
-cp $DEV/crawler/config/crawler/crawler-default.xml $DISTRIB/config/crawler/.
-cp -r $DEV/crawler/config/crawler/scripts $DISTRIB/config/crawler/.
+cp $DEV/java/crawler/config/crawler/crawler-default.xml $DISTRIB/config/crawler/.
+cp -r $DEV/java/crawler/config/crawler/scripts $DISTRIB/config/crawler/.
 
 mkdir -p $DISTRIB/config/pipeline
-cp $DEV/crawler/config/pipeline/simplepipeline-default.xml $DISTRIB/config/pipeline/.
-cp $DEV/crawler/config/pipeline/solrmapping.xml $DISTRIB/config/pipeline/.
-cp $DEV/crawler/config/pipeline/solrboost.xml $DISTRIB/config/pipeline/.
-cp $DEV/crawler/config/pipeline/contenttypemapping.xml $DISTRIB/config/pipeline/.
-cp $DEV/crawler/config/pipeline/countrymapping.xml $DISTRIB/config/pipeline/.
-cp -r $DEV/crawler/config/pipeline/scripts $DISTRIB/config/pipeline/.
-
-#cp -r $DEV/java/utils/config/* $DISTRIB/config/.
+cp $DEV/java/simplepipeline/config/pipeline/simplepipeline-default.xml $DISTRIB/config/pipeline/.
+cp $DEV/java/simplepipeline/config/pipeline/solrmapping.xml $DISTRIB/config/pipeline/.
+cp $DEV/java/simplepipeline/config/pipeline/solrboost.xml $DISTRIB/config/pipeline/.
+cp $DEV/java/simplepipeline/config/pipeline/contenttypemapping.txt $DISTRIB/config/pipeline/.
+cp $DEV/java/simplepipeline/config/pipeline/countrymapping.txt $DISTRIB/config/pipeline/.
+cp -r $DEV/java/simplepipeline/config/pipeline/scripts $DISTRIB/config/pipeline/.
 
 mkdir -p $DISTRIB/config/indexer
-cp -r $DEV/crawler/config/indexer/indexer-default.xml $DISTRIB/config/indexer/.
+cp $DEV/java/indexer/config/indexer/indexer-default.xml $DISTRIB/config/indexer/.
+
+cp -r $DEV/java/utils/config/* $DISTRIB/config/.
 
 #=============================================
 # tar

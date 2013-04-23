@@ -1,0 +1,11 @@
+# homogeneisation des types mimes xml / rss
+actualite=Actualité
+agenda=Agenda
+economie-champagne-ardenne=Economie Champagne-Ardenne
+s-implanter-creer-transmettre=S'implanter, Créer et Transmettre
+emploi---formation=Emploi & Formation
+votre-ccir=Votre CCIR
+opeq=Opeq
+newsletters=Newsletter
+pdf=
+fr=

@@ -1,0 +1,97 @@
+Apache Commons Lang			
+	home    : http://commons.apache.org/lang/ 
+	license : http://www.apache.org/licenses/
+	
+Apache Commons IO			
+	home    : http://commons.apache.org/io/
+	license : http://www.apache.org/licenses/
+	
+Apache HttpComponents    	
+	home    : http://hc.apache.org/ 
+	license : http://www.apache.org/licenses/
+
+FasterXML / jackson-core 		- https://github.com/FasterXML/jackson-core/wiki
+FasterXML / jackson-databind 	- https://github.com/FasterXML/jackson-databind/wiki
+FasterXML / jackson-annotations - https://github.com/FasterXML/jackson-annotations/wiki
+
+//bson4jackson
+//	home    : https://github.com/michel-kraemer/bson4jackson
+//	license : Apache License 2.0 - https://github.com/michel-kraemer/bson4jackson/blob/master/LICENSE.txt
+
+Junit                    	- http://junit.sourceforge.net/cpl-v10.html
+
+MongoDB                  	- http://www.mongodb.org/display/DOCS/Licensing
+
+//Jongo
+//	home    : http://jongo.org/
+//	license : https://github.com/bguerout/jongo/blob/master/LICENSE.txt
+		<dependency>
+			<groupId>org.jongo</groupId>
+			<artifactId>jongo</artifactId>
+			<version>0.3</version>
+		</dependency>
+		
+Java-getopt
+	home    : http://www.urbanophile.com/arenn/hacking/download.html
+	license : https://github.com/arenn/java-getopt/blob/master/gnu/getopt/COPYING.LIB
+	
+Dom4j
+	home    : http://dom4j.sourceforge.net/
+	license : http://dom4j.sourceforge.net/dom4j-1.6.1/license.html
+
+
+jaxen
+http://jaxen.codehaus.org/
+
+//xerces2-j
+//https://xerces.apache.org/xerces2-j/
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>2.10.0</version>
+		</dependency>
+		
+		
+Rome
+		<dependency>
+			<groupId>rome</groupId>
+			<artifactId>rome</artifactId>
+			<version>1.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>jdom</groupId>
+					<artifactId>jdom</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+
+Jdom - http://www.jdom.org
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom</artifactId>
+			<version>1.1.3</version>
+		</dependency>
+
+
+http://htmlcleaner.sourceforge.net/
+
+http://jericho.htmlparser.net
+
+http://jsoup.org/
+
+https://github.com/karussell/snacktory
+
+http://tika.apache.org/
+
+Shell - 
+http://blog.developpez.com/adiguba/p3035/java/runtime_exec_n_est_pas_des_plus_simple - http://www.cecill.info/licences.fr.html
+
+
+http://www.sauronsoftware.it/projects/javabase64/manual.php
+
+jchardet
+
+http://iharder.net/base64 
+
+com.cybozu.labs.langdetect

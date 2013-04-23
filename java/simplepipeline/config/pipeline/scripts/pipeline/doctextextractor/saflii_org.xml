@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<server domains="www.saflii.org">
+<!--
+http://www.saflii.org/za/cases/ZAGPPHC/2012/167.html
+-->
+	<url match="^/">
+		<script engine="rhino" action="parse">
+			<![CDATA[ 
+			
+				/* available variables
+				 *    page
+				 *    url
+				 *    contenttype
+				 */
+			
+				var tempTitle = '';
+				var tempPage = '';
+				var tempDate = '';
+			
+				/*
+				 * build a new one html page
+				 */	
+				// cleanup
+				var re = new RegExp("[\n\r\f]+", "gi");
+				page = page.replace(re, " ");	
+								
+				// head
+				var head = "<html><head><body>";
+				var endHead = page.indexOf('<body');
+				if (endHead!=-1)
+					head = page.slice(0,endHead) + "<body>";
+
+				// body
+				var start = page.indexOf('<!--make_database:');
+				var end = page.indexOf('<!--make_database footer start-->');
+
+				var body = '';
+				if (start!=-1 && end!=-1) {
+					 body = page.slice(start, end);
+				}
+				
+				if (body!='') {
+					tempPage = head + body  + '</body></html>';					
+				}
+				else {
+					tempPage = page;	
+				}
+
+				/* 
+				 * out 
+				 */
+				parsedData = java.lang.reflect.Array.newInstance(java.lang.String, 3);
+				
+				parsedData[0] = tempTitle;
+				parsedData[1] = tempDate;  // empty in this sample
+				parsedData[2] = tempPage;
+			]]>
+		</script>
+		
+		<script engine="rhino" action="extractmeta">
+			<![CDATA[ 
+			
+				//[ include '/opt/crawler/config/js/htmlparser.js']
+	
+				meta = java.lang.reflect.Array.newInstance(java.lang.String, 10);
+
+				/* available variables
+				 *    page
+				 *    url
+				 *    contenttype
+				 *    contentcharset
+				 */
+				i=0;
+						
+				// cleanup
+				var re = new RegExp("[\n\r\f]+", "gi");
+				page = page.replace(re, "");	
+				
+				// Download zone
+				var start = page.indexOf('<b>Download original files</b>');
+				var end = page.indexOf('</td>');
+
+				var download = '';
+				var pdf = '0';
+				var rtf = '0';
+				if (start!=-1 && end!=-1) {
+					 download = page.slice(start, end);
+					 // pdf ?  <A HREF="/za/cases/ZAGPPHC/2012/167.pdf">
+					 if (download.indexOf('.pdf')!=-1) pdf = 1;
+					 // rtf ?  <A HREF="/za/cases/ZAGPPHC/2012/167.rtf">
+					 if (download.indexOf('.rtf')!=-1) rtf = 1;
+				}
+
+				/* 
+				 * out 
+				 */				
+				meta[i++] = "saflii_have_pdf:" + pdf;
+				meta[i++] = "saflii_have_rtf:" + rtf;
+
+				// url meta
+				// http://www.saflii.org/za/cases/ZAGPJHC/2012/156.html
+ 				re = new RegExp("\\/([a-z]{2})\\/([a-z]+)\\/([A-Z]+)\\/([0-9]{4})\\/"); 
+ 				var match = re.exec(url); 
+				
+				if (match) { 
+ 					/*  
+ 					 * out  
+ 					 */				 
+ 					meta[i++] = "saflii_country:" + match[1]; 
+ 					meta[i++] = "saflii_type:" + match[2]; 
+ 					meta[i++] = "saflii_base:" + match[3]; 
+ 					meta[i++] = "saflii_year:" + match[4];			
+ 				}							 								
+			]]>
+		</script>
+	</url>
+</server>

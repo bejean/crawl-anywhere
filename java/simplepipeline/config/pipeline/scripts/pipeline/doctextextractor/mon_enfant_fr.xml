@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<server domains="mon-enfant.fr, www.mon-enfant.fr">
+
+	<url match="^/">
+		<script engine="rhino" action="parse">
+			<![CDATA[ 
+			
+				var tempTitle = "";
+				var tempPage = "";
+				var tempDate = "";
+			
+				// cleanup page html content
+				var re = new RegExp("[\n\r\f]+", "gi");
+				page = page.replace(re, "");	
+								
+				var head = "<html><head><body>";
+				var endHead = page.indexOf('<body');
+				if (endHead!=-1)
+					head = page.slice(0,endHead) + "<body>";
+
+				var start = page.indexOf('<!-- CONTENU -->');
+				var end = page.indexOf('<!-- FOOTER -->');
+
+				if (start!=-1 && end!=-1) {
+					tempPage = head + '<body>' + page.slice(start, end) + '</body></html>';
+				}
+				
+				parsedData = java.lang.reflect.Array.newInstance(java.lang.String, 3);
+				
+				parsedData[0] = tempTitle;
+				parsedData[1] = tempDate;  // empty in this sample
+				parsedData[2] = tempPage;
+			]]>
+		</script>
+	</url>
+</server>

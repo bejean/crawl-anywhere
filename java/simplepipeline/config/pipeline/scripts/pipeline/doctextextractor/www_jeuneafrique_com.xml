@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<server domains="www.jeuneafrique.com">
+
+	<url match="^/">
+		<script engine="rhino" action="parse">
+			<![CDATA[ 
+						
+				var tempTitle = contenttype + " - " + url;
+				var tempPage = page;
+				var tempDate = "";
+							
+				parsedData = java.lang.reflect.Array.newInstance(java.lang.String, 3);
+				
+				parsedData[0] = tempTitle;
+				parsedData[1] = tempDate;  // empty in this sample
+				parsedData[2] = tempPage;
+			]]>
+		</script>
+	</url>
+</server>

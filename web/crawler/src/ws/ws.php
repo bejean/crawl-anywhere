@@ -95,7 +95,7 @@ if ($action=="create_account")
 		// Create account
 		$stmt = new db_stmt_insert("accounts");
 
-		$stmt->addColumnValue("id_engine", $crawler_engine_id);
+		$stmt->addColumnValue("id_engine", intval($crawler_engine_id));
 		$stmt->addColumnValue("createtime", "", NOW);
 		$stmt->addColumnValue("name", $instance_name, "");
 		$stmt->addColumnValue("enabled", "1", "");
@@ -115,7 +115,7 @@ if ($action=="create_account")
 		// Create the target
 		$stmt = new db_stmt_insert("targets");
 
-		$stmt->addColumnValue("id_account", $id);
+		$stmt->addColumnValue("id_account", intval($id));
 		$stmt->addColumnValue("createtime", "", NOW);
 		$stmt->addColumnValue("name", $target_name);
 		$stmt->addColumnValue("target_parameters", $target_parameter);
@@ -137,7 +137,7 @@ if ($action=="create_account")
 		// Create user
 		$stmt = new db_stmt_insert("users");
 
-		$stmt->addColumnValue("id_account", $id);
+		$stmt->addColumnValue("id_account", intval($id));
 		$stmt->addColumnValue("createtime", "", NOW);
 		$stmt->addColumnValue("user_name", $user_name, "");
 		$stmt->addColumnValue("user_level", "1", "");
@@ -157,8 +157,8 @@ if ($action=="create_account")
 
 		// Je mets a jour l'account avec l'id de l'engine et l'id de la target
 		$stmt = new db_stmt_update("accounts");
-		$stmt->addColumnValue("id_engine", $crawler_engine_id, "");
-		$stmt->addColumnValue("id_target", $id_target, "");
+		$stmt->addColumnValue("id_engine", intval($crawler_engine_id), "");
+		$stmt->addColumnValue("id_target", intval($id_target), "");
 		$stmt->setWhereClause("id = '" . $id . "'");
 		$s = $stmt->getStatement();
 		$rs = $db->Execute($s);

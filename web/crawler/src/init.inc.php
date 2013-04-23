@@ -198,7 +198,7 @@ $mg_engine_not_null = array("name");
 
 $mg_target_defaults = array(
 		"output_type" => "default",
-		"output_type" => "solr"
+		"target_type" => "solr"
 		);
 $mg_target_not_null = array("id_account", "name");
 
@@ -278,9 +278,9 @@ function getAvailableTagsCollections($config, $includeDisabled, $id_account, $fi
 	$mg = mg_connect ($config, "", "", "");
 	if ($mg) {
 		if ($includeDisabled) 
-			$query = array ('$and' => array('$or' => array(array("deleted" => "0"), array("deleted" => NULL))), array("id_account" => $id_account));
+			$query = array ('$and' => array('$or' => array(array("deleted" => "0"), array("deleted" => NULL))), array("id_account" => intval($id_account)));
 		else
-			$query = array ('$and' => array(array('$or' => array(array("deleted" => "0"), array("deleted" => NULL))), array("enabled" => "1"), array("id_account" => $id_account)));
+			$query = array ('$and' => array(array('$or' => array(array("deleted" => "0"), array("deleted" => NULL))), array("enabled" => "1"), array("id_account" => intval($id_account))));
 		
 		$stmt = new mg_stmt_distinct($mg, "sources");
 		$stmt->setQuery($query);
@@ -314,9 +314,9 @@ function getAvailableSourceType($config, $includeDisabled, $id_account) {
 	$mg = mg_connect ($config, "", "", "");
 	if ($mg) {
 		if ($includeDisabled) 
-			$query = array ('$and' => array('$or' => array(array("deleted" => "0"), array("deleted" => NULL))), array("id_account" => $id_account));
+			$query = array ('$and' => array('$or' => array(array("deleted" => "0"), array("deleted" => NULL))), array("id_account" => intval($id_account)));
 		else
-			$query = array ('$and' => array(array('$or' => array(array("deleted" => "0"), array("deleted" => NULL))), array("enabled" => "1"), array("id_account" => $id_account)));
+			$query = array ('$and' => array(array('$or' => array(array("deleted" => "0"), array("deleted" => NULL))), array("enabled" => "1"), array("id_account" => intval($id_account))));
 		
 		$stmt = new mg_stmt_distinct($mg, "sources");
 		$stmt->setQuery($query);

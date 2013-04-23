@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<solrboosts>
+	<defaults fields='*' boost='2.0' />
+	<rules>
+		<urls fields='*' boost='2.0'>
+			<url match='exact'>http://www.gold.org/investment/statistics/gold_price_chart/</url>
+			<url match='contains'>/jewellery/</url>
+			
+			
+		</urls>
+		
+		<urls fields='title_ml' boost='3.0'>
+			<url match='exact'>http://www.gold.org/investment/what_we_do/calendar_of_events/</url>
+			
+			<url match='regex'>partners</url>
+			
+			
+		</urls>
+		
+	</rules>
+</solrboosts>

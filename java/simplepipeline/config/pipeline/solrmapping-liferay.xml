@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<solrmappings>
+	<mapping source="source_id"                         target="sourceid" />
+	<mapping source="source_name"                       target="source_text,source_str" />
+
+	<mapping value="fr.fepem.search.source.website" 	target="entryClassName" />
+
+	<!--mapping source="source_tags" 		                target="assetTagsName"                        split="," / -->
+	
+	<mapping source="item_id"                           target="uid" />
+	<mapping source="item_id"                           target="url" />
+
+	<mapping source="item_domain" 		                target="domain" />
+
+	<mapping source="summary"  	                        target="shortDescription" />
+    
+	<mapping source="parser_title"                      target="title" />
+
+	<mapping source="text"                      		target="content" />
+</solrmappings>

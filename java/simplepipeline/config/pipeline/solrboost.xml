@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<solrboosts>
+	<defaults fields='*' boost='2.0' />
+	<rules>
+		<!--
+		Declare <url> rules here. <url> are grouped into <urls>
+		
+		The field attribute of urls elements can be: a list of Solr field separated by "," or "*". 
+		"*" means the boost applies to the Solr document not specific fields.
+
+		The match attribute of url elements can be: regex, contains or exact
+
+		Here are some samples :
+
+		<urls fields='*' boost='2.0'>
+			<url match='exact'>http://www.zzz.com/investment/statistics/gold_price_chart/</url>
+		</urls>
+
+		<urls fields='title' boost='3.0'>
+			<url match='regex'>[.]php$</url>
+			<url match='contains'>/investment/</url>
+		</urls>
+		-->
+	</rules>
+</solrboosts>

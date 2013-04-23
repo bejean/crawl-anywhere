@@ -283,9 +283,9 @@ if ($action=="createuser")
 		$stmt->addColumnValueDate("createtime");
 		$stmt->addColumnValue("user_name", $_POST["user_name"]);
 		if ($_POST["user_level"]=="2") {
-			$stmt->addColumnValue("id_account", "0");
+			$stmt->addColumnValue("id_account", 0);
 		} else {
-			$stmt->addColumnValue("id_account", $_POST["id_account"]);
+			$stmt->addColumnValue("id_account", intval($_POST["id_account"]));
 		}
 		$stmt->addColumnValue("user_password", $_POST["user_password"]);
 		$stmt->addColumnValue("user_level", $_POST["user_level"]);
@@ -328,9 +328,9 @@ if ($action=="saveuser")
 		$stmt->setQuery ($query);
 
 		if ($_POST["user_level"]=="2") {
-			$stmt->addColumnValue("id_account", "0");
+			$stmt->addColumnValue("id_account", 0);
 		} else {
-			if (isset($_POST["id_account"])) $stmt->addColumnValue("id_account", $_POST["id_account"]);
+			if (isset($_POST["id_account"])) $stmt->addColumnValue("id_account", intval($_POST["id_account"]));
 		}
 		if (isset($_POST["user_password"]) && (trim($_POST["user_password"] != ""))) {
 			$stmt->addColumnValue("user_password", trim($_POST["user_password"]));

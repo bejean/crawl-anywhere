@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<server domains="www.emploisdelafamille-formation.fr">
+
+<!--
+http://www.emploisdelafamille-formation.fr/pg/catalogue/view-form/14400/certif
+http://www.emploisdelafamille-formation.fr/pg/content/11191
+-->
+	<url match="^/pg/(catalogue/view-form|content)">
+		<script engine="rhino" action="parse">
+			<![CDATA[ 
+			
+				var tempTitle = "";
+				var tempPage = "";
+				var tempDate = "";
+			
+				// cleanup page html content
+				var re = new RegExp("[\n\r\f]+", "gi");
+				page = page.replace(re, "");	
+				
+				// title - <title>Portail de la professionnalisation des emplois de la famille: Certification Assistant Maternel/garde d'enfants</title>
+		
+				
+				var start = page.indexOf('<title>');
+				var end = page.indexOf('</title>', start);
+				if (start!=-1 && end!=-1) {
+					var tempTitle = page.slice(start+69, end);
+					tempTitle = tempTitle.replace(/<br \/>/g, ' ').replace(/^\s+/g,'').replace(/\s+$/g,'');	
+				}
+				
+				var head = "";
+				var endHead = page.indexOf('<body');
+				if (endHead!=-1)
+					head = page.slice(0,endHead) + "<body>";
+												
+				var start = page.indexOf('<!-- main content -->');
+				var end = page.indexOf('<!-- /main content -->');
+				if (end==-1)
+					var end = page.indexOf('<!-- /two_column_left_sidebar_maincontent -->');
+				
+				if (start!=-1 && end!=-1) {
+					tempPage = head + '<body>' + page.slice(start+20, end) + '</body></html>';
+				}
+				
+				parsedData = java.lang.reflect.Array.newInstance(java.lang.String, 3);
+				
+				parsedData[0] = tempTitle;
+				parsedData[1] = tempDate;  // empty in this sample
+				parsedData[2] = tempPage;
+				
+			]]>
+		</script>
+	</url>
+</server>

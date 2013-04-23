@@ -41,7 +41,8 @@ if (isset($_POST["action"]))
 			if (isset($_POST["instance_name"])) $_SESSION["mysolrserver_instance_name"] = $_POST["instance_name"];
 			$username = $_POST["user_name"];
 		}
-		if ($_SESSION["mysolrserver_url"]) {
+		if ($_SESSION["mysolrserver_url"]) 
+		{
 			$login = $user->loginAs($config, $username);
 		}
 		else {
@@ -71,7 +72,8 @@ if (isset($_POST["action"]))
 		if ($user->loginAs($config, $_POST["user_name"]))
 		{
 			$_SESSION["user"] = $user;
-			if ($user->getLevel()=="2") {
+			if ($user->getLevel()=="2") 
+			{
 				$id_account_current = "1";
 			} else {
 				$id_account_current = $user->getIdAccount();
@@ -170,18 +172,33 @@ Login</h1>
 <br />
 <br />
 <br />
-<div id="login"><?php
-if ($action=="login" && $action_message=="")
+<div id="login">
+<?php
+if ($action=="login" && $action_message!="")
 {
-	?>
-<table>
+?>
+<table align='center'>
 	<tr>
 		<td><?php echo $action_message; ?></td>
 	</tr>
 </table>
 <br />
 <br />
-	<?php
+<?php
+}
+if (empty($action)) {
+	$mg = mg_connect ($config, "", "", "");
+	if ($mg==null && mg_get_last_error()!='') {
+?>
+<table align='center'>
+	<tr>
+		<td><?php echo "Database error : " . mg_get_last_error(); ?></td>
+	</tr>
+</table>
+<br />
+<br />
+<?php
+	}
 }
 ?>
 <form name='login' action='' method='post'>

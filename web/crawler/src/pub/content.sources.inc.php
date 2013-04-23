@@ -841,15 +841,15 @@ function moveRule(ndx, offset) {
 	var ruleJson = '{ "rules": [';
 	var sep = "";	
 	for ( var i = 0; i < objJson.rules.length ; i++ ) {
-		if (i!=ndx) {
-			if (offset==1 || offset==-1) {
-				ruleJson += sep + '{ "ope": "' + objJson.rules[i].ope + '", "mode": "' + objJson.rules[i].mode + '", "pat": "' + objJson.rules[i].pat.replace(/\\/g,"\\\\") + '", "meta": "' + objJson.rules[i].meta.replace(/\\/g,"\\\\") + '", "metap": "' + objJson.rules[i].metap + '", "ignoreparam": "' + objJson.rules[i].ignoreparam + '" }';
-				sep = ",";
-			}
-			if (i==ndx+offset) {
-				ruleJson += sep + '{ "ope": "' + objJson.rules[ndx].ope + '", "mode": "' + objJson.rules[ndx].mode + '", "pat": "' + objJson.rules[ndx].pat.replace(/\\/g,"\\\\") + '", "meta": "' + objJson.rules[ndx].meta.replace(/\\/g,"\\\\") + '", "metap": "' + objJson.rules[ndx].metap + '", "ignoreparam": "' + objJson.rules[i].ignoreparam + '" }';
-				sep = ",";
-			}
+		if ((i==ndx && offset==1) || (i==ndx-1 && offset==-1)) {
+			ruleJson += sep + '{ "ope": "' + objJson.rules[i+1].ope + '", "mode": "' + objJson.rules[i+1].mode + '", "pat": "' + objJson.rules[i+1].pat.replace(/\\/g,"\\\\") + '", "meta": "' + objJson.rules[i+1].meta.replace(/\\/g,"\\\\") + '", "metap": "' + objJson.rules[i+1].metap + '", "ignoreparam": "' + objJson.rules[i+1].ignoreparam + '" }';
+			sep = ",";
+			ruleJson += sep + '{ "ope": "' + objJson.rules[i].ope + '", "mode": "' + objJson.rules[i].mode + '", "pat": "' + objJson.rules[i].pat.replace(/\\/g,"\\\\") + '", "meta": "' + objJson.rules[i].meta.replace(/\\/g,"\\\\") + '", "metap": "' + objJson.rules[i].metap + '", "ignoreparam": "' + objJson.rules[i].ignoreparam + '" }';
+			sep = ",";	
+			i++;	
+		} else {
+			ruleJson += sep + '{ "ope": "' + objJson.rules[i].ope + '", "mode": "' + objJson.rules[i].mode + '", "pat": "' + objJson.rules[i].pat.replace(/\\/g,"\\\\") + '", "meta": "' + objJson.rules[i].meta.replace(/\\/g,"\\\\") + '", "metap": "' + objJson.rules[i].metap + '", "ignoreparam": "' + objJson.rules[i].ignoreparam + '" }';
+			sep = ",";	
 		}
 	}
 	ruleJson += '] }';		

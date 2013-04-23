@@ -82,12 +82,12 @@ abstract class SourceBase {
 
 	protected function getValue($name, $default) {
 		if ($this->data==null) return '';
-		//$ret = $this->data[strtoupper($name)];
 		$ret = $this->data[strtolower($name)];
+		if($ret instanceof MongoDate) return date('Y-m-d h:i:s', $ret->sec);
 		if (empty($ret) && !empty($default)) $ret = $default;
 		return $ret;
 	}
-
+	
 	protected function normalizeTagsCollections($value) {
 		$value = strtolower(trim($value));
 		$value = preg_replace ('/\s*,\s*/', ',', $value);
@@ -139,7 +139,7 @@ abstract class SourceBase {
 
 	protected function initSQL($stmt, $values, $create = false) {
 			
-		$stmt->addColumnValue("id_target", $values["id_target"]);
+		$stmt->addColumnValue("id_target", intval($values["id_target"]));
 		$stmt->addColumnValue("enabled", $values["source_enabled"]);
 		$stmt->addColumnValue("name", $values["source_name"]);
 		$stmt->addColumnValue("country", $values["source_country"]);

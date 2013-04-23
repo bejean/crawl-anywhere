@@ -14,6 +14,46 @@ if ($limit=="") $limit="0";
 
 require_once("content.common.ajax.inc.php");
 
+require_once_all('../sources/*.inc.php');
+
+if (!isset($_SESSION["crawl_countries"]))
+{
+	$handle = fopen("../../code_countries.txt", "rb");
+	while (!feof($handle) ) {
+		$line = trim(fgets($handle));
+		if ($line!="")
+		{
+			$parts = explode(';', $line);
+			$aCountries[trim($parts[1])] = ucwords(strtolower(trim($parts[0])));
+		}
+	}
+	fclose($handle);
+	$_SESSION["crawl_countries"] = $aCountries;
+}
+else
+{
+	$aCountries = $_SESSION["crawl_countries"];
+}
+
+if (!isset($_SESSION["crawl_languages"]))
+{
+	$handle = fopen("../../code_languages.txt", "rb");
+	while (!feof($handle) ) {
+		$line = trim(fgets($handle));
+		if ($line!="")
+		{
+			$parts = explode(';', $line);
+			$aLanguages[trim($parts[0])] = trim($parts[1]);
+		}
+	}
+	fclose($handle);
+	$_SESSION["crawl_languages"] = $aLanguages;
+}
+else
+{
+	$aLanguages = $_SESSION["crawl_languages"];
+}
+
 if ($action=="showstatus")
 {
 	$res .= "<center><table>";
@@ -75,7 +115,7 @@ if ($action=="showstatus")
 	if ($mg)
 	{
 		$res .= "<tr><td class='head'>Number of sources</td><td>";
-		$res .= mg_row_count($mg, "sources", array('$and' => array(array("deleted" => 0), array("id_account" => $id_account_current))));
+		$res .= mg_row_count($mg, "sources", array('$and' => array(array("deleted" => 0), array("id_account" => intval($id_account_current)))));
 		$res .= "</td></tr>";
 			
 		$res .= "<tr><td class='head'>Number of crawled URLs</td><td>";
@@ -83,17 +123,17 @@ if ($action=="showstatus")
 		$res .= "</td></tr>";
 
 		$res .= "<tr><td class='head'>Number of enabled sources</td><td>";
-		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => 1), array("deleted" => 0), array("id_account" => $id_account_current))));				
+		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => 1), array("deleted" => 0), array("id_account" => intval($id_account_current)))));				
 		$res .= "</td></tr>";
 
 		$res .= "<tr><td class='head'>Number of sources to be crawled</td><td>";
 		// TODO: V4 - $stmt->addWhereClause("enabled = 1 and deleted = 0 and (crawl_nexttime is null or crawl_nexttime <= now()) and id_account = " . $id_account_current);
-		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => 1), array("deleted" => 0), array("id_account" => $id_account_current))));				
+		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => 1), array("deleted" => 0), array("id_account" => intval($id_account_current)))));				
 		$res .= "</td></tr>";
 
 		$res .= "<tr><td class='head'>Number of sources to be crawled for the first time</td><td>";
 		// TODO: V4 - $stmt->addWhereClause("enabled = 1 and deleted = 0 and crawl_nexttime is null and id_account = " . $id_account_current);
-		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => 1), array("deleted" => 0), array("id_account" => $id_account_current))));				
+		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => 1), array("deleted" => 0), array("id_account" => intval($id_account_current)))));				
 		$res .= "</td></tr>";
 	}
 
@@ -109,10 +149,42 @@ if ($action=="showrunning")
 	if ($mg)
 	{
 		$stmt = new mg_stmt_select($mg, "sources");
-		$query_status = array('$or' => array(array(crawl_process_status => "2"), array(crawl_process_status => "3"), array(crawl_process_status => "4")));
-		$query = array('$and' => array(array(enabled => "1"), array(deleted => "0"), array(id_account => $id_account_current), array(id_account => $id_account_current), $query_status));;
+		//$query_status = array('$or' => array(array(crawl_process_status => "1"), array(crawl_process_status => "2"), array(crawl_process_status => "3"), array(crawl_process_status => "4")));
+		//$query = array('$and' => array(array(enabled => "1"), array(deleted => "0"), array(id_account => $id_account_current), array(id_account => $id_account_current), $query_status));
 		//TODO: V4
-		//$stmt->setWhereClause("(enabled = 1 and deleted = 0 and id_account = " . $id_account_current . " and not crawl_process_status=0 and ((crawl_process_status=2) or (crawl_process_status=3) or (crawl_process_status=4) or (crawl_lasttime_start > crawl_lasttime_end) or (crawl_lasttime_end is null and crawl_lasttime_start is not null))) and ((crawl_process_status=2) or (crawl_process_status=3) or (crawl_process_status=4) or (running_crawl_lastupdate is not null and running_crawl_lastupdate > DATE_SUB(NOW(),INTERVAL 5 MINUTE)))");
+		/*
+		 $stmt->setWhereClause("
+		 	(
+		 		enabled = 1 
+		 		and deleted = 0 
+		 		and id_account = " . $id_account_current . " 
+		 		and not crawl_process_status=0 
+		 		and (
+		 			(crawl_process_status=2) 
+		 			or (crawl_process_status=3) 
+		 			or (crawl_process_status=4) 
+		 			or (crawl_lasttime_start > crawl_lasttime_end) 
+		 			or (crawl_lasttime_end is null and crawl_lasttime_start is not null)
+		 			)
+		 	) 
+		 	and 
+		 	(
+		 		(crawl_process_status=2) 
+		 		or (crawl_process_status=3) 
+		 		or (crawl_process_status=4) 
+		 		or (running_crawl_lastupdate is not null and running_crawl_lastupdate > DATE_SUB(NOW(),INTERVAL 5 MINUTE))
+		 	)
+		 ");
+		 
+
+		 
+		 $ts = new MongoDate(strtotime("now") - (5*60));
+		 query_running_crawl_lastupdate = array("running_crawl_lastupdate" => array('$gt' => $ts));
+		 
+		$query_1 = array('$and' => array(enabled => "1", deleted => "0", id_account => intval($id_account_current), array('$not' => array(crawl_process_status => "0"))));
+		*/		
+		
+		$query = array('$and' => array(array(enabled => "1"), array(deleted => "0"), array(id_account => intval($id_account_current)), array(crawl_process_status => array('$ne' => "0"))));
 
 		$stmt->setQuery($query);
 		$stmt->setSort(array( "crawl_lasttime_start" => 1 ));
@@ -125,7 +197,7 @@ if ($action=="showrunning")
 		$cursor = $stmt->getCursor();
 		
 		$res .= "<center><table>";
-		$res .= "<tr><th style='width:25%;'>Title</th><th>Start crawl date</th><th style='width: 70px;'>Processed<br/>pages</th><th style='width: 70px;'>Remaining<br/>pages</th>";
+		$res .= "<tr><th style='width:25%;'>Title</th><th>Start crawl date</th><th style='width: 70px;'>Processed<br/>pages</th><th style='width: 70px;'>Remaining<br/>pages</th><th style='width: 30px;'>Status</th><th style='width: 30px;'>Action</th>";
 		if (!$_SESSION["mysolrserver_url"] && $cache_enabled  && $rs["type"]=='1') {
 			$res .= "<th style='width: 30px; text-align: center;'>Status</th><th style='width: 30px; text-align: center;'>Action</th>";
 		}
@@ -186,7 +258,8 @@ if ($action=="showrunning")
 			*/
 				
 			$res .= "<td>";
-			$res .= $rs["crawl_lasttime_start"];
+			$t = $rs["crawl_lasttime_start"]->sec;
+			$res .= date('Y-m-d h:i:s', $t);
 			if (!empty($processing_info)) {
 				$res .= "<br><br>Effective elapsed<br/>time : " . round($elapsedtime, 2) . " " . $elapsedtime_unit;
 			}
@@ -321,11 +394,12 @@ if ($action=="shownext" or $action=="showenqueued")
 		if ($action=="shownext") {
 			//TODO: V4
 			//$stmt->setWhereClause("enabled = 1 and deleted = 0 and crawl_nexttime > now() and id_account = " . $id_account_current);
-			$query = array('$and' => array(array(enabled => "1"), array(deleted => "0"), array(id_account => $id_account_current)));;
+			$query = array('$and' => array(array(enabled => "1"), array(deleted => "0"), array(id_account => intval($id_account_current))));
 		} else {
 			//TODO: V4
 			//$stmt->setWhereClause("enabled = 1 and deleted = 0 and (crawl_process_status='' or crawl_process_status='0') and id_account = " . $id_account_current);
-			$query = array('$and' => array(array(enabled => "1"), array(deleted => "0"), array(id_account => $id_account_current)));;
+			$query = array('$and' => array(array(enabled => "1"), array(deleted => "0"), array(id_account => intval($id_account_current))));
+			//$query = array('$and' => array(array(enabled => "1"), array(deleted => "0")));
 		}
 				
 		$stmt->setQuery($query);
@@ -348,6 +422,13 @@ if ($action=="shownext" or $action=="showenqueued")
 		while ($cursor->hasNext())
 		{
 			$rs = $cursor->getNext();
+					
+			$query = array ('$and' => array(array("type" => "cnx"),array("id" => intval($rs["type"]))));
+			mg_get_value($mg, "plugins", "class_php", $query, $class);
+				
+			$source = SourceFactory::createInstance($class, $config, $id_account_current, $mg, $aLanguages, $aCountries);
+			$source->load($rs);		
+			
 			$res .= "<tr>";
 
 			$res .= "<td class='name'>";
@@ -355,11 +436,11 @@ if ($action=="shownext" or $action=="showenqueued")
 			$res .= "</td>";
 
 			$res .= "<td class='url'>";
-			$res .= getStartingUrls($rs["url"]);
+			$res .= getStartingUrls($source->getUrl());
 			$res .= "</td>";
 
 			$res .= "<td>";
-			$res .= $rs["crawl_nexttime"];
+			$res .= date('Y-m-d h:i:s', $rs["crawl_nexttime"]->sec) ;
 			$res .= "</td>";
 
 			$res .= "</tr>";

@@ -137,7 +137,7 @@ if ($action=="loadsources")
 	if ($mg)
 	{
 		
-		$query_id = array ("id_account" => $id_account_current);
+		$query_id = array ("id_account" => intval($id_account_current));
 
  		if ($suspicious == "1") { 		
  			$q1 = array("crawl_status_message" => "");
@@ -195,7 +195,7 @@ if ($action=="loadsources")
  		$query_language = array ("language" => $filter_language);
  			
  		if ($filter_target!="")
- 		$query_language = array ("id_target" => $filter_target);
+ 		$query_language = array ("id_target" => intval($filter_target));
  			
  		if ($filter_type!="")
 		$query_type = array ("type" => $filter_type);
@@ -305,7 +305,7 @@ if ($action=="loadsources")
  			$res2 .= "</select></td></tr>";
  		}
 		
-		$query = array ('$and' => array(array("deleted" => "0"), array("id_account" => $id_account_current)));
+		$query = array ('$and' => array(array("deleted" => "0"), array("id_account" => intval($id_account_current))));
  		$stmt = new mg_stmt_distinct($mg, "sources");
  		$stmt->setQuery($query);
  		$stmt->setKey("country");
@@ -764,7 +764,7 @@ if ($action=="createsource")
 
 		$stmt = new mg_stmt_insert($mg, "sources", $mg_source_defaults);
 		
-		$stmt->addColumnValue("id_account", $id_account_current);
+		$stmt->addColumnValue("id_account", intval($id_account_current));
 		$stmt->addColumnValueDate ("createtime");
 		$stmt->addColumnValue("type", $source->getType(), ""); // Why this and not $type ?
 
@@ -1179,7 +1179,7 @@ if ($action=="exportsources")
 
 		$stmt = new mg_stmt_select($mg, "sources");
 
-		$query = array ("id_account" => $id_account_current);
+		$query = array ("id_account" => intval($id_account_current));
 		if ($mode=='selection') {
 			$query2 = array ("id" => array( '$in' => $ids));
 		} else {
@@ -1262,9 +1262,9 @@ if ($action=="importsources")
 
 					$mode = "insert";
 
-					$query = array ("id_account" => $id_account_current);
+					$query = array ("id_account" => intval($id_account_current));
 					if ($match=='id') {
-						$query = array ('$and' => array($query, array ("id" => (string) $item->id)));
+						$query = array ('$and' => array($query, array ("id" => intval((string) $item->id))));
 						$count = mg_row_count($mg, "sources", $query);
 						if ($count > 1) continue;
 						if ($count == 1) $mode = "update";
@@ -1286,7 +1286,7 @@ if ($action=="importsources")
 
 					if ($mode == 'insert') {
 						$stmt = new mg_stmt_insert($mg, "sources", $mg_source_defaults);
-						$stmt->addColumnValue("id_account", $id_account_current);
+						$stmt->addColumnValue("id_account", intval($id_account_current));
 						$stmt->addColumnValueDate("createtime");
 						$enabled = $status;
 					}
@@ -1316,9 +1316,9 @@ if ($action=="importsources")
 					$stmt->addColumnValue("crawl_priority", "1");
 					$stmt->addColumnValueDate("crawl_nexttime");
 						
-					$query = array ("id" => $id_account_current);
+					$query = array ("id" => intval($id_account_current));
 					mg_get_value($mg, "accounts", "id_target", $query, $id_target);					
-					$stmt->addColumnValue("id_target", $id_target);
+					$stmt->addColumnValue("id_target", intval($id_target));
 
 					$ignore = array();
 					$ignore[]='id';

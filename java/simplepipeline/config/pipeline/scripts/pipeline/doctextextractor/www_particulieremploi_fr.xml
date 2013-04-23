@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<server domains="www.particulieremploi.fr">
+
+	<url match="^/">
+		<script engine="rhino" action="parse">
+			<![CDATA[ 
+			
+				var tempTitle = "";
+				var tempPage = "";
+				var tempDate = "";
+			
+				// cleanup page html content
+				var re = new RegExp("[\n\r\f]+", "gi");
+				page = page.replace(re, "");	
+								
+				var head = "<html><head><body>";
+				var endHead = page.indexOf('<body');
+				if (endHead!=-1)
+					head = page.slice(0,endHead) + "<body>";
+
+				var start0 = page.indexOf('<img src="images/homev2/passeport_a.gif"');
+				var start = start0;
+				if (start != -1) {
+					var start2 = page.indexOf('<tr>', start0);
+					if (start2 != -1) start = start2;
+					
+					var start2 = page.indexOf('<table width="995" border="0" align="center" cellpadding="0" cellspacing="0">', start0);
+					if (start2 != -1) start = start2;
+				
+					var start2 = page.indexOf('<table width="733" border="0" cellpadding="0" cellspacing="0">', start0);
+					if (start2 != -1) start = start2;
+								
+					var end = page.indexOf('<a href="prevenir.php">');
+					
+					if (end == -1) {
+						tempPage = head + '<body>' + page.slice(start) + '</body></html>';
+					}
+					else {
+						tempPage = head + '<body>' + page.slice(start, end) + '</body></html>';
+					}
+				}
+				
+				parsedData = java.lang.reflect.Array.newInstance(java.lang.String, 3);
+				
+				parsedData[0] = tempTitle;
+				parsedData[1] = tempDate;  // empty in this sample
+				parsedData[2] = tempPage;
+			]]>
+		</script>
+	</url>
+</server>

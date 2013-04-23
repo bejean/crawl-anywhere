@@ -238,7 +238,7 @@ if ($action=="createtarget")
 		$stmt = new mg_stmt_insert($mg, "targets", $mg_target_defaults);
 
 		$stmt->addColumnValueDate("createtime");
-		$stmt->addColumnValue("id_account", $_POST["id_account"]);
+		$stmt->addColumnValue("id_account", intval($_POST["id_account"]));
 		$stmt->addColumnValue("name", $_POST["name"]);
 		$stmt->addColumnValue("output_type", $_POST["output_type"]);
 		$stmt->addColumnValue("target_type", $_POST["target_type"]);
@@ -276,7 +276,7 @@ if ($action=="savetarget")
 		$stmt->setQuery ($query);
 
 		$stmt->addColumnValue("name", $_POST["name"]);
-		$stmt->addColumnValue("id_account", $_POST["id_account"]);
+		$stmt->addColumnValue("id_account", intval($_POST["id_account"]));
 		$stmt->addColumnValue("target_type", $_POST["target_type"]);
 		$stmt->addColumnValue("target_parameters", $_POST["target_parameters"]);
 		$stmt->addColumnValue("queue_dir", $_POST["queue_dir"]);

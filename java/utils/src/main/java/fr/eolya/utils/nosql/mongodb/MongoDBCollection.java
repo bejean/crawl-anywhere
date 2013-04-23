@@ -17,6 +17,8 @@
  */
 package fr.eolya.utils.nosql.mongodb;
 
+import java.util.ArrayList;
+
 import org.bson.types.ObjectId;
 import com.mongodb.*;
 
@@ -25,7 +27,6 @@ import com.mongodb.*;
  */
 public class MongoDBCollection {
 
-	//private MongoDBDatabase db;
 	private DBCollection coll;
 	private String collName = null;
 
@@ -35,9 +36,12 @@ public class MongoDBCollection {
 	 * @return
 	 */
 	public MongoDBCollection(MongoDBDatabase db, String collName) {
-		//this.db = db;
 		coll = db.getDb().getCollection(collName);
 		this.collName = collName;
+	}
+
+	public MongoDBCollection(DBCollection coll) {
+		this.coll = coll;
 	}
 
 	public DBCollection getColl() {
@@ -65,19 +69,18 @@ public class MongoDBCollection {
 			ObjectId id = (ObjectId)doc.get( "_id" );
 			return id.toString();
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 	}
 
-	public String update(BasicDBObject docsearch, BasicDBObject doc) {
+	public int update(BasicDBObject docsearch, BasicDBObject doc) {
 		try {
-			coll.update( docsearch, doc );
-			ObjectId id = (ObjectId)doc.get( "_id" );
-			return id.toString();
+			WriteResult wr = coll.update( docsearch, doc );
+			return wr.getN();
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			//e.printStackTrace();
+			return -1;
 		}
 	}
 
@@ -86,12 +89,14 @@ public class MongoDBCollection {
 		return false;
 	}
 
-	public void remove(BasicDBObject doc) {
-		coll.remove(doc);
+	public int remove(BasicDBObject doc) {
+		WriteResult wr = coll.remove(doc);
+		return wr.getN();
 	}
 
-	public void removeAll() {
-		coll.remove(new BasicDBObject());
+	public int removeAll() {
+		WriteResult wr = coll.remove(new BasicDBObject());
+		return wr.getN();
 	}
 
 	public void drop() {
@@ -100,6 +105,62 @@ public class MongoDBCollection {
 
 	public long size() {
 		return coll.count(new BasicDBObject());
+	}
+	
+	public long count(String query) {
+		BasicDBObject docsearch = null;
+		if (query==null || "".equals(query)) {
+			docsearch = new BasicDBObject();
+		} else {
+			docsearch = MongoDBHelper.JSON2BasicDBObject(query);
+		}
+		return coll.count(docsearch);
+	}
+
+	public ArrayList<String> getValues(BasicDBObject docsearch, String field) {
+		DBCursor cur = null;
+		if (docsearch!=null) 
+			cur = coll.find(docsearch);
+		else
+			cur = coll.find();
+		if (cur.count()==0) return null;
+		ArrayList<String> values = new ArrayList<String>();
+		while (cur.hasNext()) {
+			BasicDBObject doc = (BasicDBObject) cur.next();
+			values.add((String)doc.getString(field));
+		}
+		return values;
+	}
+	
+	public String getValue(BasicDBObject docsearch, String field) {
+		DBCursor cur = coll.find(docsearch);
+		if (cur.count()!=1) return null;
+		BasicDBObject doc = (BasicDBObject) cur.next();
+		return (String)doc.getString(field);
+	}
+	
+//	public HashMap<String,String> getItemMap(BasicDBObject docsearch) {
+//		DBCursor cur = coll.find(docsearch);
+//		if (cur.count()!=1) return null;
+//		BasicDBObject doc = (BasicDBObject) cur.next();		
+//		return MongoDBHelper.BasicDBObject2Map(doc);
+//	}
+
+	public String getJson(BasicDBObject docsearch) {
+		BasicDBObject doc = get(docsearch);
+		if (doc==null) return null;
+		return (String)doc.toString();
+	}
+	
+	public BasicDBObject get(BasicDBObject docsearch) {
+		DBCursor cur = coll.find(docsearch);
+		if (cur.count()!=1) return null;
+		BasicDBObject doc = (BasicDBObject) cur.next();
+		return doc;
+	}
+	
+	public DBCursor getCursor(BasicDBObject docsearch) {
+		return coll.find(docsearch);
 	}
 }
 

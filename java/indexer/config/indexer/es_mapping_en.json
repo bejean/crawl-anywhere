@@ -1,0 +1,22 @@
+{
+	"mapping_en": {
+   		"_source": {
+   			"enabled": true
+      	},
+	    "properties": {
+        	"title": {
+    	  		"type": "string",
+      			"analyzer": "en",
+    	  		"store": "yes"
+     		},
+	    	"body": {
+          		"type": "string",
+       			"analyzer": "en_s"
+       		},
+	       	"published": {
+         		"type": "date",
+       	  		"store": "yes"
+        	}
+	     }
+	}
+}

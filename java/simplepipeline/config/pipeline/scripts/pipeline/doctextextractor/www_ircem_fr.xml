@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<server domains="www.ircem.fr">
+
+<!--
+http://www.ircem.fr/www/fr/home_page/outils/les_garanties_ircem_mutuelle/la_garantie_obseques.aspx
+-->
+	<url match="^/">
+		<script engine="rhino" action="parse">
+			<![CDATA[ 
+			
+				var tempTitle = "";
+				var tempPage = "";
+				var tempDate = "";
+			
+				// cleanup page html content
+				var re = new RegExp("[\n\r\f]+", "gi");
+				page = page.replace(re, "");	
+				
+				// title - <div class="texttitle" style="text-align:left">L'employeur d'une famille d'accueil<br /><br /></div>		
+				
+				var start = page.indexOf('<div class="texttitle" style="text-align:left">');
+				var end = page.indexOf('</div>', start);
+				if (start!=-1 && end!=-1) {
+					var tempTitle = page.slice(start+47, end);
+					tempTitle = tempTitle.replace(/<br \/>/g, ' ').replace(/^\s+/g,'').replace(/\s+$/g,'');	
+				
+					var head = "";
+					var endHead = page.indexOf('<body>');
+					if (endHead!=-1)
+						head = page.slice(0,endHead) + "<body>";
+						
+					//starPattern = new String('<!-- CONTENU START -->');		
+					var start = page.indexOf('<!-- CONTENU START -->');
+					var end = page.indexOf('<!-- CONTENU END -->');
+					if (start!=-1 && end!=-1) {
+						//tempPage = page.slice(start+22, end);
+						tempPage = head + '<body>' + page.slice(start+22, end) + '</body></html>';
+					}
+				}
+				
+				parsedData = java.lang.reflect.Array.newInstance(java.lang.String, 3);
+				
+				parsedData[0] = tempTitle;
+				parsedData[1] = tempDate;  // empty in this sample
+				parsedData[2] = tempPage;
+				
+			]]>
+		</script>
+	</url>
+</server>

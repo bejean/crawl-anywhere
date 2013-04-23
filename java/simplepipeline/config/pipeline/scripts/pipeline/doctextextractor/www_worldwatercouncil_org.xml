@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<server domains="www.worldwatercouncil.org">
+
+<!--
+http://www.worldwatercouncil.org
+-->
+	<url match="^/">
+		<script engine="rhino" action="cleantext">
+			<![CDATA[ 				
+				cleanedText = java.lang.reflect.Array.newInstance(java.lang.String, 1);			
+				cleanedText[0] = text;
+			]]>
+		</script>
+	</url>
+</server>

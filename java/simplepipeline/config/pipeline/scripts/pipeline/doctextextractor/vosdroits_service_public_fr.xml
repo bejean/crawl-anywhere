@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<server domains="vosdroits.service-public.fr">
+
+
+	<url match="^/">
+		<script engine="rhino" action="parse">
+			<![CDATA[ 
+			
+				var tempTitle = "";
+				var tempPage = "";
+				var tempDate = "";
+			
+				// cleanup page html content
+				var re = new RegExp("[\n\r\f]+", "gi");
+				page = page.replace(re, "");	
+								
+				var start = page.indexOf('<h2 id="titrePage">');
+				var end = page.indexOf('</h2>', start);
+				if (start!=-1 && end!=-1) {
+					var tempTitle = page.slice(start+19, end);
+				}
+				
+				end = page.indexOf('<div id="colonne22">', start); 
+				if (start!=-1 && end!=-1) {
+					var head = "";
+					var endHead = page.indexOf('<body ');
+					if (endHead!=-1) {
+						head = page.slice(0,endHead) + "<body>";
+						tempPage = head + '<body>' + page.slice(start, end) + '</body></html>';
+					}
+				}
+				
+				parsedData = java.lang.reflect.Array.newInstance(java.lang.String, 3);
+				
+				parsedData[0] = tempTitle;
+				parsedData[1] = tempDate;  // empty in this sample
+				parsedData[2] = tempPage;
+				
+			]]>
+		</script>
+	</url>
+</server>

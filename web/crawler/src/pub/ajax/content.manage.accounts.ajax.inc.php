@@ -188,7 +188,7 @@ if ($action=="createaccount")
 
 		$stmt->addColumnValueDate("createtime");
 		$stmt->addColumnValue("name", $_POST["account_name"]);
-		$stmt->addColumnValue("id_engine", $_POST["id_engine"]);
+		$stmt->addColumnValue("id_engine", intval($_POST["id_engine"]));
 
 		if (!$stmt->checkNotNull ($mg_account_not_null)) {
 			$res = "Error&nbsp;&nbsp;&nbsp;";
@@ -221,8 +221,8 @@ if ($action=="saveaccount")
 		$query = array ("id" => intval($id));
 		$stmt->setQuery ($query);
 		$stmt->addColumnValue("name", $_POST["account_name"]);
-		$stmt->addColumnValue("id_engine", $_POST["id_engine"]);
-		$stmt->addColumnValue("id_target", $_POST["id_target"]);
+		$stmt->addColumnValue("id_engine", intval($_POST["id_engine"]));
+		$stmt->addColumnValue("id_target", intval($_POST["id_target"]));
 
 		$stmt->execute();
 		$res = "Success&nbsp;&nbsp;&nbsp;";

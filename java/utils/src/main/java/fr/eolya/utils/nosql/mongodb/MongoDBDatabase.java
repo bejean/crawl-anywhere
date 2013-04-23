@@ -25,7 +25,6 @@ import com.mongodb.*;
  */
 public class MongoDBDatabase {
 
-	//private MongoDBConnection con;
 	private DB db;
 	private String dbName = null;
 
@@ -36,7 +35,6 @@ public class MongoDBDatabase {
 	 * @throws UnknownHostException 
 	 */
 	public MongoDBDatabase(MongoDBConnection con, String dbName) {
-		//this.con = con;
 		db = con.getMongo().getDB(dbName);
 		db.setWriteConcern(WriteConcern.SAFE);
 		this.dbName = dbName;

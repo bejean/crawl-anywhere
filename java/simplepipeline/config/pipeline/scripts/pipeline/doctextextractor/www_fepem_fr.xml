@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<server domains="www.fepem.fr">
+
+<!--
+http://www.fepem.fr
+-->
+	<url match="^/">
+		<script engine="rhino" action="cleantext">
+			<![CDATA[ 		
+				// Do something with text
+				// text = ...
+					
+				cleanedText = java.lang.reflect.Array.newInstance(java.lang.String, 1);			
+				cleanedText[0] = text;
+			]]>
+		</script>
+	</url>
+</server>

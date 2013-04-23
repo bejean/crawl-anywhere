@@ -17,15 +17,39 @@
  */
 package fr.eolya.utils.nosql.mongodb;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
 public class MongoDBHelper {
-	public static DBObject JSON2DBObject (String json) {
-		return (DBObject) JSON.parse(json);
-	}
+	//	public static DBObject JSON2DBObject (String json) {
+	//		return (DBObject) JSON.parse(json);
+	//	}
+
 	public static BasicDBObject JSON2BasicDBObject (String json) {
 		return (BasicDBObject) JSON.parse(json);
 	}	
+
+	public static Map<String,Object> BasicDBObject2Map(BasicDBObject doc) {
+		Map<String,Object> ret = new HashMap<String,Object>();
+		Iterator<Entry<String, Object>> it = doc.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, Object> entry = (Map.Entry<String, Object>) it.next();	
+			Object o = doc.get(entry.getKey());
+			ret.put(entry.getKey(), o);
+			if (o!=null) {
+				if (o instanceof Double) {
+					try {
+						Double d = (Double)o;
+						ret.put(entry.getKey(), new Integer(d.intValue()));
+					} catch (Exception e) {}
+				}
+			}
+		}		
+		return ret;
+	}
 }

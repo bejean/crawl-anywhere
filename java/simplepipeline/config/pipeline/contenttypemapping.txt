@@ -1,0 +1,10 @@
+# homogeneisation des types mimes xml / rss
+application/rss+xml=application/xml
+application/atom+xml=application/xml
+application/rtf=application/msword
+text/rtf=application/msword
+application/vnd.ms-word.document=application/msword
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=application/msword
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=application/vnd.ms-excel
+application/vnd.openxmlformats-officedocument.presentationml.presentation=application/vnd.ms-powerpoint
+

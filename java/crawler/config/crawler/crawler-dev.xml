@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crawler>
+<database>
+	<param name="dbtype">mongodb</param>
+	<param name="dbhost">localhost</param>
+	<param name="dbport">27017</param>
+	<param name="dbname">crawler</param>
+	<param name="dbuser"></param>
+	<param name="dbpassword"></param>
+</database>
+
+<cache>
+	<param name="dbtype">mongodb</param>
+	<param name="dbhost">localhost</param>
+	<param name="dbport">27017</param>
+	<param name="dbname">crawler_cache</param>
+	<param name="dbuser"></param>
+	<param name="dbpassword"></param>
+</cache>
+	
+<proxy>
+	<param name="host"></param>
+	<param name="port"></param>
+	<param name="exclude"></param>
+	<param name="username"></param>
+	<param name="password"></param>
+</proxy>
+
+<documenthandler>
+	<default>
+		<param name="classname">fr.eolya.crawler.documenthandler.XmlQueueWriterHandler</param>
+		<param name="checkqueuesize_each">10</param>
+		<param name="jobspath">queue</param>
+		<param name="jobslimit">10000</param>
+	</default>
+</documenthandler>
+
+<param name="log_verbose">1</param>
+<param name="log_debug">0</param>
+
+<param name="force_once">0</param>
+<param name="robots_wildcard_allowed">1</param>
+<param name="user_agent">CaBot</param>
+<param name="bypass_robots_file">0</param>
+<param name="max_depth">99</param>
+<param name="max_page">0</param>
+<param name="max_page_length">1000000</param>
+<param name="max_redirection">6</param>
+
+<param name="child_only">0</param>
+
+<param name="extension_exclude">png,gif,jpg,jpeg,jpe,tiff,tif,bmp,mov,mp3,mpeg,mpg,mpe,avi,movie,dwg,mp4,bin,dvi,tar,gtar,zip,gzip,gz,man,ai,eps,ps,aif,aiff,aifc,wave,h264</param>
+
+<param name="contenttype_include">application/x-shockwave-flash,text/html,text/xml,text/plain,application/pdf,application/xhtml+xml,application/msword,application/vnd.ms-excel,application/rss+xml,application/xml,application/rtf,text/rtf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/atom+xml,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</param>
+<!--param name="contenttype_exclude">image/jpeg,video/quicktime,application/zip,application/x-zip-compressed</param-->
+<param name="contenttype_exclude"></param>
+
+<param name="bypass_robots_file">0</param>
+<param name="bypass_robots_meta">0</param>
+<param name="rss_extract">0</param>
+
+<param name="max_simultaneous_source">3</param>
+<param name="max_simultaneous_item_per_source">1</param>
+
+<param name="witness_files_path">log</param>
+
+<param name="crawler.scripts_path">config/crawler/scripts</param>
+
+<param name="swfToHtmlPath">external/swf2html</param>
+
+<param name="geo_location">1</param>
+
+<param name="log_filename">log/crawler.log</param>
+<param name="log_filename_test">log/crawler_test.log</param>
+	
+<param name="country_include">en, fr, ca, ru, cn, pt, nl, it, es, al, af</param>
+<param name="country_exclude"></param>
+
+<param name="ignore_url_fields">PHPSESSID,jsessionid</param>
+<!-- PHPSESSID|JSESSIONID|ASPSESSIONID|sid|zenid -->
+
+
+<param name="removedoc_httpstatus">404</param>
+<!-- 403,500,502, ... -->
+	
+	
+	
+	
+</crawler>
+	

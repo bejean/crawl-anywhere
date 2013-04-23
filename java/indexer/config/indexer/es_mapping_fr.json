@@ -1,0 +1,22 @@
+{
+	"mapping_fr": {
+      	"_source": {
+        	"enabled": true
+	    },
+    	"properties": {
+	        "title": {
+    	      	"type": "string",
+        	  	"analyzer": "fr",
+        	  	"store": "yes"
+        	},
+        	"body": {
+	          	"type": "string",
+    	      	"analyzer": "fr_s"
+        	},
+        	"published": {
+          		"type": "date",
+        	  	"store": "yes"
+        	}
+     	}
+    }
+}

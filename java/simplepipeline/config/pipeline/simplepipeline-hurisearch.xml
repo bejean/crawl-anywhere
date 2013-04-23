@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pipeline>
+	<param name="witnessfilespath">/opt/hurisearch/log</param>
+	<param name="logfilename">/opt/hurisearch/log/pipeline.log</param>
+	<param name="oncemodetimeout">300</param>
+	<connector classname="fr.eolya.simplepipeline.connector.FileQueueConnector">
+		<param name="rootdir">/opt/hurisearch/queue</param>
+		<param name="filepattern">^j[.].*[.]xml$</param>
+		<param name="onsuccessmoveto">/opt/hurisearch/queue/_success</param>
+		<param name="onerrormoveto">/opt/hurisearch/queue/_error</param>
+	</connector>
+	<stages>
+ 		<stage position="0" classname="fr.eolya.simplepipeline.stage.ContentTypeFilter">
+ 			<param name="onaction">add</param>
+			<param name="contentTypeElement">item_contenttype</param>
+			<param name="acceptedContentType">application/x-shockwave-flash,text/html,text/plain,application/pdf,application/xhtml+xml,application/msword,application/rtf,application/vnd.ms-powerpoint</param>
+ 		</stage>
+ 		<stage position="1" classname="fr.eolya.simplepipeline.stage.DocTextExtractor">
+			<param name="onaction">add</param>
+			<param name="contenttype">item_contenttype</param>
+			<param name="cleanmethod">item_clean_method</param>
+			<param name="cleanmethoddefault"></param>
+			<param name="charset">item_charset</param>
+			<param name="source">content</param>
+			<param name="source_file">content_file</param>
+			<param name="target">text</param>
+			<param name="prefix">parser_</param>
+ 			<param name="pdftotextpath">/usr/bin/pdftotext</param>
+ 			<param name="catdocpath">/opt/local/bin/catdoc</param>
+ 			<param name="catpptpath">/opt/local/bin/catppt</param>
+			<param name="swf2htmlpath">/usr/bin/swf2thml</param>
+ 			<param name="onsuccessmoveto">/opt/hurisearch/queue/_success</param>
+			<param name="onerrormoveto">/opt/hurisearch/queue/_error</param>
+ 			<param name="tmppath">/opt/hurisearch/tmp</param>
+ 			<param name="stoppipelineonerror">yes</param>
+ 			<param name="stoppipelineonemptytext">yes</param>
+		</stage>
+		<stage position="2" classname="fr.eolya.simplepipeline.stage.DocSummaryExtractor">
+			<param name="onaction">add</param>
+			<param name="source">text</param>
+			<param name="target">summary</param>
+			<param name="maxsize">400</param>
+		</stage>		
+		<stage position="3" classname="fr.eolya.simplepipeline.stage.FieldMapping">
+			<param name="onaction">add</param>
+			<param name="source">item_contenttype</param>
+			<param name="sourcecapture">^([a-zA-Z_\/\-\.\+]*).*</param>
+ 			<param name="target">item_contenttyperoot</param>
+			<param name="mappingdefinitionfile">/opt/hurisearch/config/contenttypemapping.txt</param>
+			<param name="lowercasenormalization">yes</param>
+			<param name="sourcecaptureisdefault">yes</param>
+		</stage>		 
+		<stage position="4" classname="fr.eolya.simplepipeline.stage.FieldMapping">
+			<param name="onaction">add</param>
+			<param name="source">source_country</param>
+			<param name="sourcecapture"></param>
+ 			<param name="target">country_tandis</param>
+			<param name="mappingdefinitionfile">/opt/hurisearch/config/countrymapping.txt</param>
+			<param name="lowercasenormalization">yes</param>
+			<param name="sourcecaptureisdefault">yes</param>
+		</stage>		 
+ 		<stage position="5" classname="fr.eolya.simplepipeline.stage.LanguageDetector">
+			<param name="onaction">add</param>
+			<param name="text">text</param>
+			<param name="target">item_language</param>
+			<param name="targetdetection">item_languagedetection</param>
+			<param name="declaredlanguage">source_language</param>
+			<param name="candidatelanguages">source_candidatelanguages</param>
+			<param name="declaredcharset">item_charset</param>
+			<param name="textdetectionlength">4096</param>
+			<param name="languagerecognizerpoolsize">5</param>
+			<param name="npg">/opt/hurisearch/config/ngp/ngp</param>
+		</stage>
+		<stage position="6" classname="fr.eolya.simplepipeline.stage.SolrIndexerQueueWriter">
+			<param name="queuedir">/opt/hurisearch/queue_solr</param>
+			<param name="maxqueuesize">10000</param>
+			<param name="tempfilenameprefix">t.</param>
+			<param name="filenameprefix">j.</param>
+			<param name="solrmappings">/opt/hurisearch/config/solrmapping-hurisearch.xml</param>
+		</stage>
+	</stages>
+</pipeline>

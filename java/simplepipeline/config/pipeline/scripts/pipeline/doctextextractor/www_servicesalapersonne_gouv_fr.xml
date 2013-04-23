@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<server domains="www.servicesalapersonne.gouv.fr">
+
+	<url match="^/">
+		<script engine="rhino" action="parse">
+			<![CDATA[ 
+			
+				var tempTitle = "";
+				var tempPage = "";
+				var tempDate = "";
+			
+				// cleanup page html content
+				var re = new RegExp("[\n\r\f]+", "gi");
+				page = page.replace(re, "");	
+								
+				var head = "<html><head><body>";
+				var endHead = page.indexOf('<body');
+				if (endHead!=-1)
+					head = page.slice(0,endHead) + "<body>";
+
+				var start = page.indexOf('<div id="default">');
+				if (start != -1) {
+					var end = page.indexOf('<div id="right-part">', start);
+					if (end == -1)
+						end = page.indexOf('<div id="footer-content"', start);
+					
+					if (end == -1) {
+						tempPage = head + '<body>' + page.slice(start) + '</body></html>';
+					}
+					else {
+						tempPage = head + '<body>' + page.slice(start, end) + '</body></html>';
+					}
+				}
+				
+				parsedData = java.lang.reflect.Array.newInstance(java.lang.String, 3);
+				
+				parsedData[0] = tempTitle;
+				parsedData[1] = tempDate;  // empty in this sample
+				parsedData[2] = tempPage;
+			]]>
+		</script>
+	</url>
+</server>

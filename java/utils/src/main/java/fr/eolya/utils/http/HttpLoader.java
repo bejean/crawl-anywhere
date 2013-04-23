@@ -17,6 +17,7 @@
  */
 package fr.eolya.utils.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -62,7 +63,14 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.util.EntityUtils;
 
+import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.io.SyndFeedInput;
+import com.sun.syndication.io.XmlReader;
+
 import fr.eolya.utils.Utils;
+
+// TODO: use gzip compression 
+
 
 /**
  * A wrapper class for Apache HttpClient 4.x
@@ -73,11 +81,9 @@ public class HttpLoader {
 	private HttpGet get;
 	private HttpResponse response;
 
-	private String url;
-	private URI uri;
 	private String proxyHost;
 	private int proxyPort;
-	//private String proxyExclude;
+	private String proxyExclude;
 	private String proxyUserName;
 	private String proxyPassword;
 	private int connectionTimeOut;
@@ -106,9 +112,7 @@ public class HttpLoader {
 	public static final int LOAD_PAGEUNCHANGED = 1;
 	public static final int LOAD_PAGEREDIRECTED = 2;
 
-	public HttpLoader(String url) throws URISyntaxException {
-		this.url = url;
-		uri = new URI(url);		
+	public HttpLoader() throws URISyntaxException {
 		proxyHost = null;
 		//proxyExclude = null;
 		proxyUserName = null;
@@ -131,9 +135,9 @@ public class HttpLoader {
 		this.proxyPort = proxyPort;
 	}
 
-	//public void setProxyExclude(String proxyExclude) {
-	//	this.proxyExclude = proxyExclude;
-	//}
+	public void setProxyExclude(String proxyExclude) {
+		this.proxyExclude = proxyExclude;
+	}
 
 	public void setProxyUserName(String proxyUserName) {
 		this.proxyUserName = proxyUserName;
@@ -220,7 +224,7 @@ public class HttpLoader {
 		}
 	}
 
-	public int open() throws IOException {
+	public int open(String url) throws IOException {
 		try {
 			close();
 
@@ -229,7 +233,7 @@ public class HttpLoader {
 			if (client == null) throw new IOException("HttpClient object creation failed");
 
 			// HttpGet
-			get = getHttpGet();
+			get = getHttpGet(url);
 			if (get == null) throw new IOException("HttpGet object creation failed");
 
 			// execute
@@ -335,8 +339,12 @@ public class HttpLoader {
 		return errorCode;
 	}
 
-	public int getHeadStatusCode() {
+	public int getHeadStatusCode(String url) {
 		try {
+			
+			//this.url = url;
+			URI uri = new URI(url);		
+
 			close();
 
 			// HttpClient
@@ -381,29 +389,24 @@ public class HttpLoader {
 		return null;
 	}
 
-	public int openRetry(int maxRetry) {
+	public int openRetry(String url, int maxRetry) {
+
 		int ret = -1;
 		int tryCount = 0;
 		while (ret == LOAD_ERROR && tryCount < maxRetry) {
 			try {
-				ret = open();
+				tryCount++;
+				ret = open(url);
 			}
 			catch (IOException e) {
 				String msg = e.getMessage();
-				if (tryCount == 0 && msg!=null && msg.toLowerCase().startsWith("invalid uri")) {
-					url = URLUtils.urlEncode(url);
-					try {
-						uri = new URI(url);
-					} catch (URISyntaxException e1) {
-						e1.printStackTrace();
-					}	
+				if (tryCount == 1 && msg!=null && msg.toLowerCase().startsWith("invalid uri")) {
+					url = HttpUtils.urlEncode(url);
 				}
 				else {
 					Utils.sleep(tryCount * 1000);
 				}
-				tryCount++;
-				ret = -1;
-				if (tryCount == maxRetry) return LOAD_ERROR;
+				//if (tryCount == maxRetry) return LOAD_ERROR;
 			}
 		}
 		return ret;
@@ -480,7 +483,14 @@ public class HttpLoader {
 		}
 	} 
 
-	private HttpGet getHttpGet() {
+	private HttpGet getHttpGet(String url) {
+		URI uri;
+		try {
+			uri = new URI(url);
+		} catch (URISyntaxException e1) {
+			e1.printStackTrace();
+			return null;
+		}
 		HttpGet httpGet = new HttpGet(uri);
 		// Conditional Get
 		if (!StringUtils.isEmpty(condGetLastModified) && !StringUtils.isEmpty(condGetETag)) {
@@ -543,4 +553,53 @@ public class HttpLoader {
 		if (StringUtils.isEmpty(value)) return null;
 		return value;
 	}
+	
+    public static boolean isRss(String contentType, String rawPage) {
+        if (contentType==null) return false;
+        if (
+                        contentType.toLowerCase().startsWith("application/xml") 
+                        || contentType.toLowerCase().startsWith("application/rss+xml") 
+                        || contentType.toLowerCase().startsWith("application/atom+xml") 
+                        || contentType.toLowerCase().startsWith("application/rdf+xml") 
+                        || contentType.toLowerCase().startsWith("text/xml")
+                        ) {
+            if (rawPage==null) return true;
+            return isFeed(rawPage);
+        }
+        return false;
+    }
+  
+    public static boolean isHtmlOrText(String contentType) {
+        if (contentType==null) return false;
+        return (contentType.toLowerCase().startsWith("text/plain") || isHtml(contentType));
+    }
+    
+    public static boolean isHtml(String contentType) {
+        if (contentType==null) return false;
+        if (contentType.toLowerCase().startsWith("text/html") || contentType.toLowerCase().startsWith("application/x-shockwave-flash") || contentType.toLowerCase().startsWith("application/xhtml+xml")) return true;
+        return false;
+    }
+       
+    public static boolean isFeed(String rawPage) {
+        try {
+            XmlReader xmlReader = new XmlReader(new ByteArrayInputStream(rawPage.getBytes()));
+            SyndFeedInput input = new SyndFeedInput();
+            @SuppressWarnings("unused")
+			SyndFeed feed = input.build(xmlReader);
+            //SyndFeed feed = input.build(new InputSource(new ByteArrayInputStream(rawPage.getBytes())));
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+    
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
 }

@@ -1,1 +1,2 @@
-{ "id" : 1, "id_account" : 1,"createtime" : "20130101000000", "name" : "Default" }
+{ "id" : 1, "id_account" : 1,"createtime" : "20130101000000", "name" : "Default", "output_type" : "default", "target_type" : "solr"}
+

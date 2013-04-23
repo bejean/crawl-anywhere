@@ -1,0 +1,24 @@
+# ATTENTION !!! pas de ligne blanche avant la fin du fichier de parametres
+# ATTENTION !!! laisser au minimum une ligne blanche à la fin du fichier 
+#
+# Cette premiere ligne définie les groupes de caractères interdits dans le titre
+# les groupe de caractères sont séparés par un espace
+#
+_ :\ 
+
+#
+# les lignes suivantes définissent les expressions régulieres interdites dans les titres
+#
+untitled
+Microsoft Word
+
+# pas de mot alphanumerique seul
+^[a-zA-Z0-9]+$
+# pas de mot alphabetique seul
+^[a-zA-Z]+$
+# pas de mot numerique seul
+^[0-9]+$
+# pas de nom de fichier
+\.pdf$
+\.(doc|xls)$
+

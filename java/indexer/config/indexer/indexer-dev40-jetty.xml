@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<indexer>
+	<solr>
+		<param name="baseurl">http://localhost:8983/solr/</param>
+		<param name="corename">crawler</param>
+		<!-- commitwithin wins commiteach --> 
+		<param name="commitwithin">10000</param>
+		<param name="commiteach">200</param>
+		<param name="optimizeeach">0</param>
+	</solr>
+	<param name="witnessfilespath">log</param>
+	<param name="logfilename">log/indexer.log</param>
+	<param name="queuepath">queue_solr40</param>
+	<param name="queuefilepattern">^j[.].*[.]xml$</param>
+	<!--param name="jobsremove">1</param-->
+	<param name="onsuccessmoveto">queue_solr40/_success</param>
+	<param name="onerrormoveto">queue_solr40/_error</param>
+</indexer>	
+
+
+
+

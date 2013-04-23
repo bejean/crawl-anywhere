@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<solrmappings>
+	<!-- the following mapping (source_id to sourceid) is mandatory. Never remove or modify it if -->		
+	<mapping source="source_id"                         target="sourceid" />
+	
+	<mapping source="source_type"                       target="type_str" />
+	<mapping source="source_name"                       target="source_text,source_str" />
+	<mapping source="source_country"                    target="country"                                normalization="lowercase" />
+	<mapping source="item_language"                   	target="item_meta_language"                     normalization="lowercase" />
+	<mapping source="source_collections" 		        target="collection"                 split=","	normalization="lowercase" />
+	<mapping source="source_tags" 		                target="tag"                        split=","	normalization="lowercase" />
+	
+	<mapping source="item_id"                           target="id" />
+	<mapping source="item_contenttype"                  target="contenttype" />
+	<mapping source="item_contenttyperoot"              target="contenttyperoot" />
+	<mapping source="item_meta_description"  	        target="summary" />
+	<mapping source="item_firstcrawldate"  	            target="createtime" 							normalization="date" />
+
+	<!-- uncomment in order to use the spacial search (use the correct solconfig.xml and schema.xml files and the jteam spacial solr plugin http://www.jteam.nl/products/spatialsolrplugin.html
+	<mapping source="latitude"  	                    target="lat" />
+	<mapping source="longitude"  	                    target="lng" />
+    -->
+
+	<mapping source="item_meta_ai_published"  	        target="publishtime" 							normalization="date" />
+	<mapping source="parser_imageurl"  	            	target="urlimage_str" />
+    
+	<mapping source="meta_custom_(.*)"  	            target="$_str,$_text" />    
+	
+	<mapping source="meta_extracted_(.*)"  	            target="$_str,$_text" />    
+    
+    <mapping source="item_meta_ai_type"  	            target="item_meta_ai_type_str" />    
+    <mapping source="item_meta_ai_category_issue"  	    target="item_meta_ai_category_issue_str" />    
+    <mapping source="item_meta_ai_category_region"  	target="item_meta_ai_category_region_str" />    
+
+	<mapping source="item_meta_ai_title"                target="title_dis" />
+
+	<mapping source="item_meta_language,item_meta_ai_title,text" target="content_ml,content_mls"     format="[%1$s]%2$s\n%3$s">
+		<condition source="item_meta_language" type="in">en,fr,ar,ru,da,nl,fi,de,hu,it,no,ro,es,pt,sv,tr</condition>
+	</mapping>
+	<mapping source="item_meta_language,item_meta_ai_title,text" target="content_ml"                 format="[%1$s]%2$s\n%3$s">
+		<condition source="item_meta_language" type="not_in">en,fr,ar,ru,da,nl,fi,de,hu,it,no,ro,es,pt,sv,tr</condition>
+	</mapping>
+
+	<mapping source="item_meta_language,item_meta_ai_title"      target="title_ml,title_mls"         format="[%1$s]%2$s" >
+		<condition source="item_meta_language" type="in">en,fr,ar,ru,da,nl,fi,de,hu,it,no,ro,es,pt,sv,tr</condition>
+	</mapping>
+	<mapping source="item_meta_language,item_meta_ai_title"      target="title_ml"                   format="[%1$s]%2$s" >
+		<condition source="item_meta_language" type="not_in">en,fr,ar,ru,da,nl,fi,de,hu,it,no,ro,es,pt,sv,tr</condition>
+	</mapping>
+
+</solrmappings>

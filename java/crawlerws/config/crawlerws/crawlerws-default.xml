@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<servlet>
+	<param name="test">test</param>
+		
+	<param name="proxy_host"></param>
+	<param name="proxy_port"></param>
+	<param name="proxy_exclude">localhost,127.0.0.1</param>
+	<param name="proxy_username"></param>
+	<param name="proxy_password"></param>
+</servlet>

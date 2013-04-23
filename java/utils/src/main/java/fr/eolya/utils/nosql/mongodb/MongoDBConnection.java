@@ -20,12 +20,14 @@ package fr.eolya.utils.nosql.mongodb;
 import java.net.UnknownHostException;
 import com.mongodb.*;
 
+import fr.eolya.utils.nosql.IDBConnection;
+
 /**
  * A MongoDB class representing a DB connection.
  */
-public class MongoDBConnection {
+public class MongoDBConnection implements IDBConnection {
 
-	private Mongo m;
+	private MongoClient m = null;
 	private String hostName = null;
 	private int hostPort = 0;
 
@@ -35,20 +37,19 @@ public class MongoDBConnection {
 	 * @return
 	 * @throws UnknownHostException 
 	 */
-	public MongoDBConnection(String hostName, int hostPort) throws UnknownHostException {
-
-		// http://api.mongodb.org/java/2.9.1/com/mongodb/MongoOptions.html#autoConnectRetry
-		MongoOptions options = new MongoOptions();
-		options.autoConnectRetry = true;
-		options.safe = true;
-		options.socketKeepAlive = true;
+	public MongoDBConnection(String hostName, int hostPort, String userName, String userPassword) throws UnknownHostException {
+		
+		MongoClientOptions.Builder builder = new MongoClientOptions.Builder();
+		builder.autoConnectRetry(true);
+		builder.socketKeepAlive(true);
+		builder.writeConcern(WriteConcern.SAFE);
 
 		if ("".equals(hostName)) hostName = "localhost";
 		if (hostPort>0) {
 			ServerAddress addr = new ServerAddress(hostName, hostPort);
-			m = new Mongo(addr, options);
+			m = new MongoClient(addr, builder.build());
 		} else {
-			m = new Mongo(hostName, options);
+			m = new MongoClient(hostName, builder.build());
 		}
 		this.hostName = hostName;
 		this.hostPort = hostPort;
@@ -65,5 +66,16 @@ public class MongoDBConnection {
 	public int getHostPort() {
 		return hostPort;
 	}
+	
+	public void close() {
+		if (m==null) return;
+		m.close();
+		m = null;
+	}
+	
+	public String getType() {
+		return "mongodb";
+	}
+
 }
 

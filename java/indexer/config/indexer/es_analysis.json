@@ -1,0 +1,60 @@
+{
+	"index":{
+		"analysis":{
+			"analyzer":{
+				"xx":{
+					"type":"custom",
+					"tokenizer":"standard",
+					"filter":["asciifolding", "lowercase"]
+				},
+				"xx_s":{
+					"type":"custom",
+					"tokenizer":"standard",
+					"filter":["asciifolding", "lowercase"]
+				},
+				"en":{
+					"type":"custom",
+					"tokenizer":"standard",
+					"filter":["asciifolding", "lowercase", "en_stop"]
+				},
+				"en_s":{
+					"type":"custom",
+					"tokenizer":"standard",
+					"filter":["asciifolding", "lowercase", "en_stop", "en_stemmer"]
+				},
+				"fr":{
+					"type":"custom",
+					"tokenizer":"standard",
+					"filter":["asciifolding", "fr_elision", "lowercase", "fr_stop"]
+				},
+				"fr_s":{
+					"type":"custom",
+					"tokenizer":"standard",
+					"filter":["asciifolding", "fr_elision", "lowercase", "fr_stop", "fr_stemmer"]
+				}
+			},
+			"filter":{
+				"en_stop":{
+					"type":"stop",
+					"stopwords":["_english_"]
+				},
+				"en_stemmer" : {
+					"type" : "stemmer",
+					"name" : "english"
+				},
+				"fr_stop":{
+					"type":"stop",
+					"stopwords":["_french_"]
+				},
+				"fr_stemmer" : {
+					"type" : "stemmer",
+					"name" : "french"
+				},
+				"fr_elision" : {
+					"type" : "elision",
+					"articles" : ["l", "m", "t", "qu", "n", "s", "j", "d"]
+				}
+			}
+		}
+	}
+}

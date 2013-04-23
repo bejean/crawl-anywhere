@@ -1,0 +1,23 @@
+# French stop words taken from Lucene's StopAnalyzer
+a
+au
+aux
+c
+ce
+cet
+cette
+ces
+d
+de
+des
+du
+en
+et
+l
+la
+le
+les
+par
+s
+se
+ses

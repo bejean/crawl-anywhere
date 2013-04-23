@@ -1,0 +1,1 @@
+This component is available for macos at http://www.macports.org/

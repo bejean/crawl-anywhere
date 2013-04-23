@@ -1,0 +1,6 @@
+<Context docBase="c:\cygwin\opt\solr\webapps\solr.war" debug="0" crossContext="true" >
+    <Environment
+        name="solr/home"
+        type="java.lang.String"
+        value="c:\cygwin\opt\solr" override="true" />
+</Context>

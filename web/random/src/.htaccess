@@ -1,0 +1,7 @@
+RewriteEngine on
+#RewriteBase /random/
+#RewriteCond %{REQUEST_URI} !/page.php$
+#RewriteCond %{REQUEST_URI} !/doc/
+#RewriteCond %{REQUEST_URI} !/404.html$
+RewriteCond %{REQUEST_URI} /redirect/
+RewriteRule $ /random/page.php [L]

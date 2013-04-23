@@ -14,7 +14,6 @@ find . -name .DS_Store -type f -exec rm {} \;
 mkdir $DISTRIB
 export DISTRIB=$DISTRIB/$VERSION
 mkdir $DISTRIB
-
 #=============================================
 # readme
 #=============================================
@@ -31,12 +30,9 @@ cp -r $DEV/install/* $DISTRIB/install/.
 #=============================================
 
 #=============================================
-# tools
-#============================================
-
-#=============================================
 # scripts
 #============================================
+mkdir $DISTRIB/scripts
 
 #=============================================
 # crawler
@@ -59,7 +55,6 @@ mkdir $DISTRIB/install/bin
 mkdir $DISTRIB/install/crawler
 mkdir $DISTRIB/install/tomcat
 
-
 # utils
 cd $DEV/java/utils
 mvn clean
@@ -67,7 +62,7 @@ mvn install -Dmaven.test.skip=true
 rm -rf $DEV/java/utils/target/dependency
 mvn dependency:copy-dependencies
 cp target/utils-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-utils-$VERSION.jar
-cp target/utils-0.0.1-SNAPSHOT.jar $DEV/install/bin/crawler/eolya-utils-$VERSION.jar
+cp target/utils-0.0.1-SNAPSHOT.jar $DISTRIB/install/bin/crawler/eolya-utils-$VERSION.jar
 
 # crawler
 cd $DEV/java/crawler
@@ -76,7 +71,7 @@ mvn install -Dmaven.test.skip=true
 rm -rf $DEV/java/crawler/target/dependency
 mvn dependency:copy-dependencies
 cp target/crawler-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-crawler-$VERSION.jar
-cp target/crawler-0.0.1-SNAPSHOT.jar $DEV/install/bin/crawler/eolya-crawler-$VERSION.jar
+cp target/crawler-0.0.1-SNAPSHOT.jar $DISTRIB/install/bin/crawler/eolya-crawler-$VERSION.jar
 
 # simplepipeline
 cd $DEV/java/simplepipeline
@@ -85,7 +80,7 @@ mvn install -Dmaven.test.skip=true
 rm -rf $DEV/java/simplepipeline/dependency
 mvn dependency:copy-dependencies
 cp target/pipeline-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-pipeline-$VERSION.jar
-cp target/pipeline-0.0.1-SNAPSHOT.jar $DEV/install/bin/crawler/eolya-pipeline-$VERSION.jar
+cp target/pipeline-0.0.1-SNAPSHOT.jar $DISTRIB/install/bin/crawler/eolya-pipeline-$VERSION.jar
  
 # indexer
 cd $DEV/java/indexer
@@ -94,7 +89,7 @@ mvn install -Dmaven.test.skip=true
 rm -rf $DEV/java/indexer/dependency
 mvn dependency:copy-dependencies
 cp target/indexer-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-indexer-$VERSION.jar
-cp target/indexer-0.0.1-SNAPSHOT.jar $DEV/install/bin/crawler/eolya-indexer-$VERSION.jar
+cp target/indexer-0.0.1-SNAPSHOT.jar $DISTRIB/install/bin/crawler/eolya-indexer-$VERSION.jar
 
 # solr3
 
@@ -120,23 +115,19 @@ cp -r $DEV/java/simplepipeline/target/dependency/* $DISTRIB/lib/.
 cp -r $DEV/java/indexer/target/dependency/* $DISTRIB/lib/.
 cp -r $DEV/java/utils/target/dependency/* $DISTRIB/lib/.
 
-
 #=============================================
 # web
 #=============================================
 mkdir $DISTRIB/web
-cp -r $DISTRIB/crawler/web $DISTRIB/web/crawler
-cp -r $DEV/web/search/src $DISTRIB/web/search
-rm -rf $DISTRIB/web/search/config/*
-cp $DEV/web/search/src/config/config-default.ini $DISTRIB/web/search/config/.
-perl -pi -e 's/\r\n/\n/g' $DISTRIB/web/search/config/config-default.ini
 
-#cp -r $DEV/web/search2/src $DISTRIB/web/search2
-#rm -rf $DISTRIB/web/search2/config/*
-#rm -rf $DISTRIB/web/search2/pub/themes/taligentia
-#rm -rf $DISTRIB/web/search2/pub/themes/amnesty
-#cp $DEV/web/search2/src/config/config-default.ini $DISTRIB/web/search2/config/.
-#perl -pi -e 's/\r\n/\n/g' $DISTRIB/web/search2/config/config-default.ini
+cp -r $DEV/web/crawler/src $DISTRIB/web/crawler
+rm -rf $DISTRIB/web/crawler/config/*
+cp $DEV/web/crawler/src/config/config-default.ini $DISTRIB/web/crawler/config/.
+
+#cp -r $DEV/web/search/src $DISTRIB/web/search
+#rm -rf $DISTRIB/web/search/config/*
+#cp $DEV/web/search/src/config/config-default.ini $DISTRIB/web/search/config/.
+#perl -pi -e 's/\r\n/\n/g' $DISTRIB/web/search/config/config-default.ini
 
 find $DISTRIB/web -name '.svn' -exec rm -rf {} \;
 
@@ -144,16 +135,21 @@ find $DISTRIB/web -name '.svn' -exec rm -rf {} \;
 # bin / config
 #=============================================
 mkdir -p $DISTRIB/config/crawler
-cp -r $DISTRIB/crawler/java/config/crawler $DISTRIB/config/.
+cp $DEV/crawler/config/crawler/crawler-default.xml $DISTRIB/config/crawler/.
+cp -r $DEV/crawler/config/crawler/scripts $DISTRIB/config/crawler/.
 
 mkdir -p $DISTRIB/config/pipeline
-cp -r $DISTRIB/simplepipeline/java/config/pipeline $DISTRIB/config/.
+cp $DEV/crawler/config/pipeline/simplepipeline-default.xml $DISTRIB/config/pipeline/.
+cp $DEV/crawler/config/pipeline/solrmapping.xml $DISTRIB/config/pipeline/.
+cp $DEV/crawler/config/pipeline/solrboost.xml $DISTRIB/config/pipeline/.
+cp $DEV/crawler/config/pipeline/contenttypemapping.xml $DISTRIB/config/pipeline/.
+cp $DEV/crawler/config/pipeline/countrymapping.xml $DISTRIB/config/pipeline/.
+cp -r $DEV/crawler/config/pipeline/scripts $DISTRIB/config/pipeline/.
 
 #cp -r $DEV/java/utils/config/* $DISTRIB/config/.
 
 mkdir -p $DISTRIB/config/indexer
-cp -r $DISTRIB/indexer/java/config/indexer $DISTRIB/config/.
-
+cp -r $DEV/crawler/config/indexer/indexer-default.xml $DISTRIB/config/indexer/.
 
 #=============================================
 # tar
@@ -163,7 +159,7 @@ find $DISTRIB -name .DS_Store -type f -exec rm {} \;
 
 #tar cfz crawl-anywhere-external.tar.gz external
 tar cfz crawl-anywhere-dependencies-jar-$VERSION.tar.gz lib
-tar cfz crawl-anywhere-$VERSION.tar.gz bin config tools scripts web install src *.txt
+tar cfz crawl-anywhere-$VERSION.tar.gz bin config scripts web install *.txt
 
 #=============================================
 # clean up

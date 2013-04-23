@@ -1,3 +1,0 @@
-# homogeneisation des types mimes xml / rss
-application/rss+xml=application/xml
-application/atom+xml=application/xml

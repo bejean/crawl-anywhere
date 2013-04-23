@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<server domains="mon-enfant.fr, www.mon-enfant.fr">
+
+<!-- 
+	http://mon-enfant.fr/web/guest/accueil
+ -->
+	<url match="^/">
+		<script engine="rhino" action="links">
+			<![CDATA[ 
+				//
+				// input and output : links (String array)	
+				// 	contains a list of links			
+				//	can be updated (replace, add or remove links)
+				//
+				
+				for (var i = 0; i<links.length; i++) {
+					links[i] = links[i].replace("/mon-enfant.fr/", "/www.mon-enfant.fr/");
+				}
+			]]>
+		</script>
+	</url>
+</server>

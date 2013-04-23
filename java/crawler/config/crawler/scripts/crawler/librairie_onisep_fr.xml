@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<server domains="librairie.onisep.fr">
+
+<!--
+http://www.cohor.org/cohor_site/all_nws1.asp
+onClick="MyPopup('all_nws2.asp?NewIdx=69&lng=en','Detail',420,625,0,1)
+-->
+	<url match="^/">
+		<script engine="rhino" action="links">
+			<![CDATA[ 
+				//
+				// input and output : links (String array)	
+				// 	contains a list of links			
+				//	can be updated (replace, add or remove links)
+				//
+			
+				// cleanup page html content
+				var re = new RegExp("[\n\r\f]+", "gi");
+				page = page.replace(re, " ");				
+				
+				// search for all javascript links
+				
+				// initiate the links output array
+				var linkCount = 0;
+				
+				// submitThematique('1');
+				re = new RegExp ("submitThematique\\('(.*?)'", "gim");
+				var aLinks = page.match(re);
+				if(aLinks && aLinks.length > 0) linkCount += aLinks.length;
+				
+				// submitCollectionGp('1');
+				re = new RegExp ("submitCollectionGp\\('(.*?)'", "gim");
+				var aLinks = page.match(re);
+				if(aLinks && aLinks.length > 0) linkCount += aLinks.length;
+
+				// goDetail('http://librairie.onisep.fr/librairie/portal/media-type/html/group/gp/page/interieur.espace.librairie.rechercheProduitDetail/js_peid/LibrairieDetailProduit?id=822')
+				re = new RegExp ("goDetail\\('(.*?)'", "gim");
+				var aLinks = page.match(re);
+				if(aLinks && aLinks.length > 0) linkCount += aLinks.length;
+				
+				
+				
+				links = java.lang.reflect.Array.newInstance(java.lang.String, linkCount);
+				pos=0;
+				
+					
+				// submitThematique('1');
+				re = new RegExp ("submitThematique\\('(.*?)'", "gim");
+				var aLinks = page.match(re);
+				if(aLinks && aLinks.length > 0) {
+					// populate output array with http links
+					for (i=0; i < aLinks.length ; i++) {
+						var l = new String(aLinks[i]);
+						var link = "http://librairie.onisep.fr/librairie/portal/media-type/html/group/gp/page/interieur.espace.librairie.rechercheProduitResultat/js_peid/LibrairieRechercheProduitResultat/js_peid/LibrairieBandeauRecherche?isPublicPro=false&critere%28nouvelleRecherche%29=&collection=&thematique=";
+						link += l.slice(18,-1);
+						link += "&domaine=&typeRecherche=parTheme&collectionsProDeplie=false&collectionProRecherchee=false&critere%28fullText%29=Entrez+votre+mot+cl%E9";
+						links[pos++] = link;	
+					}
+				}
+				
+				// submitCollectionGp('1');
+				re = new RegExp ("submitCollectionGp\\('(.*?)'", "gim");
+				var aLinks = page.match(re);
+				if(aLinks && aLinks.length > 0) {
+					// populate output array with http links
+					for (i=0; i < aLinks.length ; i++) {
+						var l = new String(aLinks[i]);
+						var link = "http://librairie.onisep.fr/librairie/portal/media-type/html/group/gp/page/interieur.espace.librairie.rechercheProduitResultat/js_peid/LibrairieRechercheProduitResultat/js_peid/LibrairieBandeauRecherche?isPublicPro=false&critere%28nouvelleRecherche%29=&collection=";
+						link += l.slice(20,-1);
+						link += "&thematique=&domaine=&typeRecherche=parTheme&collectionsProDeplie=false&collectionProRecherchee=false&critere%28fullText%29=Entrez+votre+mot+cl%E9";
+						links[pos++] = link;	
+					}
+				}
+
+				// goDetail('http://librairie.onisep.fr/librairie/portal/media-type/html/group/gp/page/interieur.espace.librairie.rechercheProduitDetail/js_peid/LibrairieDetailProduit?id=822')
+				re = new RegExp ("goDetail\\('(.*?)'", "gim");
+				var aLinks = page.match(re);
+				if(aLinks && aLinks.length > 0) {
+					// populate output array with http links
+					for (i=0; i < aLinks.length ; i++) {
+						var l = new String(aLinks[i]);
+						var link = l.slice(10,-1);
+						links[pos++] = link;	
+					}
+				}
+
+			]]>
+		</script>
+	</url>
+</server>

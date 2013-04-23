@@ -29,11 +29,12 @@ cp -r $DEV/install/* $DISTRIB/install/.
 #=============================================
 # externals
 #=============================================
+cp -r $DEV/external $DISTRIB/.
 
 #=============================================
 # scripts
 #============================================
-mkdir $DISTRIB/scripts
+cp -r $DEV/scripts $DISTRIB/.
 
 #=============================================
 # crawler
@@ -118,9 +119,9 @@ cp -r $DEV/web/crawler/src $DISTRIB/web/crawler
 rm -rf $DISTRIB/web/crawler/config/*
 cp $DEV/web/crawler/src/config/config-default.ini $DISTRIB/web/crawler/config/.
 
-#cp -r $DEV/web/search/src $DISTRIB/web/search
-#rm -rf $DISTRIB/web/search/config/*
-#cp $DEV/web/search/src/config/config-default.ini $DISTRIB/web/search/config/.
+cp -r $DEV/web/search/src $DISTRIB/web/search
+rm -rf $DISTRIB/web/search/config/*
+cp $DEV/web/search/src/config/config-default.ini $DISTRIB/web/search/config/.
 #perl -pi -e 's/\r\n/\n/g' $DISTRIB/web/search/config/config-default.ini
 
 find $DISTRIB/web -name '.svn' -exec rm -rf {} \;

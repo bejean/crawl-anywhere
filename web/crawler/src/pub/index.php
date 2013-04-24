@@ -40,6 +40,12 @@ if ($page=="") {
     }
 }   
 
+if (empty($db_version) || ($db_version!=$ca_version)) {
+	header("Status: 301 Moved Permanently", false, 301);
+	header("location:dbinit.php");
+	exit();
+}
+
 if ($page=="logout") {
 	$user = new User();
 	$_SESSION["user"] = $user;	

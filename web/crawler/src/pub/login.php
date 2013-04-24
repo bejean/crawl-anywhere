@@ -18,6 +18,12 @@ if ($use_sts && isset($_SERVER['HTTPS'])) {
 	exit();
 }
 
+if (empty($db_version) || ($db_version!=$ca_version)) {
+	header("Status: 301 Moved Permanently", false, 301);
+	header("location:dbinit.php");
+	exit();
+}
+
 unset($_SESSION["user"]);
 unset($_SESSION["id_account_current"]);
 

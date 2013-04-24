@@ -10,17 +10,17 @@ $rootpath = dirname(__FILE__);
 error_reporting(E_ERROR);
 header('Content-Type: text/html; Charset=UTF-8');
 set_time_limit (300);
-//require_once("lib/adodb5/adodb.inc.php");
 require_once("lib/config.class.inc.php");
 require_once("lib/mongo.inc.php");
 require_once("lib/string.inc.php");
 require_once("lib/user.inc.php");
 require_once("lib/log.class.inc.php");
 
+$ca_version = '4.0.0';
+
 $session_name = 'crawlanywhere';
 session_name($session_name);
 session_start();
-
 
 //
 // $config initialisation
@@ -106,44 +106,66 @@ else
 $cache_enabled = ($config->getDefault("crawler.cache.type", "") != "");
 
 //$isEnterprise = ($config->get("application.enterprise") == '1');
+$db_version = getDBVersion($config);
 
-if (!isset($_SESSION["source_types"]))
-{
-	$plugins_available = $config->getDefault("plugins.available", "");
-	$aplugins_available = array_map('trim',explode(',', $plugins_available));
-
-	$mg = mg_connect ($config, "", "", "");
-	if ($mg)
+if (!empty($db_version)) {
+	if (!isset($_SESSION["source_types"]))
 	{
-		$stmt = new mg_stmt_select($mg, "plugins");
-		$stmt->setQuery(array( "type" => "cnx" ));
-		$stmt->setSort(array( "name" => 1 ));
-		$count = $stmt->execute();
-		if ($count>0) {
-			$cursor = $stmt->getCursor();
-			while ($cursor->hasNext()) {
-				$rs = $cursor->getNext();
-					
-				$id = $rs["id"];
-				$name = $rs["name"];
-				$mnemo = $rs["mnemo"];
-				$link = $rs["link"];
-					
-				if (!empty($plugins_available)) {
-					if (in_array($mnemo, $aplugins_available)) {
+		$plugins_available = $config->getDefault("plugins.available", "");
+		$aplugins_available = array_map('trim',explode(',', $plugins_available));
+
+		$mg = mg_connect ($config, "", "", "");
+		if ($mg)
+		{
+			$stmt = new mg_stmt_select($mg, "plugins");
+			$stmt->setQuery(array( "type" => "cnx" ));
+			$stmt->setSort(array( "name" => 1 ));
+			$count = $stmt->execute();
+			if ($count>0) {
+				$cursor = $stmt->getCursor();
+				while ($cursor->hasNext()) {
+					$rs = $cursor->getNext();
+						
+					$id = $rs["id"];
+					$name = $rs["name"];
+					$mnemo = $rs["mnemo"];
+					$link = $rs["link"];
+						
+					if (!empty($plugins_available)) {
+						if (in_array($mnemo, $aplugins_available)) {
+							$aSourceTypes[$id]=array("name" => $name, "mnemo" => $mnemo, "link" => $link);
+						}
+					} else {
 						$aSourceTypes[$id]=array("name" => $name, "mnemo" => $mnemo, "link" => $link);
 					}
-				} else {
-					$aSourceTypes[$id]=array("name" => $name, "mnemo" => $mnemo, "link" => $link);
 				}
 			}
 		}
+		$_SESSION["source_types"] = $aSourceTypes;
 	}
-	$_SESSION["source_types"] = $aSourceTypes;
+	else
+	{
+		$aSourceTypes = $_SESSION["source_types"];
+	}
 }
-else
+
+///////////////////////////////////////////////////////////
+function getDBVersion($config)
 {
-	$aSourceTypes = $_SESSION["source_types"];
+	$version = '';
+	$mg = mg_connect ($config, "", "", "");
+	if ($mg) {
+		$stmt = new mg_stmt_select($mg, "infos");
+		$stmt->setFields (array("value" => "true"));
+		$query = array ("name" => "version");
+		$stmt->setQuery($query);
+		$count = $stmt->execute();
+		if ($count<=0) return '';
+		$cursor = $stmt->getCursor();
+		$rs = $cursor->getNext();
+		$version = strtolower(trim($rs['value']));
+	}
+	return $version;
 }
 
 
@@ -165,19 +187,19 @@ function isAvailableMenuItem($Items, $Item, $config)
 
 /*
  * MongoDB data constraints
- */
+*/
 $mg_source_defaults = array(
-		"id_target" => 1, 
-		"deleted" => "0", 
-		"type" => "0", 
-		"enabled" => "1", 
-		"crawl_status" => "0", 
-		"crawl_status_message" => "", 
-		"crawl_lastpagecount" => 0, 
-		"crawl_pagecount" => 0, 
-		"crawl_pagecount_success" => 0, 
-		"crawl_pagecount_pushed" => 0, 
-		"crawl_process_status" => "0", 
+		"id_target" => 1,
+		"deleted" => "0",
+		"type" => "0",
+		"enabled" => "1",
+		"crawl_status" => "0",
+		"crawl_status_message" => "",
+		"crawl_lastpagecount" => 0,
+		"crawl_pagecount" => 0,
+		"crawl_pagecount_success" => 0,
+		"crawl_pagecount_pushed" => 0,
+		"crawl_process_status" => "0",
 		"crawl_minimal_period" => "0",
 		"crawl_firstcompleted" => "0",
 		"crawl_mode" => "0",
@@ -199,7 +221,7 @@ $mg_engine_not_null = array("name");
 $mg_target_defaults = array(
 		"output_type" => "default",
 		"target_type" => "solr"
-		);
+);
 $mg_target_not_null = array("id_account", "name");
 
 $mg_user_defaults = array(
@@ -277,11 +299,11 @@ function getAvailableTagsCollections($config, $includeDisabled, $id_account, $fi
 	$aTagsFinal = null;
 	$mg = mg_connect ($config, "", "", "");
 	if ($mg) {
-		if ($includeDisabled) 
+		if ($includeDisabled)
 			$query = array ('$and' => array('$or' => array(array("deleted" => "0"), array("deleted" => NULL))), array("id_account" => intval($id_account)));
 		else
 			$query = array ('$and' => array(array('$or' => array(array("deleted" => "0"), array("deleted" => NULL))), array("enabled" => "1"), array("id_account" => intval($id_account))));
-		
+
 		$stmt = new mg_stmt_distinct($mg, "sources");
 		$stmt->setQuery($query);
 		$stmt->setKey($field);
@@ -313,11 +335,11 @@ function getAvailableSourceType($config, $includeDisabled, $id_account) {
 	$aTypes = null;
 	$mg = mg_connect ($config, "", "", "");
 	if ($mg) {
-		if ($includeDisabled) 
+		if ($includeDisabled)
 			$query = array ('$and' => array('$or' => array(array("deleted" => "0"), array("deleted" => NULL))), array("id_account" => intval($id_account)));
 		else
 			$query = array ('$and' => array(array('$or' => array(array("deleted" => "0"), array("deleted" => NULL))), array("enabled" => "1"), array("id_account" => intval($id_account))));
-		
+
 		$stmt = new mg_stmt_distinct($mg, "sources");
 		$stmt->setQuery($query);
 		$stmt->setKey("type");
@@ -334,9 +356,9 @@ function getAvailableTargets($config, $account) {
 		$stmt = new mg_stmt_select($mg, "targets");
 		$stmt->setFields (array("id" => "true", "name" => "true"));
 		$query = array ('$or' => array(array("id_account" => 0), array("id_account" => intval($account))));
-		
+
 		$stmt->setQuery($query);
-		
+
 		$stmt->setSort(array( "name" => 1 ));
 		$count = $stmt->execute();
 		if ($count>0) {

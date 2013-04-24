@@ -261,6 +261,15 @@ div#login table
     border-collapse:collapse; 
 }
 
+div#dbinit table 
+{
+    border: solid #808080;
+    border-width: 2px 2px 2px 2px;
+    width: 55%;
+    padding:0px;
+    border-collapse:collapse; 
+}
+
 .nobr { white-space: nowrap; }
 
 #user_list, #user_details {

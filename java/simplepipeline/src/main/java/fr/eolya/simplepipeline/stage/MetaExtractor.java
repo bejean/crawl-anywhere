@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import fr.eolya.extraction.ScriptsWrapper;
 import fr.eolya.simplepipeline.config.PipelineConfig;
@@ -85,7 +85,7 @@ public class MetaExtractor extends Stage {
         if (contentType.startsWith("text/html")) {
             if (sourceHtmlElement != null && !"".equals(sourceHtmlElement)) {
                 rawData = doc.getElementText("//" + sourceHtmlElement);
-                rawData = StringEscapeUtils.unescapeHtml(rawData);
+                rawData = StringEscapeUtils.unescapeHtml4(rawData);
             }
         } else {
             if (sourceTextElement != null && !"".equals(sourceTextElement)) {

@@ -1,18 +1,7 @@
 package fr.eolya.crawler.connectors;
 
-import java.io.StringReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.Node;
-import org.dom4j.io.SAXReader;
 
 import fr.eolya.crawler.ICrawlerController;
 import fr.eolya.crawler.cache.IDocumentCache;

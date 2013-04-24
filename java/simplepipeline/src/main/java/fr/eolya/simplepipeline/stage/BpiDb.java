@@ -5,8 +5,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import fr.eolya.simplepipeline.document.Doc;
 import fr.eolya.utils.Utils;
 

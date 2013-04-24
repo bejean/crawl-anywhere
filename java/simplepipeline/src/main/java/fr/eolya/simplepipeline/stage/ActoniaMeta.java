@@ -1,17 +1,11 @@
 package fr.eolya.simplepipeline.stage;
 
-import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
-import fr.eolya.extraction.MultiFormatTextExtractor;
 import fr.eolya.simplepipeline.config.PipelineConfig;
 import fr.eolya.simplepipeline.document.Doc;
-import fr.eolya.utils.Utils;
 
 /*
  * Configuration snippet sample :
@@ -74,7 +68,7 @@ public class ActoniaMeta extends Stage {
             if (source == null)
                 source = "";
         }
-        String rawData = StringEscapeUtils.unescapeHtml(source);
+        String rawData = StringEscapeUtils.unescapeHtml4(source);
 		        
         HtmlCleaner cleaner = new HtmlCleaner();
         //CleanerProperties props = cleaner.getProperties();         

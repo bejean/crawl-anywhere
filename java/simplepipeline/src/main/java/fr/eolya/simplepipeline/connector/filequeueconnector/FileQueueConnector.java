@@ -1,19 +1,14 @@
 package fr.eolya.simplepipeline.connector.filequeueconnector;
 
 import java.io.File;
-import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Properties;
-import org.apache.commons.io.FileUtils;
 
 import fr.eolya.simplepipeline.IStateController;
-import fr.eolya.simplepipeline.config.PipelineConfig;
 import fr.eolya.simplepipeline.connector.Connector;
 import fr.eolya.simplepipeline.connector.threads.IMessageReceiver;
 import fr.eolya.simplepipeline.document.Doc;
-import fr.eolya.simplepipeline.stage.*;
-import fr.eolya.utils.Logger;
 import fr.eolya.utils.Utils;
 
 /*

@@ -3,7 +3,6 @@ package fr.eolya.simplepipeline.stage;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import fr.eolya.simplepipeline.connector.Connector;
 import fr.eolya.simplepipeline.document.Doc;
 
 

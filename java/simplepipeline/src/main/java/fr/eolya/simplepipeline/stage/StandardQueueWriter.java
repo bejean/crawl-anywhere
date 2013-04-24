@@ -1,22 +1,7 @@
 package fr.eolya.simplepipeline.stage;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.StringReader;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
-import org.apache.commons.lang.math.NumberUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
-import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.SAXReader;
-import org.dom4j.io.XMLWriter;
 
 import fr.eolya.simplepipeline.SimplePipelineUtils;
 import fr.eolya.simplepipeline.document.Doc;

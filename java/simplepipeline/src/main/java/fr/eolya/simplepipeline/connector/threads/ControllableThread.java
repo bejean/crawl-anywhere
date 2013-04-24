@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.Properties;
 
 import fr.eolya.simplepipeline.IStateController;
-import fr.eolya.utils.Logger;
 
 /**
  * Abstract class that denotes a thread that can cooperate with a

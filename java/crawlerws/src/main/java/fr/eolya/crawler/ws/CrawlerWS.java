@@ -12,7 +12,6 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.util.*;
 
-import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.lang3.StringUtils;
 
 import com.dropbox.client2.DropboxAPI;

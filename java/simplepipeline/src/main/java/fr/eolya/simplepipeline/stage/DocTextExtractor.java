@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import fr.eolya.extraction.MultiFormatTextExtractor;
 import fr.eolya.extraction.ScriptsWrapper;
@@ -179,7 +179,7 @@ public class DocTextExtractor extends Stage {
 						if (contentCharset==null || "".equals(contentCharset)) contentCharset = "UTF-8";
 						rawData = IOUtils.toString(new Base64.InputStream(new ByteArrayInputStream(source.getBytes()), Base64.DECODE), contentCharset.toUpperCase());
 					} else {
-						rawData = StringEscapeUtils.unescapeHtml(source);
+						rawData = StringEscapeUtils.unescapeHtml4(source);
 					}
 				}
 				else {

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.lucene.search.TermQuery;
 import org.elasticsearch.action.admin.indices.create.*;
 import org.elasticsearch.action.admin.indices.delete.*;
 import org.elasticsearch.action.admin.indices.flush.FlushRequest;
@@ -24,7 +23,6 @@ import org.elasticsearch.index.query.QueryBuilders;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.*;
 import org.elasticsearch.action.admin.cluster.health.*;
-import org.elasticsearch.action.deletebyquery.DeleteByQueryRequest;
 
 import fr.eolya.utils.Logger;
 import fr.eolya.utils.Utils;

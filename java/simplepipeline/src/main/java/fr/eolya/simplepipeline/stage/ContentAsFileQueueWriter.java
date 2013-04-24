@@ -6,30 +6,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringReader;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
-import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.SAXReader;
-import org.dom4j.io.XMLWriter;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import fr.eolya.simplepipeline.SimplePipelineUtils;
 import fr.eolya.simplepipeline.document.Doc;
 import fr.eolya.utils.Base64;
 import fr.eolya.utils.MimeTypes;
 import fr.eolya.utils.Utils;
-import fr.eolya.utils.XMLUtils;
 
 /*
  * Configuration snippet sample :
@@ -135,7 +121,7 @@ public class ContentAsFileQueueWriter extends Stage {
 			String rawData = null;
 
 			if (!"base64".equals(sourceEncoding) && contentType.startsWith("text/")) {  // or "application/x-shockwave-flash" ???
-				rawData = StringEscapeUtils.unescapeHtml(source);
+				rawData = StringEscapeUtils.unescapeHtml4(source);
 			}
 			else {
 				inputSource = new ByteArrayInputStream(source.getBytes());

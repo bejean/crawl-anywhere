@@ -152,7 +152,7 @@ cp -r $DEV/java/utils/config/* $DISTRIB/config/.
 cd $DISTRIB
 find $DISTRIB -name .DS_Store -type f -exec rm {} \;
 
-#tar cfz crawl-anywhere-external.tar.gz external
+tar cfz crawl-anywhere-external.tar.gz external
 tar cfz crawl-anywhere-dependencies-jar-$VERSION.tar.gz lib
 tar cfz crawl-anywhere-$VERSION.tar.gz bin config scripts web install *.txt
 

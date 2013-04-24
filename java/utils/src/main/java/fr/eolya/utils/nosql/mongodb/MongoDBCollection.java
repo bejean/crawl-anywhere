@@ -56,7 +56,7 @@ public class MongoDBCollection {
 		String[] aTemp=fieldsName.split(",");
 		BasicDBObject fields = new BasicDBObject();	
 		for (int i=0; i<aTemp.length; i++) {
-			fields.put(aTemp[i], "1");
+			fields.put(aTemp[i], 1);
 		}
 		BasicDBObject options = new BasicDBObject();	
 		options.put("unique", unique);

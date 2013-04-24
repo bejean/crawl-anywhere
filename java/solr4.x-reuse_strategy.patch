@@ -1,0 +1,38 @@
+# HG changeset patch
+# User Dominique Bejean <dominique.bejean@eolya.fr>
+# Date 2012-04-24 08:24:00 +0200
+# Node ID a853d72a2d004afe8530d2c0d9ad07cba0325c39
+# Parent  9b00e0209be42074ac618a16e355068b742fbcc6
+Disable Reuse Strategy for fields with name terminating by "_ml" or "_mls"
+
+diff --git a/trunk/lucene/core/src/java/org/apache/lucene/analysis/Analyzer.java b/trunk/lucene/core/src/java/org/apache/lucene/analysis/Analyzer.java
+--- a/trunk/lucene/core/src/java/org/apache/lucene/analysis/Analyzer.java
++++ b/trunk/lucene/core/src/java/org/apache/lucene/analysis/Analyzer.java
+@@ -77,14 +77,22 @@
+    */
+   public final TokenStream tokenStream(final String fieldName,
+                                        final Reader reader) throws IOException {
+-    TokenStreamComponents components = reuseStrategy.getReusableComponents(fieldName);
++    //>>> DBE - 20120424
++    TokenStreamComponents components = null;
+     final Reader r = initReader(reader);
+-    if (components == null) {
++    if (fieldName.toLowerCase().endsWith("_ml") || fieldName.toLowerCase().endsWith("_mls")) {
+       components = createComponents(fieldName, r);
+-      reuseStrategy.setReusableComponents(fieldName, components);
+-    } else {
+-      components.reset(r);
++	}
++	else {
++      components = reuseStrategy.getReusableComponents(fieldName);
++      if (components == null) {
++        components = createComponents(fieldName, r);
++        reuseStrategy.setReusableComponents(fieldName, components);
++      } else {
++        components.reset(r);
++      }
+     }
++    //>>> DBE - 20120424
+     return components.getTokenStream();
+   }
+   

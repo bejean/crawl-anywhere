@@ -14,7 +14,7 @@ require_once_all('../sources/*.inc.php');
 
 if (!isset($_SESSION["crawl_countries"]))
 {
-	$handle = fopen("../../code_countries.txt", "rb");
+	$handle = fopen("../ressources/code_countries.txt", "rb");
 	while (!feof($handle) ) {
 		$line = trim(fgets($handle));
 		if ($line!="")
@@ -33,7 +33,7 @@ else
 
 if (!isset($_SESSION["crawl_languages"]))
 {
-	$handle = fopen("../../code_languages.txt", "rb");
+	$handle = fopen("../ressources/code_languages.txt", "rb");
 	while (!feof($handle) ) {
 		$line = trim(fgets($handle));
 		if ($line!="")
@@ -999,10 +999,6 @@ if ($action == "testauthentication")
 	$filename = $temp_path. "/" . uniqid() . ".html";
 	write_file($filename, $content);
 	print ($filename);
-
-	//$filename = uniqid() . ".html";
-	//write_file($rootpath . "/pub/tests/" . $filename, $content);
-	//print ("tests/" . $filename);
 
 	exit();
 }

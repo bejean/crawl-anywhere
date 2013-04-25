@@ -1,0 +1,79 @@
+#
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Search"
+msgstr "Rechercher"
+
+msgid "Sort results by"
+msgstr "Trier par"
+
+msgid "Relevance"
+msgstr "Pertinence"
+
+msgid "Items per page"
+msgstr "Eléments par page"
+
+msgid "document(s) match your query"
+msgstr "document(s) correspondent à votre requête"
+
+msgid "Did you mean"
+msgstr "Essayez avec cette orthographe"
+
+msgid "Subject"
+msgstr "Sujet"
+
+msgid "Country"
+msgstr "Pays"
+
+msgid "Language"
+msgstr "Langue"
+
+msgid "Reader"
+msgstr "Lecture Rapide"
+
+msgid "Close"
+msgstr "Fermer"
+
+msgid "Preferences"
+msgstr "Préférences"
+
+msgid "Bookmark link to this search"
+msgstr "Lien permanent vers cette recherche"
+
+msgid "The language of the query is"
+msgstr "La langue de la requête est"
+
+msgid "Not specified"
+msgstr "Non spécifiée"
+
+msgid "Path"
+msgstr "Chemin"
+
+msgid "Format"
+msgstr "Format"
+
+msgid "Any formats"
+msgstr "Tous formats"
+
+msgid "Any countries"
+msgstr "Tous pays"
+
+msgid "Any languages"
+msgstr "Tous langages"
+
+msgid "Source name"
+msgstr "Source"
+
+msgid "Advanced search"
+msgstr "Recherche avancée"
+
+msgid "Simple search"
+msgstr "Recherche simple"
+
+msgid "none"
+msgstr "aucun"
+

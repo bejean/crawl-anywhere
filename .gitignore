@@ -27,7 +27,6 @@ local.properties
 .settings/
 .loadpath
 target/
-lib/
 .svn
 doc/
 

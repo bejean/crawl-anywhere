@@ -66,9 +66,6 @@ public class MongoDBDocumentCache implements IDocumentCache {
 
 		for (Map.Entry<String, String> item : params.entrySet()) {
 			String key = item.getKey();
-			if (item.getKey().startsWith("meta_")) {
-				key = key.replace(':', '_').replace('-', '_').replace('.', '_').replace('/', '_');
-			}
 			xml_params_items.addElement(key).addText(item.getValue());
 		}
 		doc.put("item_params", xml_params.asXML());
@@ -78,7 +75,11 @@ public class MongoDBDocumentCache implements IDocumentCache {
 		Element xml_metas_items = xml_metas.addElement("metas");
 
 		for (Map.Entry<String, String> item : metas.entrySet()) {
-			xml_metas_items.addElement(item.getKey()).addText(item.getValue());
+			String key = item.getKey();
+			if (item.getKey().startsWith("meta_")) {
+				key = key.replace(':', '_').replace('-', '_').replace('.', '_').replace('/', '_');
+			}
+			xml_metas_items.addElement(key).addText(item.getValue());
 		}	
 		doc.put("item_metas", xml_metas.asXML());
 

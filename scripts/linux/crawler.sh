@@ -51,7 +51,7 @@ start() {
 		exit 1
 	else
 		cd $LOG_DIR
-		java $JVMARGS fr.eolya.crawler.crawler.Crawler -p $CONF_DIR/crawler/crawler.properties $1 $ARGS >> $LOG_DIR/crawler.output 2>&1  &
+		java $JVMARGS fr.eolya.crawler.Crawler -p $CONF_DIR/crawler/crawler.xml $1 $ARGS >> $LOG_DIR/crawler.output 2>&1  &
 		exit 0
 	fi
 }

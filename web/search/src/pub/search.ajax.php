@@ -41,7 +41,7 @@ if ($action=="autocomplete" || $action=="fiedvalues" || $action=="gettext" || $a
 		if ($action=="gettagcloud")
 		{
 			$field = getRequestParam("field");
-			
+				
 			$maxhours = $config->get("search.tagcloud.maxhours", "0");
 			$data = $solr->getCloud($field, 20, '', '', $maxhours, 3, true, false);
 
@@ -162,19 +162,19 @@ if ($action=="autocomplete" || $action=="fiedvalues" || $action=="gettext" || $a
 
 			$search_bookmark = "?q=".$crit."&ql=".$querylang;
 			if (!empty($filter_collection))
-			$search_bookmark .= "&c=".implode ( $filter_collection , ",");
+				$search_bookmark .= "&c=".implode ( $filter_collection , ",");
 			if (!empty($filter_tag))
-			$search_bookmark .= "&t=".implode ( $filter_tag , ",");
+				$search_bookmark .= "&t=".implode ( $filter_tag , ",");
 			if ($word_variations)
-			$search_bookmark .= "&wv=1";
+				$search_bookmark .= "&wv=1";
 			if ($filter_lang!="")
-			$search_bookmark .= "&lan=".$filter_lang;
+				$search_bookmark .= "&lan=".$filter_lang;
 			if ($filter_country!="")
-			$search_bookmark .= "&country=".$filter_country;
+				$search_bookmark .= "&country=".$filter_country;
 			if ($filter_source!="")
-			$search_bookmark .= "&org=".$filter_source;
+				$search_bookmark .= "&org=".$filter_source;
 			if ($filter_mimetype!="")
-			$search_bookmark .= "&mime=".$filter_mimetype;
+				$search_bookmark .= "&mime=".$filter_mimetype;
 
 			if (!$fq) $fq = '';
 			$fq = urldecode($fq);
@@ -183,8 +183,8 @@ if ($action=="autocomplete" || $action=="fiedvalues" || $action=="gettext" || $a
 			$groupsize = $config->get("results.groupsize", "0");
 			$groupdisplaysize = $config->get("results.groupdisplaysize", "3");
 
-/*
-			// filtres (facets)
+			/*
+			 // filtres (facets)
 			$fqstr = '';
 			$fqitms = explode('||', stripslashes($fq));
 			sort($fqitms);
@@ -194,32 +194,32 @@ if ($action=="autocomplete" || $action=="fiedvalues" || $action=="gettext" || $a
 			$fqsearch_item = '';
 			$fqitem_field_prev = '';
 			foreach ($fqitms as $fqitem) {
-				if ($fqitem) {
-					$fqitem_parts = explode(':', $fqitem);
+			if ($fqitem) {
+			$fqitem_parts = explode(':', $fqitem);
 
-					if ($fqitem_field_prev != $fqitem_parts[0]) {
-						if (!empty($fqsearch_item)) {
-							array_push($fqsearch, $fqsearch_item);
-						}
-						$fqsearch_item = $fqitem;
-					} else {
-						$fqsearch_item .= ' ' . $facets_conf[$fqitem_parts[0]]['mode'] . ' ' . $fqitem;
-					}
-					$fqitem_field_prev = $fqitem_parts[0];
+			if ($fqitem_field_prev != $fqitem_parts[0]) {
+			if (!empty($fqsearch_item)) {
+			array_push($fqsearch, $fqsearch_item);
+			}
+			$fqsearch_item = $fqitem;
+			} else {
+			$fqsearch_item .= ' ' . $facets_conf[$fqitem_parts[0]]['mode'] . ' ' . $fqitem;
+			}
+			$fqitem_field_prev = $fqitem_parts[0];
 
-					// reconstruction de la string des filtres
-					$splititm = explode(':', $fqitem, 2);
-					if ($fqstr!="") $fqstr .= urlencode('||');
-					$fqstr .= $splititm[0] . ':' . urlencode($splititm[1]);
-				}
+			// reconstruction de la string des filtres
+			$splititm = explode(':', $fqitem, 2);
+			if ($fqstr!="") $fqstr .= urlencode('||');
+			$fqstr .= $splititm[0] . ':' . urlencode($splititm[1]);
+			}
 			}
 			if (!empty($fqsearch_item)) {
-				$fqsearch_item = $fqsearch_item;
-				array_push($fqsearch, $fqsearch_item);
+			$fqsearch_item = $fqsearch_item;
+			array_push($fqsearch, $fqsearch_item);
 			}
-*/				
-			
-			 $aFacetFields = array();
+			*/
+				
+			$aFacetFields = array();
 			$fqstr = '';
 			//$fqitms = explode('\|\|', stripslashes($fq));
 			$fqitms = explode('||', stripslashes($fq));
@@ -227,36 +227,36 @@ if ($action=="autocomplete" || $action=="fiedvalues" || $action=="gettext" || $a
 			$fqsearch = array();
 			$fqitem_field_prev = '';
 			foreach ($fqitms as $fqitem) {
-			if ($fqitem) {
-			if ($fqstr!="") $fqstr .= urlencode('||');
+				if ($fqitem) {
+					if ($fqstr!="") $fqstr .= urlencode('||');
 
-			if ($facet_union) {
-			$fqitem_parts = explode(':', $fqitem);
-			if ($fqstr=="") {
-			array_push($fqsearch, "(" . $fqitem);
-			} else {
-			if ($fqitem_field_prev != $fqitem_parts[0])
-			$fqsearch[0] .= ") AND (" . $fqitem;
-			else
-			$fqsearch[0] .= " OR " . $fqitem;
-			}
-			$fqitem_field_prev = $fqitem_parts[0];
-			}
-			$splititm = explode(':', $fqitem, 2);
-			$fqstr .= $splititm[0] . ':' . urlencode($splititm[1]);
-			array_push($aFacetFields, $splititm[0]);
-			if ($splititm[0]=="source_str") $groupsize = 0;
-			}
+					if ($facet_union) {
+						$fqitem_parts = explode(':', $fqitem);
+						if ($fqstr=="") {
+							array_push($fqsearch, "(" . $fqitem);
+						} else {
+							if ($fqitem_field_prev != $fqitem_parts[0])
+								$fqsearch[0] .= ") AND (" . $fqitem;
+							else
+								$fqsearch[0] .= " OR " . $fqitem;
+						}
+						$fqitem_field_prev = $fqitem_parts[0];
+					}
+					$splititm = explode(':', $fqitem, 2);
+					$fqstr .= $splititm[0] . ':' . urlencode($splititm[1]);
+					array_push($aFacetFields, $splititm[0]);
+					if ($splititm[0]=="source_str") $groupsize = 0;
+				}
 			}
 			if ($fqsearch[0]!="") $fqsearch[0] .= ")";
 
 			if (!$facet_union) $fqsearch = $fqitms;
-			
+				
 
 			$queryField = getQueryField($search_multilingual, $search_language_code);
 
 			if ($groupsize>0)
-			$item_per_page = intval($item_per_page / $groupdisplaysize);
+				$item_per_page = intval($item_per_page / $groupdisplaysize);
 
 			$debug=false;
 			$solr->setDebug($debug);
@@ -377,13 +377,13 @@ if ($action=="autocomplete" || $action=="fiedvalues" || $action=="gettext" || $a
 							$count += 1;
 
 							if ($facetcnt=="0")
-							break;
+								break;
 
 							$crit_fq = $facetfield . ":" . urlencode('"'.$facetval.'"');
 
 							$checked = "";
 							if (in_array($facetfield.":\"".$facetval."\"",$fqitms))
-							$checked = " checked ";
+								$checked = " checked ";
 
 							if ($facetfield=="language")
 							{
@@ -426,13 +426,13 @@ if ($action=="autocomplete" || $action=="fiedvalues" || $action=="gettext" || $a
 					$res .= '<div class="pagination">';
 
 					$res .= "
-					<script language='javascript'>
-						function changeItemPerPage()
-						{
-							$('#search_itemperpage').val($('#results_itemperpage').val()); 
-						}
-					</script>
-				    ";
+							<script language='javascript'>
+							function changeItemPerPage()
+							{
+							$('#search_itemperpage').val($('#results_itemperpage').val());
+				}
+							</script>
+							";
 					$res .= displayPagination ($numFoundPaginate, $item_per_page, $page, $fqstr );
 					$res .= "<select id='results_itemperpage' name='results_itemperpage' onChange='changeItemPerPage();'>";
 					$item_per_page_values="10,20,50,100";
@@ -440,7 +440,7 @@ if ($action=="autocomplete" || $action=="fiedvalues" || $action=="gettext" || $a
 					foreach($aValues as $value){
 						$res .= "<option value='" . $value . "'";
 						if ($item_per_page_option==$value)
-						$res .= " selected";
+							$res .= " selected";
 						$res .= ">" . $value . "</option>";
 					}
 					$res .= "</select><label for='results_itemperpage'>" . 'Items per page' . "</label>";
@@ -497,7 +497,7 @@ if ($action=="autocomplete" || $action=="fiedvalues" || $action=="gettext" || $a
 				// 				}
 
 				if ($debug)
-				$res .= $response->getRawResponse();
+					$res .= $response->getRawResponse();
 			}
 			else
 			{
@@ -532,7 +532,7 @@ function getExtraFacetLabel($facetfield, $facetextra) {
 
 function buildDocBloc($doc, $query, $teasers, $queryField) {
 
-	global $aContentTypeImage, $resultshowsource, $resultshowmeta, $results_img_height, $results_img_width;
+	global $aContentTypeImage, $resultshowsource, $resultshowmeta, $results_img_height, $results_img_width, $aCountries, $aLanguages;
 
 	$res2 = "<dl>";
 
@@ -541,7 +541,7 @@ function buildDocBloc($doc, $query, $teasers, $queryField) {
 	$t = $doc->contenttyperoot;
 	$img = getImageNameForContentType($aContentTypeImage, $t);
 	if ($img!="")
-	$res2 .= "&nbsp;<img src='images/" . $img . "' border='0'>";
+		$res2 .= "&nbsp;<img src='images/" . $img . "' border='0'>";
 	$res2 .= "</a>";
 
 	if ($t=='text/html') {
@@ -571,14 +571,14 @@ function buildDocBloc($doc, $query, $teasers, $queryField) {
 	}
 
 	if ($summary=='')
-	$summary = $doc->summary;
+		$summary = $doc->summary;
 
 	$res2 .= "<dd>" . $summary . "</dd>";
 
 	if ($results_img_height>0 && $results_img_width>0 && !empty($doc->urlimage_str)) {
 		$res2 .= "<dd><a href='" . $doc->urlimage_str . "' target='image'><img class='resizeme' src='" . $doc->urlimage_str . "'></a></dd>";
 	}
-	
+
 	if ($resultshowsource) {
 		$parseUrl = parse_url($doc->id);
 		$homeUrl = $parseUrl["scheme"] . "://" . $parseUrl["host"];
@@ -588,10 +588,10 @@ function buildDocBloc($doc, $query, $teasers, $queryField) {
 
 	if ($resultshowmeta) {
 		$res2 .= "<dd><table width='90%'><tr><td width='30%'>";
-		if (count($doc->tag) > 1)
-		$temp = implode(', ', $doc->tag);
-		else
-		$temp = $doc->tag;
+		//if (count($doc->tag) > 1)
+			$temp = implode(', ', $doc->tag);
+		//else
+		//	$temp = $doc->tag;
 		$res2 .= "<span class='mnemo'>Tags&nbsp;:</span>&nbsp;" . $temp . "</td><td width='38%'>";
 
 		$t = $doc->country;
@@ -678,7 +678,7 @@ function displayPagination ($totalhits, $pagesize, $page, $fqstr ) {
 	$itemarround = 2;
 
 	if ($totalhits<=$pagesize)
-	return "";
+		return "";
 
 	$res="<span>Pages</span>";
 
@@ -688,28 +688,28 @@ function displayPagination ($totalhits, $pagesize, $page, $fqstr ) {
 	$ndxstart = (($page-1) * $pagesize) + 1;
 	$ndxstop = $page * $pagesize;
 	if ($ndxstop > $totalhits)
-	$ndxstop = $totalhits;
+		$ndxstop = $totalhits;
 
 	if ($lastpage > 1) {
 		if ($page != 1)
-		$res .= '<a href="#" onclick="doSearch(' . ($page-1) . ', \'\', \'' . $fqstr . '\', \'\', false, \'\', \'\');"><b><<</b></a>';
+			$res .= '<a href="#" onclick="doSearch(' . ($page-1) . ', \'\', \'' . $fqstr . '\', \'\', false, \'\', \'\');"><b><<</b></a>';
 
 		for ($i=$firstpage; $i<=$lastpage; $i++) {
 			if ($i!=$firstpage)
-			$res .= ' ';
+				$res .= ' ';
 
 			if ($i==$page)
-			$res .= '<a class="current" href="#" onclick="doSearch(' . $i . ', \'\', \'' . $fqstr . '\', \'\', false, \'\', \'\');">' . $i . '</a>';
+				$res .= '<a class="current" href="#" onclick="doSearch(' . $i . ', \'\', \'' . $fqstr . '\', \'\', false, \'\', \'\');">' . $i . '</a>';
 			else
 			if ($i <= 1 || ($i > ($page - $itemarround) && $i < ($page + $itemarround)) || $i > ($lastpage - 1))
-			$res .= '<a href="#" onclick="doSearch(' . $i . ', \'\', \'' . $fqstr . '\', \'\', false, \'\', \'\');"><b>' . $i . '</b></a>';
+				$res .= '<a href="#" onclick="doSearch(' . $i . ', \'\', \'' . $fqstr . '\', \'\', false, \'\', \'\');"><b>' . $i . '</b></a>';
 			else
 			if ($i == ($page - $itemarround) || $i == ($page + $itemarround))
-			$res .= '&nbsp;...&nbsp;';
+				$res .= '&nbsp;...&nbsp;';
 		}
 
 		if ($page != $lastpage)
-		$res .= '&nbsp;<a href="#" onclick="doSearch(' . ($page+1) . ', \'\', \'' . $fqstr . '\', \'\', false, \'\', \'\');"><b>>></b></a>';
+			$res .= '&nbsp;<a href="#" onclick="doSearch(' . ($page+1) . ', \'\', \'' . $fqstr . '\', \'\', false, \'\', \'\');"><b>>></b></a>';
 
 	} else {
 		$res .= '&nbsp; ';
@@ -721,14 +721,14 @@ function displayPagination ($totalhits, $pagesize, $page, $fqstr ) {
 function getLabelFromCode($search, $key) {
 	if ($search=="") return "";
 	if (array_key_exists  ( strtolower($key)  , $search ))
-	return $search[strtolower($key)];
+		return $search[strtolower($key)];
 	return $key;
 }
 
 function getImageNameForContentType($search, $key) {
 	if ($search=="") return "";
 	if (array_key_exists  ( $key  , $search ))
-	return $search[$key];
+		return $search[$key];
 	return "";
 }
 

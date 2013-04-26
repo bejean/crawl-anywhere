@@ -374,9 +374,11 @@ public class WebConnector extends Connector implements IConnector {
 									if (links!=null) {
 										String[] pushLink = Utils.mergeStringArrays(links.getLinks0(), links.getLinks1());
 										int i=1;
-										for (String s : pushLink) {
-											metas.put("link"+String.valueOf(i++),s);
-										}   
+										if (pushLink!=null) {
+											for (String s : pushLink) {
+												metas.put("link"+String.valueOf(i++),s);
+											}   
+										}
 									}
 
 									charSet = "utf-8";
@@ -1093,7 +1095,10 @@ public class WebConnector extends Connector implements IConnector {
 	private void pushLink (String strLink, int currentLevel, int nextLevel, SourceItemWeb currentUrlItem, String currentNormalizedUrl, URL pageURL, String refererCharSet, long threadId) {
 
 		try {		
-			strLink = strLink.trim();
+			strLink = StringUtils.trimToNull(strLink);
+			if (strLink==null) {
+				return;
+			}
 			strLink = HttpUtils.urlGetAbsoluteURL(pageURL.toExternalForm(), strLink);
 			strLink = HttpUtils.urlNormalize(strLink, src.getHost());			
 			String strLink2 = getUrlWithoutIgnoredFields(strLink);

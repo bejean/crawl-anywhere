@@ -1,0 +1,41 @@
+ISO-8859-1		Afrikaans (af), Albanian (sq), Basque (eu), Catalan (ca), Danish (da), Dutch (nl), English (en), Faroese (fo), Finnish (fi), French (fr), Galician (gl), German (de), Icelandic (is), Irish (ga), Italian (it), Norwegian (no), Portuguese (pt), Scottish (gd), Serbian (sr), Spanish (es), Swahili (sw), Swedish (sv)
+windows-1252	Afrikaans (af), Albanian (sq), Basque (eu), Catalan (ca), Danish (da), Dutch (nl), English (en), Faroese (fo), Finnish (fi), French (fr), Galician (gl), German (de), Icelandic (is), Irish (ga), Italian (it), Norwegian (no), Portuguese (pt), Scottish (gd), Serbian (sr), Spanish (es), Swahili (sw), Swedish (sv)
+ISO-8859-2 		Croatian (hr), Czech (cs), German (de), Hungarian (hu), Polish (pl), Romanian (ro), Serbian (sr), Slovak (sk), Slovenian (sl)
+windows-1250	Croatian (hr), Serbian (sr), Slovenian (sl)
+iso-8859-3		Esperanto (eo), Galician (gl),Maltese (mt), Turkish (tr) 
+iso-8859-5 		Bulgarian (bg), Byelorussian (be), Macedonian (mk), Russian (ru), Serbian (sr), Ukrainian (uk)
+iso-8859-6 		Arabic (ar), Persian (fa)
+windows-1256 	Arabic (ar), Persian (fa)
+windows-1251	Bulgarian (bg), Byelorussian (be), Macedonian (mk), Russian (ru), Serbian (sr), Ukrainian (uk)
+iso-8859-7		Greek (el)
+iso-8859-8		Hebrew (iw)
+iso-8859-9		Turkish (tr) 
+windows-1254	Turkish (tr) 
+koi8-r			Russian (ru)
+iso-8859-13		Latvian (lv), Lithuanian (lt) 
+windows-1257 	Latvian (lv), Lithuanian (lt) 
+iso-8859-15		Estonian (et)
+shift_jis		Japanese (ja)
+iso-2022-jp		Japanese (ja)
+euc-jp			Japanese (ja)
+euc-kr			Korean (ko) 	
+ISO-2022-CN		Simplified Chinese (zh)
+Big5			Traditional Chinese (zh)
+GB2312			Simplified Chinese (zh)
+
+#iso-8859-10		Inuit (), Icelandic (is), Lapp ()
+#Western Europe : ASCII 8, CP437, CP850, CP860, CP1252, ISO 8859-1, ISO 8859-15, MacRoman, MacIceland
+#: Albanian, Catalan, Danish, Dutch, English, Faeroese, Finnish, French, Galician, German, Icelandic, Italian, Norwegian, Portuguese, Spanish, Swedish 	
+#Eastern Europe: Croatian, Czech, Hungarian, Polish, Romanian, Slovak, Slovene 	CP852, CP1250, ISO 8859-2, MacCentralEurope, MacRomania, MacCroatian
+#Baltic: Latvian, Lithuanian, Estonian	CP1257, ISO-8859-4, ISO-8859-13
+#Cyrillic: Bulgarian, Belorussian, Macedonian, Russian, Serbian, Ukrainian	CP855, CP866, CP1251, ISO 8859-5, Koi8-r, Koi8-u, MacCyrillic
+#Arabic	CP864, CP1256, ISO 8859-6, MacArabic
+#Greek	CP869, CP1253, ISO 8859-7, MacGreek
+#Hebrew	CP1255, ISO 8859-8, MacHebrew
+#Turkish	CP857, CP1254, ISO 8859-9, MacTurkish
+#Thai	CP874, TIS 620, MacThai
+#Vietnamese	CP1258
+#Indian	MacGujarati, TSCII
+#Georgian	geostd8
+
+

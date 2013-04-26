@@ -442,7 +442,7 @@ class Solr {
 		}
 
 		// Test Carrot2
-		$bTestCarrot2 = true;
+		$bTestCarrot2 = false;
 		if ($bTestCarrot2 && !$rss) {
 			$params['clustering'] = 'true';
 			$params['clustering.results'] = 'true';
@@ -559,9 +559,8 @@ class Solr {
 		$response = $this->_solr->search( $finalqry, $offset, $count, $params);
 
 		$sorl_response = new Solr_Response($response->getRawResponse(), $response->getHttpStatus());
-		$q = $sorl_response->getRawResponse();
 		
-		//echo $q;
+		//echo $sorl_response->getRawResponse();
 
 		return $sorl_response;
 	}

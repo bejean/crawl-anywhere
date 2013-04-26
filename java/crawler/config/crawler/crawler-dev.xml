@@ -4,7 +4,7 @@
 	<param name="dbtype">mongodb</param>
 	<param name="dbhost">localhost</param>
 	<param name="dbport">27017</param>
-	<param name="dbname">crawler</param>
+	<param name="dbname">crawler_2</param>
 	<param name="dbuser"></param>
 	<param name="dbpassword"></param>
 </database>
@@ -13,7 +13,7 @@
 	<param name="dbtype">mongodb</param>
 	<param name="dbhost">localhost</param>
 	<param name="dbport">27017</param>
-	<param name="dbname">crawler_cache</param>
+	<param name="dbname">crawler_2_cache</param>
 	<param name="dbuser"></param>
 	<param name="dbpassword"></param>
 </cache>

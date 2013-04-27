@@ -69,4 +69,4 @@ Getting Started
 See the User Manual at http://www.crawl-anywhere.com/getting-started/
 
 
-Keywords : Web Crawler, Solr, Spider, Nutch, Heritrix, 
+Keywords : Web Crawler, Solr, Spider, Nutch, Heritrix

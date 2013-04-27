@@ -1,6 +1,6 @@
 ![Crawl-Anywhere](http://www.crawl-anywhere.com/logo.png "Crawl-Anywhere")
 
-<strong>April 2013 - Starting version 4.0 Crawl-Anywhere becomes an open-source project. Current version is 4.0.0-alpha</strong>
+<strong>April 2013 - Starting version 4.0, Crawl-Anywhere becomes an open-source project. Current version is 4.0.0-alpha</strong>
 
 Stable version 3.x is still available at http://www.crawl-anywhere.com/
 
@@ -16,6 +16,7 @@ Crawl Anywhere includes :
 * a Web Crawler with a Web administration interface (http://www.crawl-anywhere.com/crawl-anywhere/)
 * a document processing pipeline (http://www.crawl-anywhere.com/simple-pipeline/)
 * a Solr indexer
+* a Solr multilingual analyzer and a Solr tags cloud analyzer
 * a full featured and customizable Web search application (some search engines using Crawl-anywhere : http://www.hurisearch.org/ or http://www.searchamnesty.org/)
 
 Project home page : http://www.crawl-anywhere.com/
@@ -67,3 +68,5 @@ Getting Started
 
 See the User Manual at http://www.crawl-anywhere.com/getting-started/
 
+
+Keywords : Web Crawler, Solr, Spider, Nutch, Heritrix, 

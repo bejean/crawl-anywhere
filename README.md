@@ -1,7 +1,7 @@
 <strong>April 2013 - Starting version 4.0 Crawl-Anywhere becomes an open-source project. Current version is 4.0.0-alpha
 
-Stable version 3.x are still available at http://www.crawl-anywhere.com/
-</center>
+Stable version 3.x is still available at http://www.crawl-anywhere.com/
+</strong>
 
 
 Introduction

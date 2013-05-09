@@ -1,8 +1,0 @@
-Complete at next Solr4 release.
-
-war
-conf
-config ML analyzer
-config nterm tokenizer
-
-

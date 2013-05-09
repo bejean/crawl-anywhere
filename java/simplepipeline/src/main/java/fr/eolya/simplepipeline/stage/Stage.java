@@ -3,7 +3,6 @@ package fr.eolya.simplepipeline.stage;
 import java.util.Properties;
 
 import fr.eolya.simplepipeline.IStateController;
-import fr.eolya.simplepipeline.connector.Connector;
 import fr.eolya.simplepipeline.document.Doc;
 import fr.eolya.utils.Logger;
 

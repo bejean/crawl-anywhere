@@ -2,20 +2,17 @@ package fr.eolya.simplepipeline.stage;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import fr.eolya.extraction.ScriptsWrapper;
-import fr.eolya.simplepipeline.config.PipelineConfig;
 import fr.eolya.simplepipeline.document.Doc;
 import fr.eolya.utils.Utils;
 
 /*
  * Configuration snippet sample :
  * 
- *	<stage position="0" classname="fr.eolya.simplepipeline.stage.MetaExtractor">
+ *	<stage classname="fr.eolya.simplepipeline.stage.MetaExtractor">
  *      <param name="onaction">add</param>
  *      <param name="scriptspath">/opt/crawler/config/scripts</param>
  *      <param name="url">item_url</param>

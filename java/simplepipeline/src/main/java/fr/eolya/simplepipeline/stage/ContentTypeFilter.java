@@ -9,7 +9,7 @@ import fr.eolya.simplepipeline.document.Doc;
 /*
  * Configuration snippet sample :
  * 
- *	<stage position="0" classname="fr.eolya.simplepipeline.stage.ContentTypeFilter">
+ *	<stage classname="fr.eolya.simplepipeline.stage.ContentTypeFilter">
  *      <param name="onaction">add</param>
  *      <param name="contentTypeElement">item_contenttype</param>
  *		<param name="acceptedContentType">application/x-shockwave-flash,text/html,text/plain,application/pdf,application/xhtml+xml,application/msword,application/xml,application/rtf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation</param>

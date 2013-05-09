@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="utf-8"?>
+<multilingual>
+
+	<!--
+	Sample for language "xx"
+	
+	<xx>
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+	</xx>
+
+	Or,
+
+	<xx>
+		<index>
+			<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	    <filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+		</index>
+		<query>
+			<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	    <filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+		</query>
+	</xx>
+	-->
+
+	<!--
+	<configHome>/opt/solr40/crawler/conf</configHome>
+	-->
+
+	<!-- Default -->
+	<default>
+			<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	    <filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+	</default>
+	
+	<!-- Arabic -->
+   	<ar> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+        <!-- for any non-arabic -->
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_ar.txt" format="snowball" enablePositionIncrements="true"/>
+        <!-- normalizes ﻯ to ﻱ, etc -->
+        <filter class="org.apache.lucene.analysis.ar.ArabicNormalizationFilter"/>
+        <filter class="org.apache.lucene.analysis.ar.ArabicStemFilter"/>
+	</ar>
+
+    <!-- Bulgarian -->
+   	<bg> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_bg.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="org.apache.lucene.analysis.ar.BulgarianStemFilter"/>
+	</bg>
+
+    <!-- Catalan -->
+    <ca> 
+		<charFilter class="org.apache.lucene.analysis.charfilter.MappingCharFilter" mapping="mapping-ISOLatin1Accent.txt"/>		
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+ 	    <filter class="org.apache.lucene.analysis.fr.ElisionFilter" ignoreCase="true" articles="lang/contractions_ca.txt"/>
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_ca.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="Catalan"/>       
+	</ca>
+          
+    <!-- Czech -->
+    <cz> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_cz.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="solr.CzechStemFilter"/>       
+	</cz>
+	
+	<!-- Danish -->
+    <da> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_da.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="Catalan"/>       
+	</da>
+	
+     <!-- German -->
+    <de> 
+		<charFilter class="org.apache.lucene.analysis.charfilter.MappingCharFilter" mapping="mapping-ISOLatin1Accent.txt"/>		
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_de.txt" format="snowball" enablePositionIncrements="true"/>
+    	<filter class="org.apache.lucene.analysis.de.GermanNormalizationFilter"/>
+    	<filter class="org.apache.lucene.analysis.de.GermanLightStemFilter"/>
+        <!-- less aggressive: <filter class="org.apache.lucene.analysis.de.GermanMinimalStemFilter"/> -->
+        <!-- more aggressive: <filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="German2"/> -->      
+	</de>
+  
+    <!-- Greek -->
+    <el> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.el.GreekLowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_el.txt" format="snowball" enablePositionIncrements="true"/>
+    	<filter class="org.apache.lucene.analysis.el.GreekStemFilter"/>
+	</el>
+
+    <!-- Spanish -->
+    <es> 
+		<charFilter class="org.apache.lucene.analysis.charfilter.MappingCharFilter" mapping="mapping-ISOLatin1Accent.txt"/>		
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_es.txt" format="snowball" enablePositionIncrements="true"/>
+    	<filter class="org.apache.lucene.analysis.es.SpanishLightStemFilter"/>
+        <!-- more aggressive:  <filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="Spanish"/> -->    
+	</es>
+
+    <!-- Basque -->
+    <eu> 
+		<charFilter class="org.apache.lucene.analysis.charfilter.MappingCharFilter" mapping="mapping-ISOLatin1Accent.txt"/>		
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_eu.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="Basque"/> 
+	</eu>
+
+    <!-- Persian -->
+   	<fa> 
+        <charFilter class="org.apache.lucene.analysis.fa.PersianCharFilter"/>
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_fa.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="org.apache.lucene.analysis.ar.ArabicNormalizationFilter"/>
+        <filter class="org.apache.lucene.analysis.fa.PersianNormalizationFilter"/>
+	</fa>
+
+    <!-- Finnish -->
+    <fi> 
+		<charFilter class="org.apache.lucene.analysis.charfilter.MappingCharFilter" mapping="mapping-ISOLatin1Accent.txt"/>		
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_fi.txt" format="snowball" enablePositionIncrements="true"/>
+    	<filter class="org.apache.lucene.analysis.fi.FinnishLightStemFilter"/>
+        <!-- more aggressive:  <filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="Finnish"/> -->    
+	</fi>
+
+	<!-- French -->
+	<fr>
+		<charFilter class="org.apache.lucene.analysis.charfilter.MappingCharFilter" mapping="mapping-ISOLatin1Accent.txt"/>		
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+	    <filter class="org.apache.lucene.analysis.fr.ElisionFilter" ignoreCase="true" articles="lang/contractions_fr.txt"/>
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_fr.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="org.apache.lucene.analysis.fr.FrenchLightStemFilter"/>
+        <!-- less aggressive: <filter class="org.apache.lucene.analysis.fr.FrenchMinimalStemFilter"/> -->
+        <!-- more aggressive: <filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="French"/> -->
+	</fr>
+	
+	<!-- English -->
+	<en>
+		<index>
+			<charFilter class="org.apache.lucene.analysis.charfilter.MappingCharFilter" mapping="mapping-ISOLatin1Accent.txt"/>		
+			<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+	    	<filter class="org.apache.lucene.analysis.en.EnglishPossessiveFilter" />
+    		<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        	<filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_en.txt" enablePositionIncrements="true"/>
+        	<filter class="org.apache.lucene.analysis.KeywordMarkerFilter" protected="protwords.txt"/>
+        	<filter class="org.apache.lucene.analysis.en.PorterStemFilter"/>
+        	<!-- less aggressive: <filter class="org.apache.lucene.analysis.en.EnglishMinimalStemFilter"/> -->
+        	
+		</index>
+		<query>
+			<charFilter class="org.apache.lucene.analysis.charfilter.MappingCharFilter" mapping="mapping-ISOLatin1Accent.txt"/>		
+			<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+	    	<filter class="org.apache.lucene.analysis.en.EnglishPossessiveFilter" />
+    		<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        	<filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_en.txt" enablePositionIncrements="true"/>
+        	<filter class="org.apache.lucene.analysis.KeywordMarkerFilter" protected="protwords.txt"/>
+        	<filter class="org.apache.lucene.analysis.synonym.SynonymFilter" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+        	<filter class="org.apache.lucene.analysis.en.PorterStemFilter"/>
+		</query>
+	</en>
+	
+    <!-- Galician -->
+    <gl> 
+		<charFilter class="org.apache.lucene.analysis.charfilter.MappingCharFilter" mapping="mapping-ISOLatin1Accent.txt"/>		
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_gl.txt" format="snowball" enablePositionIncrements="true"/>
+    	<filter class="org.apache.lucene.analysis.gl.GalicianStemFilter"/>
+        <!-- less aggressive: <filter class="org.apache.lucene.analysis.gl.GalicianMinimalStemFilter"/> -->
+	</gl>
+	
+
+    <!-- Irish -->
+    <ga> 
+		<charFilter class="org.apache.lucene.analysis.charfilter.MappingCharFilter" mapping="mapping-ISOLatin1Accent.txt"/>		
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.IrishLowerCaseFilter"/>    	
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_ga.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="org.apache.lucene.analysis.ga.IrishLowerCaseFilter"/>
+	</ga>
+
+    <!-- Chinese -->
+	<!-- CJK bigram -->
+    <cn> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+        <!-- normalize width before bigram, as e.g. half-width dakuten combine  -->
+    	<filter class="org.apache.lucene.analysis.cjk.CJKWidthFilter"/>
+        <!-- for any non-CJK -->
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+    	<filter class="org.apache.lucene.analysis.cjk.CJKBigramFilter"/>
+	</cn>
+	
+    <!-- Korean -->
+    <!-- CJK bigram -->
+    <ko> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+        <!-- normalize width before bigram, as e.g. half-width dakuten combine  -->
+    	<filter class="org.apache.lucene.analysis.cjk.CJKWidthFilter"/>
+        <!-- for any non-CJK -->
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+    	<filter class="org.apache.lucene.analysis.cjk.CJKBigramFilter"/>
+	</ko>
+
+    <!-- Japanese -->
+    <!-- CJK bigram -->
+   <ja> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+        <!-- normalize width before bigram, as e.g. half-width dakuten combine  -->
+    	<filter class="org.apache.lucene.analysis.cjk.CJKWidthFilter"/>
+        <!-- for any non-CJK -->
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+    	<filter class="org.apache.lucene.analysis.cjk.CJKBigramFilter"/>
+	</ja>
+	
+    <!-- Japanese -->
+   	<!-- Kuromoji Japaneses analyzer -->
+   	<ja_disabled> 
+	    <tokenizer class="org.apache.lucene.analysis.ja.JapaneseTokenizer" mode="search"/>
+        <!--<tokenizer class="org.apache.lucene.analysis.ja.JapaneseTokenizer" mode="search" userDictionary="lang/userdict_ja.txt"/>-->
+        <!-- Reduces inflected verbs and adjectives to their base/dictionary forms (辞書形) -->
+        <filter class="org.apache.lucene.analysis.ja.JapaneseBaseFormFilter"/>
+        <!-- Removes tokens with certain part-of-speech tags -->
+        <filter class="org.apache.lucene.analysis.ja.JapanesePartOfSpeechStopFilter" tags="lang/stoptags_ja.txt" enablePositionIncrements="true"/>
+        <!-- Normalizes full-width romaji to half-width and half-width kana to full-width (Unicode NFKC subset) -->
+        <filter class="solr.CJKWidthFilter"/>
+        <!-- Removes common tokens typically not useful for search, but have a negative effect on ranking -->
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_ja.txt" enablePositionIncrements="true" />
+        <!-- Normalizes common katakana spelling variations by removing any last long sound character (U+30FC) -->
+        <filter class="org.apache.lucene.analysis.ja.JapaneseKatakanaStemFilter" minimumLength="4"/>
+        <!-- Lower-cases romaji characters -->
+        <filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+	</ja_disabled> 
+
+	<!-- Hindi -->
+    <hi> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <!-- normalizes unicode representation -->
+        <filter class="org.apache.lucene.analysis.in.IndicNormalizationFilter"/>
+        <!-- normalizes variation in spelling -->
+        <filter class="org.apache.lucene.analysis.in.HindiNormalizationFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_hi.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="org.apache.lucene.analysis.in.HindiStemFilter"/>
+	</hi>
+
+    <!-- Hungarian -->
+    <hu> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_hu.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="Hungarian"/>  
+    	<!-- less aggressive:  <filter class="org.apache.lucene.analysis.hu.HungarianLightStemFilter"/> -->   
+	</hu>
+
+    <!-- Armenian -->
+    <hy> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_hy.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="Armenian"/>  
+	</hy>
+
+    <!-- Indonesian -->
+    <id> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_id.txt" format="snowball" enablePositionIncrements="true"/>
+        <!-- for a less aggressive approach (only inflectional suffixes), set stemDerivational to false -->
+    	<filter class="org.apache.lucene.analysis.id.IndonesianStemFilter" stemDerivational="true"/>  
+	</id>
+
+    <!-- Italian -->
+	<it>
+		<charFilter class="org.apache.lucene.analysis.charfilter.MappingCharFilter" mapping="mapping-ISOLatin1Accent.txt"/>		
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+	    <filter class="org.apache.lucene.analysis.fr.ElisionFilter" ignoreCase="true" articles="lang/contractions_fr.txt"/>
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_it.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="org.apache.lucene.analysis.it.ItalianLightStemFilter"/>
+        <!-- more aggressive: <filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="Italian"/> -->
+	</it>
+
+    <!-- Latvian -->
+    <lv> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_lv.txt" format="snowball" enablePositionIncrements="true"/>
+    	<filter class="org.apache.lucene.analysis.lv.LatvianStemFilter"/>  
+	</lv>
+	
+	<!-- Dutch -->
+ 	<nl>
+		<charFilter class="org.apache.lucene.analysis.charfilter.MappingCharFilter" mapping="mapping-ISOLatin1Accent.txt"/>		
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_nl.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="org.apache.lucene.analysis.miscellaneous.StemmerOverrideFilter" dictionary="lang/stemdict_nl.txt" ignoreCase="false"/>        
+        <filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="Dutch"/>
+	</nl>
+ 
+    <!-- Norwegian -->
+    <no> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_no.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="Norwegian"/>  
+   		<!-- less aggressive: <filter class="org.apache.lucene.analysis.no.NorwegianLightStemFilter"/> -->
+        <!-- singular/plural: <filter class="org.apache.lucene.analysis.no.NorwegianMinimalStemFilter"/> -->
+	</no>
+
+    <!-- Portuguese -->
+    <pt> 
+		<charFilter class="org.apache.lucene.analysis.charfilter.MappingCharFilter" mapping="mapping-ISOLatin1Accent.txt"/>		
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_pt.txt" format="snowball" enablePositionIncrements="true"/>
+    	<filter class="org.apache.lucene.analysis.pt.PortugueseLightStemFilter"/>  
+    	<!-- less aggressive: <filter class="org.apache.lucene.analysis.pt.PortugueseMinimalStemFilter"/> --> 
+        <!-- more aggressive: <filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="Portuguese"/> -->
+    	<!-- more aggressive: <filter class="org.apache.lucene.analysis.pt.PortugueseStemFilter"/> --> 
+	</pt>
+    
+    <!-- Romanian -->
+    <ro> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_ro.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="Romanian"/>  
+	</ro>
+
+    <!-- Russian -->
+    <ru> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_ru.txt" format="snowball" enablePositionIncrements="true"/>
+    	<filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="Russian"/>
+    	<!-- less aggressive: <filter class="org.apache.lucene.analysis.pt.RussianLightStemFilter"/> --> 
+	</ru>
+
+    <!-- Swedish -->
+    <sv> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_sv.txt" format="snowball" enablePositionIncrements="true"/>
+    	<filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="Swedish"/>
+    	<!-- less aggressive: <filter class="org.apache.lucene.analysis.sv.SwedishLightStemFilter"/> --> 
+	</sv>
+
+    <!-- Thai -->
+    <th> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.th.ThaiWordFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_th.txt" format="snowball" enablePositionIncrements="true"/>
+	</th>
+
+    <!-- Turkish -->
+    <tr> 
+		<tokenizer class="org.apache.lucene.analysis.standard.StandardTokenizer" />
+    	<filter class="org.apache.lucene.analysis.LowerCaseFilter"/>
+        <filter class="org.apache.lucene.analysis.StopFilter" ignoreCase="true" words="lang/stopwords_tr.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="org.apache.lucene.analysis.snowball.SnowballFilter" language="Turkish"/>  
+	</tr>
+	
+</multilingual>

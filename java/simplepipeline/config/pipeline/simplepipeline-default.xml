@@ -36,9 +36,6 @@
 			<param name="source">content</param>
 			<param name="target">text</param>
  			<param name="pdftotextpath">/usr/bin/pdftotext</param>
- 			<!--param name="catdocpath">external/catdoc</param-->
- 			<!--param name="catpptpath">external/catppt</param-->
-			<param name="swf2htmlpath">external/swf2thml</param>
  			<param name="tmppath">tmp</param>
  			<param name="stoppipelineonerror">yes</param>
  			<param name="stoppipelineonemptytext">yes</param>

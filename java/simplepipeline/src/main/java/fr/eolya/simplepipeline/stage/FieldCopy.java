@@ -9,8 +9,9 @@ import fr.eolya.simplepipeline.document.Doc;
 /*
  * Configuration snippet sample :
  * 
- *	<stage position="0" classname="fr.eolya.simplepipeline.stage.FieldCopy">
- *		<param name="source">source_element</param>
+ *	<stage classname="fr.eolya.simplepipeline.stage.FieldCopy">
+ *		<param name="onaction">add</param>
+ *      <param name="source">source_element</param>
  *		<param name="sourcecapture">^([a-z\/]*);.*</param>
  *		<param name="groupcapture">1</param>
  *		<param name="target">target_element</param>

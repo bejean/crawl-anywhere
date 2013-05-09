@@ -8,7 +8,7 @@ import fr.eolya.simplepipeline.document.Doc;
 /*
  * Configuration snippet sample :
  * 
- *	<stage position="0" classname="fr.eolya.simplepipeline.stage.TagFilter">
+ *	<stage classname="fr.eolya.simplepipeline.stage.TagFilter">
  *		<param name="tagfield">source_tags</param>
  *		<param name="textfield">text</param>
  *	</stage>

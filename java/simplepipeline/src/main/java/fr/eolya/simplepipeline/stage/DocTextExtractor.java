@@ -19,7 +19,7 @@ import fr.eolya.utils.http.HttpUtils;
 /*
  * Configuration snippet sample :
  * 
- *	<stage position="0" classname="fr.eolya.simplepipeline.stage.DocTextExtractor">
+ *	<stage classname="fr.eolya.simplepipeline.stage.DocTextExtractor">
  *		<param name="onaction">add</param>
  *		<param name="scriptspath">/opt/crawler/config/scripts</param>
  *		<param name="url">item_url</param>
@@ -30,8 +30,6 @@ import fr.eolya.utils.http.HttpUtils;
  *		<param name="source">content</param>
  *		<param name="target">text</param>
  *		<param name="pdftotextpath">/usr/bin/pdftotext</param>
- *		<param name="catdocpath">/opt/local/bin/catdoc</param>
- *		<param name="swf2htmlpath">/usr/bin/swf2thml</param>
  *		<param name="tmppath">/opt/crawler/tmp</param>
  *		<param name="stoppipelineonerror">yes</param>
  *		<param name="stoppipelineonemptytext">yes</param>

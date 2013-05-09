@@ -18,6 +18,7 @@
  		</stage>
  		<!--
  		<stage classname="fr.eolya.simplepipeline.stage.ContentAsFileQueueWriter">
+ 			<param name="onaction">add</param>
  			<param name="source">content</param>
  			<param name="contenttype">item_contenttype</param>
  			<param name="queuedir">queue_files/{//item_id}</param>
@@ -46,9 +47,6 @@
 			<param name="source">content</param>
 			<param name="target">text</param>
  			<param name="pdftotextpath">/usr/local/bin/pdftotext</param>
- 			<!--param name="catdocpath">/opt/local/bin/catdoc</param-->
- 			<!--param name="catpptpath">/opt/local/bin/catppt</param-->
-			<param name="swf2htmlpath">external/swf2thml</param>
  			<param name="tmppath">tmp</param>
  			<param name="stoppipelineonerror">yes</param>
  			<param name="stoppipelineonemptytext">yes</param>

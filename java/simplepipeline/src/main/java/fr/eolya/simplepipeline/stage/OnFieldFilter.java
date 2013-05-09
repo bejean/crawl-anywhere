@@ -1,13 +1,11 @@
 package fr.eolya.simplepipeline.stage;
 
-import java.util.Arrays;
-
 import fr.eolya.simplepipeline.document.Doc;
 
 /*
  * Configuration snippet sample :
  * 
- *	<stage position="0" classname="fr.eolya.simplepipeline.stage.OnFieldFilter">
+ *	<stage classname="fr.eolya.simplepipeline.stage.OnFieldFilter">
  *		<param name="source">item_contenttype</param>
  *		<param name="include"></param>
  *		<param name="exclude">image/jpeg,video/quicktime,application/zip,application/x-zip-compressed,application/octet-stream</param>

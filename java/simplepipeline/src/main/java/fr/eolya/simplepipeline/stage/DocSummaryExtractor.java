@@ -5,7 +5,7 @@ import fr.eolya.simplepipeline.document.Doc;
 /*
  * Configuration snippet sample :
  * 
- *	<stage position="0" classname="fr.eolya.simplepipeline.stage.DocSummaryExtractor">
+ *	<stage classname="fr.eolya.simplepipeline.stage.DocSummaryExtractor">
  *		<param name="source">text</param>
  *		<param name="target">summary</param>
  *		<param name="maxsize">500</param>

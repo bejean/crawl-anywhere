@@ -86,7 +86,7 @@ rm -rf $DEV/java/indexer/dependency
 mvn dependency:copy-dependencies
 cp target/indexer-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-indexer-$VERSION.jar
 
-# solr3
+## solr
 cd $DEV/java/solr
 mvn clean
 mvn package -Dmaven.test.skip=true
@@ -95,31 +95,44 @@ mvn dependency:copy-dependencies
 rm target/dependency/*lucene*
 rm target/dependency/*solr*
 
-#rm $DEV/install/bin/solr3/*
-
-mkdir $DISTRIB/install/solr/solr310/crawler/lib
-cp target/solr-0.0.1-SNAPSHOT.jar $DISTRIB/install/solr/solr310/crawler/lib/eolya-solr3.jar
-cp target/dependency/*.jar $DISTRIB/install/solr/solr310/crawler/lib/.
-
-mkdir $DISTRIB/install/solr/solr350/crawler/lib
-cp target/solr-0.0.1-SNAPSHOT.jar $DISTRIB/install/solr/solr350/crawler/lib/eolya-solr3.jar
-cp target/dependency/*.jar $DISTRIB/install/solr/solr350/crawler/lib/.
+mkdir $DISTRIB/install/solr/solr430/lib
+cp target/solr-0.0.1-SNAPSHOT.jar $DISTRIB/install/solr/solr430/lib/eolya-solr4.jar
+cp target/dependency/*.jar $DISTRIB/install/solr/solr430/lib/.
 
 
-# solr4
-cd $DEV/java/solr4
-mvn clean
-mvn package -Dmaven.test.skip=true
-rm -rf $DEV/java/solr4/target/dependency
-mvn dependency:copy-dependencies
-rm target/dependency/*lucene*
-rm target/dependency/*solr*
-
-#rm $DEV/install/bin/solr4/*
-
-mkdir $DISTRIB/install/solr/solr400/crawler/lib
-cp target/solr4-0.0.1-SNAPSHOT.jar $DISTRIB/install/solr/solr400/crawler/lib/eolya-solr4.jar
-cp target/dependency/*.jar $DISTRIB/install/solr/solr400/crawler/lib/.
+## solr3
+#cd $DEV/java/solr
+#mvn clean
+#mvn package -Dmaven.test.skip=true
+#rm -rf $DEV/java/solr/target/dependency
+#mvn dependency:copy-dependencies
+#rm target/dependency/*lucene*
+#rm target/dependency/*solr*
+#
+##rm $DEV/install/bin/solr3/*
+#
+#mkdir $DISTRIB/install/solr/solr310/crawler/lib
+#cp target/solr-0.0.1-SNAPSHOT.jar $DISTRIB/install/solr/solr310/crawler/lib/eolya-solr3.jar
+#cp target/dependency/*.jar $DISTRIB/install/solr/solr310/crawler/lib/.
+#
+#mkdir $DISTRIB/install/solr/solr350/crawler/lib
+#cp target/solr-0.0.1-SNAPSHOT.jar $DISTRIB/install/solr/solr350/crawler/lib/eolya-solr3.jar
+#cp target/dependency/*.jar $DISTRIB/install/solr/solr350/crawler/lib/.
+#
+## solr4
+#cd $DEV/java/solr4
+#mvn clean
+#mvn package -Dmaven.test.skip=true
+#rm -rf $DEV/java/solr4/target/dependency
+#mvn dependency:copy-dependencies
+#rm target/dependency/*lucene*
+#rm target/dependency/*solr*
+#
+##rm $DEV/install/bin/solr4/*
+#
+#mkdir $DISTRIB/install/solr/solr400/crawler/lib
+#cp target/solr4-0.0.1-SNAPSHOT.jar $DISTRIB/install/solr/solr400/crawler/lib/eolya-solr4.jar
+#cp target/dependency/*.jar $DISTRIB/install/solr/solr400/crawler/lib/.
 
 
 #=============================================

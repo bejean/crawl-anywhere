@@ -1,0 +1,42 @@
+/* Tagcloud CSS Styles */
+
+div#tagcloud {
+	text-align: center;
+	border-width: 4px; 
+	border-style: solid; 
+	border-color: #AAAAAA;
+	-moz-border-radius: 10px;
+	-webkit-border-radius:10px;
+	border-radius: 10px;
+	margin-top: 10px;
+	padding: 10px;
+	width: 95%;
+}
+
+a.tag1:link {  line-height: 25px; font-size: 11px; color: #777777; text-decoration: none; font-weight: bold}
+a.tag1:visited { line-height: 25px; font-size: 11px; color: #777777; text-decoration: none; font-weight: bold}
+a.tag1:hover { line-height: 25px; font-size: 11px; color: #FFFFFF; text-decoration: none; font-weight: bold; background: #000000;}
+
+a.tag2:link {  line-height: 25px; font-size: 13px; color: #666666; text-decoration: none; font-weight: bold}
+a.tag2:visited { line-height: 25px; font-size: 13px; color: #666666; text-decoration: none; font-weight: bold}
+a.tag2:hover { line-height: 25px; font-size: 13px; color: #FFFFFF; text-decoration: none; font-weight: bold; background: #000000;}
+
+a.tag3:link {  line-height: 25px; font-size: 15px; color: #555555; text-decoration: none; font-weight: bold}
+a.tag3:visited { line-height: 25px; font-size: 15px; color: #555555; text-decoration: none; font-weight: bold}
+a.tag3:hover { line-height: 25px; font-size: 15px; color: #FFFFFF; text-decoration: none; font-weight: bold; background: #000000;}
+
+a.tag4:link {  line-height: 25px; font-size: 17px; color: #444444; text-decoration: none; font-weight: bold}
+a.tag4:visited { line-height: 25px; font-size: 17px; color: #444444; text-decoration: none; font-weight: bold}
+a.tag4:hover { line-height: 25px; font-size: 17px; color: #FFFFFF; text-decoration: none; font-weight: bold; background: #000000;}
+
+a.tag5:link {  line-height: 25px; font-size: 19px; color: #333333; text-decoration: none; font-weight: bold}
+a.tag5:visited { line-height: 25px; font-size: 19px; color: #333333; text-decoration: none; font-weight: bold}
+a.tag5:hover { line-height: 25px; font-size: 19px; color: #FFFFFF; text-decoration: none; font-weight: bold; background: #000000;}
+
+a.tag6:link {  line-height: 25px; font-size: 21px; color: #111111; text-decoration: none; font-weight: bold}
+a.tag6:visited { line-height: 25px; font-size: 21px; color: #111111; text-decoration: none; font-weight: bold}
+a.tag6:hover { line-height: 25px; font-size: 21px; color: #FFFFFF; text-decoration: none; font-weight: bold; background: #000000;}
+
+a.tag7:link {  line-height: 25px; font-size: 23px; color: #000000; text-decoration: none; font-weight: bold}
+a.tag7:visited { line-height: 25px; font-size: 23px; color: #000000; text-decoration: none; font-weight: bold}
+a.tag7:hover { line-height: 25px; font-size: 23px; color: #FFFFFF; text-decoration: none; font-weight: bold; background: #000000;}

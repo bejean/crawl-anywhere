@@ -302,6 +302,9 @@ public class Crawler implements ICrawlerController {
 		boolean bFinished = false;
 		while (!stopRequested && !bFinished) {
 			try {
+				stopRequested = fileStop.exists() || !filePid.exists();
+				if (stopRequested) break;
+				
 				// Refresh PID file time 
 				try {
 					FileUtils.touch(filePid);

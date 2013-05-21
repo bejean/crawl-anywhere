@@ -1,22 +1,11 @@
 <?php
 $rootpath = dirname(__FILE__);
-require_once("init.inc.php");
-require_once("lib/solr.solr_php_client.class.inc.php");
-//require_once("lib/Solr/Service.php");
-require_once("lib/rss.class.inc.php");
-
-
-$solr_host = $config->get("solr.host");
-$solr_port = $config->get("solr.port");
-$solr_baseurl = $config->get("solr.baseurl");
-if ($solr_baseurl=="undefined") $solr_baseurl = "";
-$solr_corename = $config->get("solr.corename");
-if ($solr_corename=="undefined") $solr_corename = "";
+require_once("../init.inc.php");
+require_once("../lib/rss.class.inc.php");
 
 $solr = new Solr();
-
-if ($solr->connect($solr_host, $solr_port, $solr_baseurl, $solr_corename))
-{
+if ($solr->connect($theme->getSolrHost(), $theme->getSolrPort(), $theme->getSolrBaseUrl(), $theme->getSolrCore())) {
+	
 	$crit = getRequestParam("q");	
 	$tag = getRequestParam("t");
 	$querylang = getRequestParam("ql");
@@ -35,8 +24,10 @@ if ($solr->connect($solr_host, $solr_port, $solr_baseurl, $solr_corename))
 		$mode = "advanced";	
 	else
 		$mode = "simple";
+		
+	$queryField = getQueryField($search_multilingual, $search_language_code);
 	
-	$response = $solr->query($crit, $querylang, '', 0, 0, 100, $fqitms, $word_variations, $filter_lang, $filter_country, $filter_mimetype, $filter_source, $filter_collection, $filter_tag, '', '', '', '', true, false);
+	$response = $solr->query($crit, $queryField, $querylang, '', 0, 0, 100, $fqitms, $word_variations, $filter_lang, $filter_country, $filter_mimetype, $filter_source, $filter_collection, $filter_tag, '', '', '', '', true, false);
 	if ( $response->getHttpStatus() == 200 ) {
 		//print_r( $response->getRawResponse() );
 		
@@ -60,8 +51,16 @@ if ($solr->connect($solr_host, $solr_port, $solr_baseurl, $solr_corename))
 			}
 		}
 		echo $feed->serve();
-	
 	}	
 }
 
+function getQueryField($search_multilingual, $search_language_code) {
+	if ($search_multilingual) {
+		$field_sufix = 'ml';
+	}
+	else {
+		$field_sufix = $search_language_code;
+	}
+	return "content_" . $field_sufix;
+}
 ?>

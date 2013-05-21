@@ -79,7 +79,7 @@ class Solr {
 		$params['terms.fl'] = $queryField;
 		$params['terms.lower'] = $q;
 		$params['terms.prefix'] = $q;
-		$params['terms.lower.incl'] = 'false';
+		$params['terms.lower.incl'] = 'true';
 		$params['terms.limit'] = $limit;
 		$params['qt'] = '/terms';
 
@@ -219,6 +219,10 @@ class Solr {
 						if ($facetval=="" || $facetcnt=="0")
 						break;
 
+						$facetval = str_replace("\"", " ", $facetval);
+						//$facetval = str_replace("'", " ", $facetval);
+						$facetval = trim($facetval);
+						
 						$aItemFacet = Array();
 						$aItemFacet[] = $facetval;
 							
@@ -266,14 +270,21 @@ class Solr {
 		}
 		return $ret;
 	}
-	
+
 	function buildQuery($dismax, $queryField, $query_lang, $qry, $word_variations, $search_multilingual) {
 
+		if (empty($qry) || $qry=='*' || $qry=='*:*') {
+			return '*:*';
+		}
+		
 		if ($dismax) {
+			/*
 			if ($word_variations) $queryField = $queryField . 's';
 			if ($search_multilingual)
 			$finalqry = '[' . $query_lang .  ']' . $qry ;
 			else
+			$finalqry = $qry ;
+			*/
 			$finalqry = $qry ;
 		}
 		else {
@@ -347,11 +358,29 @@ class Solr {
 
 		$params['hl'] = 'true';
 		$params['hl.fl'] = $queryField;
-		$params['hl.snippets'] = '1';
-		$params['hl.fragsize'] = '50000';
-		$params['hl.maxAnalyzedChars']= $params['hl.fragsize'];
-		$params['hl.simple.pre'] = '<b>';
-		$params['hl.simple.post'] = '</b>';
+		$params['hl.snippets'] = '100';
+		$params['hl.fragsize'] = '100';
+		//$params['hl.maxAnalyzedChars']= $params['hl.fragsize'];
+		$params['hl.simple.pre'] = '<em>';
+		$params['hl.simple.post'] = '</em>';
+
+		/*
+		 $params['hl.useFastVectorHighlighter'] = 'true';
+		$params['hl.tag.pre'] = '<b>'; // for FastVectorHighlighter
+		$params['hl.tag.post'] = '</b>';
+		*/
+
+		//$params['tv'] = 'true';
+		//$params['tv.fl'] = $queryField;
+		//$params['tv.tf'] = 'true';
+		//$params['tv.df'] = 'true';
+		//$params['tv.positions'] = 'true';
+		//$params['tv.offsets'] = 'true';
+		//$params['tv.tf_idf'] = 'true';
+		//$params['tv.all'] = 'true';
+		//$params['tv.fl'] = '1';
+		//$params['tv.docIds'] = '1';
+
 
 		if ($debug)
 		$params['debugQuery'] = 'true';
@@ -384,53 +413,112 @@ class Solr {
 	$filter_location_lat,
 	$filter_location_lng,
 	$filter_location_radius,
+	$fields,
+	$p,
 	$mode,
 	$rss,
 	$debug=false) {
 
-		global $search_multilingual, $search_language_code, $facetcollections, $facettags, $facetcountry, $facetlanguage, $facetcontenttype, $facetsourcename, $facetextra;
-
+		//global $search_multilingual, $search_language_code, $facetcollections, $facettags, $facetcountry, $facetlanguage, $facetcontenttype, $facetsourcename, $facetextra;
+		global $search_multilingual, $search_language_code, $facetuse, $facetextra, $facetqueries, $facetlimit, $search_requesthandler;
+		
 		if ($this->_solr==null) return "";
 
 		$this->_response = null;
 
-		$params = array();
+		if (!empty($p)) 
+			$params = $p;
+		else
+			$params = array();
 
 		if ($query_lang=="") $query_lang = "en";
 
 		$dismax=false;
-		if ($dismax) $params['defType'] = "dismax";
+		if (!empty($search_requesthandler)) {
+			$dismax=true;
+			$params['qt'] = $search_requesthandler;
+		}
+		//if ($dismax) $params['defType'] = "dismax";
+		
 		$finalqry = $this->buildQuery($dismax, $queryField, $query_lang, $qry, $word_variations, $search_multilingual);
-		$finalqry = "(" . $finalqry . ")";
+		if (!$dismax) $finalqry = "(" . $finalqry . ")";
 
 		// params facet
 		if ($rss) {
 			$params['facet'] = 'false';
 		}
 		else {
-			$aFacet = Array();
-			if ($facetcollections) array_push($aFacet, "collection");
-			if ($facettags) array_push($aFacet, "tag");
-			if ($facetsourcename) array_push($aFacet, "source_str");
-			if ($facetcountry) array_push($aFacet, "country");
-			if ($facetlanguage) array_push($aFacet, "language");
-			if ($facetcontenttype) array_push($aFacet, "contenttyperoot");
-			if ($facetextra!='') {
-				$aTemp = explode(',',$facetextra);
+			$aFacet = array();
+			if (!empty($facetuse)) {
+				$aTemp = array_map('trim',explode(",",$facetuse));
+				foreach ($aTemp as $key => $value) {
+					if ($value=='source') $aTemp[$key] = 'source_str';
+					if ($value=='contenttype') $aTemp[$key] = 'contenttyperoot';
+
+					$ex = '';
+					for ($i=0; $i<count($fq); $i++) {
+						$aa = $fq[$i];
+						$ab = $aTemp[$key] . ':';
+						if (startswith($fq[$i], '(' . $aTemp[$key] . ':')) {
+							$fq[$i] = '{!tag=' . $aTemp[$key] . '_' . $i . '}' . $fq[$i];
+							if (!empty($ex)) $ex = $ex . ',';
+							$ex = $ex . $aTemp[$key] . '_' . $i;
+						}
+					}
+					
+					if (empty($ex)) {
+						array_push($aFacet, $aTemp[$key]);
+					} else {
+						array_push($aFacet, '{!ex=' . $ex . '}' . $aTemp[$key]);
+					}
+				}	
+			}
+			
+			if (!empty($facetextra)) {
+				$aTemp = array_map('trim',explode(",",$facetextra));
 				for ($i=0;$i<count($aTemp);$i++) {
 					$val=trim($aTemp[$i]);
 					$pos = strpos($val,'(');
 					if ($pos!==false) {
 						$val = substr($val,0,$pos);
 					}
-					array_push($aFacet, $val);
+					$ex = '';
+					for ($j=0; $j<count($fq); $j++) {
+						$aa = $fq[$j];
+						$ab = $val . ':';
+						if (startswith($fq[$j], '(' . $val . ':')) {
+							$fq[$j] = '{!tag=' . $val . '_' . $j . '}' . $fq[$j];
+							if (!empty($ex)) $ex = $ex . ',';
+							$ex = $ex . $val . '_' . $j;
+						}
+					}	
+					if (empty($ex)) {
+						array_push($aFacet,  $val);
+					} else {
+						array_push($aFacet, '{!ex=' . $ex . '}' .  $val);
+					}
+
 				}
 			}
-
-			$params['facet'] = 'true';
-			$params['facet.field'] = $aFacet;
-			$params['facet.mincount'] = '1';
-			$params['facet.limit'] = '10';
+			
+			if (!empty($facetqueries)) {
+				$aFacetQuery = array();
+				foreach($facetqueries as $f) {
+					foreach($f['conditions'] as $c) {
+						array_push($aFacetQuery, $f['field'] . ':[' . $c['condition'] . ']');
+					}
+				}	
+				$params['facet.query'] = $aFacetQuery;
+			}
+			
+			if (count($aFacet)>0) {
+				$params['facet'] = 'true';
+				$params['facet.field'] = $aFacet;
+				$params['facet.mincount'] = '1';
+				if ($facetlimit>0) $params['facet.limit'] = $facetlimit;
+			} else {
+				$params['facet'] = 'false';
+			}
 		}
 
 		// params fields
@@ -438,7 +526,10 @@ class Solr {
 			$params['fl'] = 'id, title_dis, summary, createtime, score';
 		}
 		else {
-			$params['fl'] = '*,score';
+			$f = 'id, id, uid, sourceid, title_dis, tag, collection, country, language, summary, createtime, source_str, type_str, urlimage_str, contenttype, contenttyperoot, tag_cloud, score';
+			$af = array_merge ( array_map('trim',explode(",",$f)), array_map('trim',explode(",",$fields)) );
+			$af = array_filter(array_unique($af), 'strlen');
+			$params['fl'] = implode(',', $af);
 		}
 
 		// Test Carrot2
@@ -456,11 +547,20 @@ class Solr {
 		}
 		else {
 			$params['hl'] = 'true';
+
+			//if ($word_variations)
+			//	$params['hl.fl'] = $queryField1 . "s";
+			//else
 			$params['hl.fl'] = $queryField;
 			$params['hl.snippets'] = '5';
 			$params['hl.fragsize'] = '100';
 			$params['hl.simple.pre'] = '<b>';
 			$params['hl.simple.post'] = '</b>';
+			/*
+			 $params['hl.useFastVectorHighlighter'] = 'true';
+			$params['hl.tag.pre'] = '<b>'; // for FastVectorHighlighter
+			$params['hl.tag.post'] = '</b>';
+			*/
 
 			//$params['hl.mergeContiguous'] = 'true';
 		}
@@ -477,13 +577,14 @@ class Solr {
 			$params['spellcheck.onlyMorePopular'] = 'true';
 			$params['spellcheck.extendedResults'] = 'true';
 			$params['spellcheck.collate'] = 'false';
-		}
 
-		if ($groupsize>0) {
-			$params['group'] = 'true';
-			$params['group.field'] = 'sourceid';
-			$params['group.limit'] = $groupsize;
-			$params['group.ngroups'] = 'true';
+			if ($groupsize>0) {
+				$params['group'] = 'true';
+				$params['group.field'] = 'sourceid';
+				$params['group.limit'] = $groupsize;
+				$params['group.ngroups'] = 'true';
+			}
+		
 		}
 
 		// param filter meta
@@ -547,20 +648,22 @@ class Solr {
 			$finalqry = "{!spatial lat=" . $filter_location_lat . " long=" . $filter_location_lng . " radius=" . $filter_location_radius . " unit=km threadCount=2} " . $finalqry;
 		}
 
+		//$debug = true;
 		if ($debug) {
 			$params['debugQuery'] = 'true';
 			$params['debug'] = 'query';
 		} else {
 			$params['debugQuery'] = 'false';
 		}
-
-		$finalqry = "{!q.op=AND}" . $finalqry;
-
+		
+		if (!$dismax) $finalqry = "{!q.op=AND}" . $finalqry;
+	
 		$response = $this->_solr->search( $finalqry, $offset, $count, $params);
 
 		$sorl_response = new Solr_Response($response->getRawResponse(), $response->getHttpStatus());
+		$q = $sorl_response->getRawResponse();
 		
-		//echo $sorl_response->getRawResponse();
+		if ($debug) echo $q;
 
 		return $sorl_response;
 	}

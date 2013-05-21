@@ -7,13 +7,15 @@ import java.util.HashMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import fr.eolya.extraction.MultiFormatTextExtractor;
+//import fr.eolya.extraction.MultiFormatTextExtractor;
 import fr.eolya.extraction.ScriptsWrapper;
 import fr.eolya.simplepipeline.config.PipelineConfig;
 import fr.eolya.simplepipeline.document.Doc;
 import fr.eolya.utils.Base64;
 import fr.eolya.utils.Utils;
 import fr.eolya.utils.http.HttpUtils;
+
+import fr.eolya.extraction.tika.TikaWrapper;
 
 
 /*
@@ -58,8 +60,10 @@ public class DocTextExtractor extends Stage {
 	private String sourceElement = null;
 	private String targetElement = null;
 
-	private MultiFormatTextExtractor extractor = null;
+	private String tmpPath = null;
+	private String pdfToTextPath = null;
 
+	private boolean VERBOSE = true;
 
 	/**
 	 * Perform initialization.
@@ -79,30 +83,11 @@ public class DocTextExtractor extends Stage {
 		sourceElement = props.getProperty("source");
 		targetElement = props.getProperty("target");
 
-		String tmpPath = props.getProperty("tmppath");
+		tmpPath = props.getProperty("tmppath");
 		tmpPath = Utils.getValidPropertyPath(tmpPath, null, "HOME");
-		extractor = new MultiFormatTextExtractor();
-		extractor.setTempPath(tmpPath);
 
-		String pdfToTextPath = props.getProperty("pdftotextpath");
+		pdfToTextPath = props.getProperty("pdftotextpath");
 		pdfToTextPath = Utils.getValidPropertyPath(pdfToTextPath, null, "HOME");
-		if (pdfToTextPath!=null && !"".equals(pdfToTextPath))
-			extractor.setPdfToTextPath(pdfToTextPath);
-
-		String catdocPath = props.getProperty("catdocpath");
-		catdocPath = Utils.getValidPropertyPath(catdocPath, null, "HOME");
-		if (catdocPath!=null && !"".equals(catdocPath))
-			extractor.setCatdocPath(catdocPath);
-
-		//String antiwordPath = props.getProperty("antiwordpath");
-		//if (antiwordPath!=null && !"".equals(antiwordPath))
-		//  antiwordPath = Utils.getValidPropertyPath(antiwordPath, null, "HOME");
-		//	extractor.setAntiwordPath(antiwordPath);
-
-		String catpptPath = props.getProperty("catpptpath");
-		catpptPath = Utils.getValidPropertyPath(catpptPath, null, "HOME");
-		if (catpptPath!=null && !"".equals(catpptPath)) 
-			extractor.setCatpptPath(catpptPath);
 	}
 
 
@@ -150,8 +135,8 @@ public class DocTextExtractor extends Stage {
 		if (scriptName==null || "".equals(scriptName))
 			scriptName = ScriptsWrapper.getScriptName (scriptsPath, url);
 
-	    if (scriptName!=null && !"".equals(scriptName) && logger!=null) logger.log("        using script : " + scriptName);
-		
+		if (scriptName!=null && !"".equals(scriptName) && logger!=null) logger.log("        using script : " + scriptName);
+
 		if (cleanMethodElement != null && !"".equals(cleanMethodElement))
 			cleanMethod = doc.getElementText("//" + cleanMethodElement);
 
@@ -182,22 +167,20 @@ public class DocTextExtractor extends Stage {
 				}
 				else {
 					inputSource = new ByteArrayInputStream(source.getBytes());
-
 					if ("base64".equals(sourceEncoding))
 						inputSource = new Base64.InputStream(inputSource, Base64.DECODE);
 				}
 
 				if (inputSource != null || rawData != null) {
 
-					if (inputSource != null)
-						rawData = null;
+					if (inputSource != null) rawData = null;
 
 					try {
 						text = extract(inputSource, rawData, contentType, cleanMethod, url, scriptName);
 						if (text==null) {
 							success = false;
 							stageList.setStagesStatus(StageList.STATUS_ERROR);
-							if (logger!=null) logger.log("        parsing error");
+							if (logger!=null) logger.log("        parsing error (text null)");
 							java.util.Date endTime = new java.util.Date();
 							processingTime += (endTime.getTime() - startTime.getTime());
 							return;							
@@ -225,22 +208,22 @@ public class DocTextExtractor extends Stage {
 					if (parserLanguage!=null && !"".equals(parserLanguage))
 						doc.addElement("/job", "parser_language", parserLanguage);
 
-                    if (parserTitle!=null && !"".equals(parserTitle))
+					if (parserTitle!=null && !"".equals(parserTitle))
 						doc.addElement("/job", "parser_title", parserTitle);
 
-                    if (parserEncoding!=null && !"".equals(parserEncoding))
+					if (parserEncoding!=null && !"".equals(parserEncoding))
 						doc.addElement("/job", "parser_charset", parserEncoding);
 
-                    if (parserContentType!=null && !"".equals(parserContentType))
+					if (parserContentType!=null && !"".equals(parserContentType))
 						doc.addElement("/job", "parser_contentype", parserContentType);
 
-                    if (parserContentSize!=null && !"".equals(parserContentSize))
+					if (parserContentSize!=null && !"".equals(parserContentSize))
 						doc.addElement("/job", "parser_contensize", parserContentSize);
 
-                    if (parserDate!=null && !"".equals(parserDate))
+					if (parserDate!=null && !"".equals(parserDate))
 						doc.addElement("/job", "parser_date", parserDate);
 
-                    if (parserImageUrl!=null && !"".equals(parserImageUrl))
+					if (parserImageUrl!=null && !"".equals(parserImageUrl))
 						doc.addElement("/job", "parser_imageurl", parserImageUrl);
 				}
 			}
@@ -314,30 +297,26 @@ public class DocTextExtractor extends Stage {
 			}
 			return true;
 		}
-		
+
 		public String getBestTitle(String parserTitle) {
-			if (title!=null && !"".equals(title))
-				return title;
+			if (title!=null && !"".equals(title)) return title;
 			return parserTitle;
 		}
-		
+
 		public String getBestDate(String parserDate) {
-			if (date!=null && !"".equals(date))
-				return date;
+			if (date!=null && !"".equals(date)) return date;
 			return parserDate;
 		}
-		
+
 		public String getBestHtml(String rawData) {
-			if (html!=null && !"".equals(html))
-				return html;
+			if (html!=null && !"".equals(html)) return html;
 			return rawData;
 		}
 	}
 
 	private String doExtract(InputStream input, String rawData, String contentType, String cleanMethod, String url, String scriptName) {
 
-		// Parser la page
-		try {
+		try {			
 			// text/plain
 			if (contentType.startsWith("text/plain")) {
 				parserText = rawData;
@@ -346,98 +325,60 @@ public class DocTextExtractor extends Stage {
 				parserContentSize = String.valueOf(parserText.length());
 				return parserText;
 			} 
-			
+
 			HtmlParser htmlParser = new HtmlParser();
 
-			// text/html
-			if (contentType.startsWith("text/html")) {
-				if (htmlParser.parse(rawData, contentType, url, scriptName)) {
-					//cleanMethod = ""; // if parse script was use, disable any clean algorithm
+			TikaWrapper wrapper = null;
+
+			// application/pdf
+			if (contentType.startsWith("application/pdf")) {
+				wrapper = new TikaWrapper(TikaWrapper.OUTPUT_FORMAT_TEXT, TikaWrapper.CONTENT_TYPE_PDF);
+				wrapper.setPdfToTextPath(pdfToTextPath);
+			} else {
+				// text/html
+				if (contentType.startsWith("text/html")) {
+					
+					if (htmlParser.parse(rawData, contentType, url, scriptName)) {
+						//cleanMethod = ""; // if parse script was use, disable any clean algorithm
+						rawData = htmlParser.getBestHtml(rawData);
+					}
+					
+					if (input==null && rawData!=null) input = new ByteArrayInputStream(rawData.getBytes());
+					if (input==null) return "";
+
+					String outputFormat = TikaWrapper.OUTPUT_FORMAT_TEXT;
+					if ("boilerpipe_article".equals(cleanMethod)) 
+						outputFormat = TikaWrapper.OUTPUT_FORMAT_TEXT_MAIN_BOILERPIPE_ARTICLE;
+					if ("boilerpipe_default".equals(cleanMethod)) 
+						outputFormat = TikaWrapper.OUTPUT_FORMAT_TEXT_MAIN_BOILERPIPE_DEFAULT;
+					if ("boilerpipe_canola".equals(cleanMethod)) 
+						outputFormat = TikaWrapper.OUTPUT_FORMAT_TEXT_MAIN_BOILERPIPE_CANOLA;
+					if ("snacktory".equals(cleanMethod)) 
+						outputFormat = TikaWrapper.OUTPUT_FORMAT_TEXT_MAIN_SNACKTORY;
+					
+					wrapper = new TikaWrapper(outputFormat, TikaWrapper.CONTENT_TYPE_HTML);
+					
+				} else {
+					wrapper = new TikaWrapper(TikaWrapper.OUTPUT_FORMAT_TEXT);
 				}
-				parserContentType = contentType;
-				parserText = extractor.htmlPageToText(htmlParser.getBestHtml(rawData), url, cleanMethod);
-				parserContentSize = Long.toString(extractor.getContentSize());
-				parserTitle = htmlParser.getBestTitle(extractor.getTitle());
-				parserDate = htmlParser.getBestDate(extractor.getDate());
-				parserImageUrl = extractor.getImageUrl();
-				return parserText;
-			} 
-
-//			// application/pdf
-//			if (contentType.startsWith("application/pdf") && input!=null )
-//			{
-//				if (extractor.getPdfToTextPath()!=null) {
-//					htmlParser.parse(extractor.pdfInputStreamToHtml(input), contentType, url, scriptName);
-//					parserContentType = contentType;
-//					parserText = extractor.htmlPageToText(htmlParser.getBestHtml(""), "", "");
-//					parserContentSize = Long.toString(extractor.getContentSize());
-//					parserTitle = htmlParser.getBestTitle(extractor.getTitle());					
-//					parserDate = htmlParser.getBestDate(extractor.getDate());
-//					return parserText;
-//				}
-//			}
-//
-//			// application/msword
-//			if (contentType.startsWith("application/msword") && input!=null )
-//			{
-//				//if (extractor.getCatdocPath()!=null || extractor.getAntiwordPath()!=null) {
-//				if (extractor.getCatdocPath()!=null) {
-//					htmlParser.parse(extractor.docInputStreamToHtml(input), contentType, url, scriptName);
-//
-//					parserContentType = contentType;
-//					parserText = extractor.htmlPageToText(htmlParser.getBestHtml(""), "", "");
-//					parserContentSize = Long.toString(extractor.getContentSize());
-//					parserTitle = htmlParser.getBestTitle(extractor.getTitle());					
-//					parserDate = htmlParser.getBestDate(extractor.getDate());
-//					return parserText;
-//				}
-//			}
-//
-//			// application/vnd.ms-powerpoint
-//			if (contentType.startsWith("application/vnd.ms-powerpoint") && input!=null )
-//			{
-//				if (extractor.getCatpptPath()!=null) {
-//					htmlParser.parse(extractor.pptInputStreamToHtml(input), contentType, url, scriptName);
-//
-//					parserContentType = contentType;
-//					parserText = extractor.htmlPageToText(htmlParser.getBestHtml(""), "", "");
-//					parserContentSize = Long.toString(extractor.getContentSize());
-//					parserTitle = htmlParser.getBestTitle(extractor.getTitle());					
-//					parserDate = htmlParser.getBestDate(extractor.getDate());
-//					return parserText;
-//				}
-//			}
-
-			if (input==null && rawData!=null) input = new ByteArrayInputStream(rawData.getBytes());
-			if (input==null) return "";
+			}
 			
-			// others
-//			String outputFormat = "xml";
+			wrapper.setTempPath(tmpPath);
+			wrapper.process(input);
 			
-//			if ("xml".equals(outputFormat)) {
-				String text = extractor.inputStreamToTextWithTika(input, contentType, "", "xml");
-				if (text==null) return null;
-				
-				htmlParser.parse(text, contentType, url, scriptName);
+			parserText = wrapper.getText();
+			parserContentType = wrapper.getMetaContentType();
+			if (contentType.startsWith("text/html")) {
+				parserTitle = htmlParser.getBestTitle(wrapper.getMetaTitle());
+				parserDate = htmlParser.getBestDate(wrapper.getMetaCreated());
+			} else {
+				parserTitle = wrapper.getMetaTitle();
+				parserDate = wrapper.getMetaCreated();				
+			}
 
-				parserContentType = extractor.getContentType();
-				parserText = extractor.htmlStringToText(htmlParser.getBestHtml(""));
-				parserContentSize = Long.toString(extractor.getContentSize());
-				parserTitle = htmlParser.getBestTitle(extractor.getTitle());					
-				parserDate = htmlParser.getBestDate(extractor.getDate());
-//			}
-//			else {
-//				parserText = extractor.inputStreamToTextWithTika(input, contentType, "", "text");
-//				if (parserText==null) return null;
-//	
-//				parserTitle = extractor.getTitle();
-//				parserContentType = extractor.getContentType();
-//				parserContentSize = Long.toString(extractor.getContentSize());
-//				parserDate = extractor.getDate();
-//			}
-			
+			//parserContentSize = Long.toString(extractor.getContentSize());
+
 			return parserText;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

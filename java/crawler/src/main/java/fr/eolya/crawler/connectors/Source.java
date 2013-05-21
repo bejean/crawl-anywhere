@@ -20,7 +20,7 @@ import fr.eolya.utils.Utils;
 import fr.eolya.utils.XMLConfig;
 
 abstract public class Source {
-	
+
 	protected Map<String,Object> srcData;
 
 	protected String className;
@@ -110,7 +110,7 @@ abstract public class Source {
 		if (srcData.containsKey(name)) return (Date)srcData.get(name);
 		return null;
 	}
-	
+
 	protected int getSrcDataInt(String name) {
 		if (srcData.containsKey(name)) return ((Integer)srcData.get(name)).intValue();
 		String value = getSrcDataString(name); //.replace(".0", "");
@@ -252,11 +252,11 @@ abstract public class Source {
 		return null;		
 	}
 
-	public Date getCrawlLastTimeStart(){
+	public Date getCrawlLastTimeStart() {
 		return dateStringToDate(getSrcDataString("crawl_lasttime_start"));
 	}
 
-	public Date getCrawlLastTimeEnd(){
+	public Date getCrawlLastTimeEnd() {
 		return dateStringToDate(getSrcDataString("crawl_lasttime_end"));
 	}
 
@@ -264,28 +264,31 @@ abstract public class Source {
 		return dateStringToDate(getSrcDataString("crawl_lasttime_checkfordeletion"));
 	}
 
-	public String getLanguage(){
+	public String getLanguage() {
 		return getSrcDataString("language");
 	}
 
-	public String getLanguageDetectionList(){
+	public String getLanguageDetectionList() {
 		return getSrcDataString("language_detection_list");
 	}
 
-	public String getCountry(){
+	public String getCountry() {
 		return getSrcDataString("country");
 	}
 
-	public String getTags(){
-		return getSrcDataString("tag").replaceAll("_", " ");
+	public String getTags() {
+		String tag = getSrcDataString("tag");
+		if (tag!=null) tag = tag.replaceAll("_", " ");
+		return tag;
 	}
 
-	public String getCollections(){
-		return getSrcDataString("collection").replaceAll("_", " ");
+	public String getCollections() {
+		String collection = getSrcDataString("collection");
+		if (collection!=null) collection = collection.replaceAll("_", " ");
+		return collection;	
 	}
 
-	public String getComment()
-	{
+	public String getComment() {
 		return getSrcDataString("comment");
 	}
 
@@ -293,35 +296,35 @@ abstract public class Source {
 		return getSrcDataString("contact");
 	}
 
-	public String getChildOnly(){
+	public String getChildOnly() {
 		return getSrcDataString("crawl_childonly");
 	}
 
-	public String getUrlConcurrency(){
+	public String getUrlConcurrency() {
 		return getSrcDataString("crawl_url_concurrency", "1");
 	}
 
-	public String getFilteringRules(){
+	public String getFilteringRules() {
 		return getSrcDataStringAsXml("crawl_filtering_rules", "");
 	}
 
-	public void setExtra(XMLConfig extra){
+	public void setExtra(XMLConfig extra) {
 		this.extra = extra;
 	}
 
-	public XMLConfig getExtra(){
+	public XMLConfig getExtra() {
 		return extra;
 	}
 
-	public int getAuthMode(){
+	public int getAuthMode() {
 		return getSrcDataInt("auth_mode");
 	}
 
-	public String getAuthLogin(){
+	public String getAuthLogin() {
 		return getSrcDataString("auth_login");
 	}
 
-	public String getAuthPasswd(){
+	public String getAuthPasswd() {
 		return getSrcDataString("auth_passwd");
 	}
 
@@ -338,7 +341,7 @@ abstract public class Source {
 		return getSrcDataString("crawl_minimal_period");
 	}
 
-	public String getMetadata(){
+	public String getMetadata() {
 		return getSrcDataString("metadata");
 	}
 
@@ -383,7 +386,7 @@ abstract public class Source {
 			return false;
 		}
 	}
-	
-	
+
+
 
 }

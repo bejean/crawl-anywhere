@@ -17,7 +17,9 @@
  */
 package fr.eolya.utils.http;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -106,6 +108,8 @@ public class HttpLoader {
 
 	public int errorCode;
 	public String errorMessage;
+	
+	private InputStream stream = null;
 
 	public static final int LOAD_ERROR = -1;
 	public static final int LOAD_SUCCESS = 0;
@@ -377,16 +381,27 @@ public class HttpLoader {
 	}
 
 	public InputStream getStream() {
-		HttpEntity resEntity = response.getEntity();
-		if (resEntity != null)
+		if (stream==null) {
 			try {
-				return resEntity.getContent();
-			} catch (IllegalStateException e) {
-				e.printStackTrace();
+				HttpEntity resEntity = response.getEntity();
+				//stream = new BufferedInputStream(resEntity.getContent());
+				stream = resEntity.getContent();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		return null;
+		}
+		return stream;
+		
+//		HttpEntity resEntity = response.getEntity();
+//		if (resEntity != null)
+//			try {
+//				return new BufferedInputStream(resEntity.getContent());
+//			} catch (IllegalStateException e) {
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		return null;
 	}
 
 	public int openRetry(String url, int maxRetry) {

@@ -17,7 +17,7 @@ export HOME="$( cd "$( dirname "$0" )/.." && pwd )"
 JVMARGS="-Duser.timezone=Europe/Paris -Xmx1024m"
 # in case of memory error "java.lang.OutOfMemoryError: PermGen", consider -XX:MaxPermSize=128m
 PID_FILE=$LOG_DIR/crawler.pid
-JAVA_CLASS="fr.eolya.crawler.crawler.Crawler"
+JAVA_CLASS="fr.eolya.crawler.Crawler"
 
 # TODO 
 #  * Change this to a more reliable version

@@ -215,12 +215,12 @@ class SourceWeb extends SourceBase implements iSource {
 		$res .= "<td>";
 		$res .= "If the same web page is discovered with both http and https protocol&nbsp;";
 		$res .= "<select id='source_crawl_protocol_strategy' name='source_crawl_protocol_strategy' style='editInputSelect'>";
-		$res .= "<option value='0'";
-		if ($this->getValue('protocol_strategy', '')=="0") $res .= " selected";
-		$res .= ">Consider http and https as different pages</option>";
 		$res .= "<option value='1'";
 		if ($this->getValue('protocol_strategy', '')=="1") $res .= " selected";
 		$res .= ">Keep only http page</option>";
+		$res .= "<option value='0'";
+		if ($this->getValue('protocol_strategy', '')=="0") $res .= " selected";
+		$res .= ">Consider http and https as different pages</option>";
 		$res .= "<option value='2'";
 		if ($this->getValue('protocol_strategy', '')=="2") $res .= " selected";
 		$res .= ">Keep only https page</option>";

@@ -23,9 +23,9 @@ import fr.eolya.utils.Utils;
  * <stage classname="fr.eolya.simplepipeline.stage.ContentAsFileQueueWriter">
  *     <param name="source">content</param>
  *     <param name="contenttype">item_contenttype</param>
- *     <param name="queuedir">/tmp/out</param>
+ *     <param name="queuedir">queue_file</param>
  *     <param name="tempfilenameprefix">t.</param>
- *     <param name="acceptedContentType">application/pdf,application/xhtml+xml,text/html</param>
+ *     <param name="acceptedContentType">*,application/pdf,application/xhtml+xml,text/html</param>
  * </stage>
  */
 
@@ -95,8 +95,8 @@ public class ContentAsFileQueueWriter extends Stage {
 			if (aContentType!=null) {
 				boolean accepted = false;
 				for (int i = 0; i < aContentType.length && !accepted; i++) {
-					if (aContentType[i].equals(contentType)) 
-						accepted = true;
+					if (aContentType[i].equals(contentType)) accepted = true;
+					if ("*".equals(aContentType[i])) accepted = true;
 				}
 				if (!accepted) {
 					if (nextStage != null) {

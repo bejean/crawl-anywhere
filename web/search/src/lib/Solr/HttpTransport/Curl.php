@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2007-2011, Servigistics, Inc.
+ * Copyright (c) 2007-2012, Parametric Technology Corporation
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,13 +27,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @copyright Copyright 2007-2011 Servigistics, Inc. (http://servigistics.com)
+ * @copyright Copyright 2007-2012 Parametric Technology Corporation (http://ptc.com)
  * @license http://solr-php-client.googlecode.com/svn/trunk/COPYING New BSD
  * @version $Id: $
  *
  * @package Apache
  * @subpackage Solr
- * @author Timo Schmidt <timo.schmidt@aoemedia.de>, Donovan Jimenez <djimenez@conduit-it.com>
+ * @author Timo Schmidt <timo.schmidt@aoemedia.de>, Donovan Jimenez
  */
 
 // Require Apache_Solr_HttpTransport_Abstract
@@ -90,7 +90,33 @@ class Apache_Solr_HttpTransport_Curl extends Apache_Solr_HttpTransport_Abstract
 		// close our curl session
 		curl_close($this->_curl);
 	}
+	
+	public function setAuthenticationCredentials($username, $password)
+	{
+		// add the options to our curl handle
+		curl_setopt_array($this->_curl, array(
+			CURLOPT_USERPWD => $username . ":" . $password,
+			CURLOPT_HTTPAUTH => CURLAUTH_BASIC		
+		));
+	}
 
+	public function setProxy($proxy, $port, $username = '', $password = '') 
+	{
+		// add the options to our curl handle
+		curl_setopt_array($this->_curl, array(
+			CURLOPT_PROXY => $proxy,
+			CURLOPT_PROXYPORT => $port
+		));
+		
+		if ($username != '' && $password != '') 
+		{
+			curl_setopt_array($this->_curl, array(
+				CURLOPT_PROXYAUTH => CURLAUTH_BASIC,
+				CURLOPT_PROXYUSERPWD => "$username:$password"
+			));
+		}
+	}
+	
 	public function performGetRequest($url, $timeout = false)
 	{
 		// check the timeout value

@@ -29,7 +29,7 @@ import java.util.Map;
 
 public class NTermStopFilterFactory extends TokenFilterFactory implements ResourceLoaderAware {
 
-	protected NTermStopFilterFactory(Map<String, String> args) {
+	public NTermStopFilterFactory(Map<String, String> args) {
 		super(args);
 		ntermStopFilterRulesFile = args.get("ntermStopFilterRules");
 	}
@@ -39,7 +39,7 @@ public class NTermStopFilterFactory extends TokenFilterFactory implements Resour
 
 //	@Override
 //	public void init(Map<String,String> args) {
-//		super.init(args);
+//		//super.init(args);
 //		assureMatchVersion();
 //	}
 	

@@ -2,17 +2,17 @@
 <indexer>
 	<default_target>solr</default_target>
 	<solr>
-		<param name="baseurl">http://localhost:8180/solr/</param>
+		<param name="baseurl">http://localhost:8180/solr430/</param>
 		<param name="corename">crawler</param>
 		<param name="commitwithin">60000</param>
 		<param name="commiteach">0</param>
-		<param name="optimizeeach"></param>
+		<param name="optimizeeach">0</param>
 	</solr>
-	<elasticsearch>
+	<!--elasticsearch>
 		<param name="baseurl">http://localhost:9300/</param>
 		<param name="indexname">crawler</param>
 		<param name="configured_languages">en,fr</param>
-	</elasticsearch>
+	</elasticsearch-->
 	<param name="witnessfilespath">log</param>
 	<param name="logfilename">log/indexer.log</param>
 	<param name="queuepath">queue_solr</param>

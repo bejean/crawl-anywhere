@@ -30,6 +30,9 @@ public class MimeTypes {
   public static final String MIME_APPLICATION_SRGS_XML    = "application/srgs+xml";
   public static final String MIME_APPLICATION_VND_MIF     = "application/vnd.mif";
   public static final String MIME_APPLICATION_VND_MSEXCEL   = "application/vnd.ms-excel";
+ 
+  public static final String MIME_APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENTS_SPREADSHEETML_SHEET   = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  
   public static final String MIME_APPLICATION_VND_MSPOWERPOINT= "application/vnd.ms-powerpoint";
   public static final String MIME_APPLICATION_VND_RNREALMEDIA = "application/vnd.rn-realmedia";
   public static final String MIME_APPLICATION_X_BCPIO     = "application/x-bcpio";
@@ -299,6 +302,8 @@ public class MimeTypes {
       //put1("class", MIME_APPLICATION_OCTET_STREAM);
       put1("jar", MIME_APPLICATION_JAVA_ARCHIVE);
       put1("xml", MIME_TEXT_XML);
+      
+      put1("xlsx", MIME_APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENTS_SPREADSHEETML_SHEET);
       
     }};
   }

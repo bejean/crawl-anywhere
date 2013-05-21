@@ -35,7 +35,7 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>LUCENE_40</luceneMatchVersion>
+  <luceneMatchVersion>LUCENE_43</luceneMatchVersion>
 
   <!-- <lib/> directives can be used to instruct Solr to load an Jars
        identified and use them to resolve any "plugins" specified in
@@ -70,21 +70,21 @@
        with their external dependencies.
     -->
   <lib dir="../../../contrib/extraction/lib" regex=".*\.jar" />
-  <lib dir="../../../dist/" regex="apache-solr-cell-\d.*\.jar" />
+  <lib dir="../../../dist/" regex="solr-cell-\d.*\.jar" />
 
   <lib dir="../../../contrib/clustering/lib/" regex=".*\.jar" />
-  <lib dir="../../../dist/" regex="apache-solr-clustering-\d.*\.jar" />
+  <lib dir="../../../dist/" regex="solr-clustering-\d.*\.jar" />
 
   <lib dir="../../../contrib/langid/lib/" regex=".*\.jar" />
-  <lib dir="../../../dist/" regex="apache-solr-langid-\d.*\.jar" />
+  <lib dir="../../../dist/" regex="solr-langid-\d.*\.jar" />
 
   <lib dir="../../../contrib/velocity/lib" regex=".*\.jar" />
-  <lib dir="../../../dist/" regex="apache-solr-velocity-\d.*\.jar" />
+  <lib dir="../../../dist/" regex="solr-velocity-\d.*\.jar" />
 
   <!-- If a 'dir' option (with or without a regex) is used and nothing
-       is found that matches, it will be ignored
+       is found that matches, a warning will be logged.
     -->
-  <lib dir="/total/crap/dir/ignored" /> 
+  <lib dir="/non/existent/dir/yields/warning" /> 
 
   <!-- an exact 'path' can be used instead of a 'dir' to specify a 
        specific jar file.  This will cause a serious error to be logged 
@@ -121,6 +121,39 @@
   <directoryFactory name="DirectoryFactory" 
                     class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}"/> 
 
+  <!-- The CodecFactory for defining the format of the inverted index.
+       The default implementation is SchemaCodecFactory, which is the official Lucene
+       index format, but hooks into the schema to provide per-field customization of
+       the postings lists and per-document values in the fieldType element
+       (postingsFormat/docValuesFormat). Note that most of the alternative implementations
+       are experimental, so if you choose to customize the index format, its a good
+       idea to convert back to the official format e.g. via IndexWriter.addIndexes(IndexReader)
+       before upgrading to a newer version to avoid unnecessary reindexing.
+  -->
+  <codecFactory class="solr.SchemaCodecFactory"/>
+
+  <!-- To enable dynamic schema REST APIs, use the following for <schemaFactory>:
+  
+       <schemaFactory class="ManagedIndexSchemaFactory">
+         <bool name="mutable">true</bool>
+         <str name="managedSchemaResourceName">managed-schema</str>
+       </schemaFactory>
+       
+       When ManagedIndexSchemaFactory is specified, Solr will load the schema from
+       he resource named in 'managedSchemaResourceName', rather than from schema.xml.
+       Note that the managed schema resource CANNOT be named schema.xml.  If the managed
+       schema does not exist, Solr will create it after reading schema.xml, then rename
+       'schema.xml' to 'schema.xml.bak'. 
+       
+       Do NOT hand edit the managed schema - external modifications will be ignored and
+       overwritten as a result of schema modification REST API calls.
+
+       When ManagedIndexSchemaFactory is specified with mutable = true, schema
+       modification REST API calls will be allowed; otherwise, error responses will be
+       sent back for these requests. 
+  -->
+  <schemaFactory class="ClassicIndexSchemaFactory"/>
+
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
        Index Config - These settings control low-level behavior of indexing
        Most example settings here show the default value, but are commented
@@ -136,6 +169,12 @@
     <!-- Maximum time to wait for a write lock (ms) for an IndexWriter. Default: 1000 -->
     <!-- <writeLockTimeout>1000</writeLockTimeout>  -->
 
+    <!-- The maximum number of simultaneous threads that may be
+         indexing documents at once in IndexWriter; if more than this
+         many threads arrive they will wait for others to finish.
+         Default in Solr/Lucene is 8. -->
+    <!-- <maxIndexingThreads>8</maxIndexingThreads>  -->
+
     <!-- Expert: Enabling compound file will use less files for the index, 
          using fewer file descriptors on the expense of performance decrease. 
          Default in Lucene is "true". Default in Solr is "false" (since 3.6) -->
@@ -148,7 +187,7 @@
          before flushing.
          If both ramBufferSizeMB and maxBufferedDocs is set, then
          Lucene will flush based on whichever limit is hit first.  -->
-    <!-- <ramBufferSizeMB>32</ramBufferSizeMB> -->
+    <!-- <ramBufferSizeMB>100</ramBufferSizeMB> -->
     <!-- <maxBufferedDocs>1000</maxBufferedDocs> -->
 
     <!-- Expert: Merge Policy 
@@ -205,7 +244,7 @@
          More details on the nuances of each LockFactory...
          http://wiki.apache.org/lucene-java/AvailableLockFactories
     -->
-    <!-- <lockType>native</lockType> -->
+    <lockType>${solr.lock.type:native}</lockType>
 
     <!-- Unlock On Startup
 
@@ -214,7 +253,7 @@
          processes to safely access a lucene index, and should be used
          with care. Default is "false".
 
-         This is not needed if lock type is 'none' or 'single'
+         This is not needed if lock type is 'single'
      -->
     <!--
     <unlockOnStartup>false</unlockOnStartup>
@@ -233,11 +272,8 @@
       -->
 
     <!-- Commit Deletion Policy
-
          Custom deletion policies can be specified here. The class must
          implement org.apache.lucene.index.IndexDeletionPolicy.
-
-         http://lucene.apache.org/java/3_5_0/api/core/org/apache/lucene/index/IndexDeletionPolicy.html
 
          The default Solr IndexDeletionPolicy implementation supports
          deleting index commit points on number of commits, age of
@@ -298,6 +334,16 @@
   <!-- The default high-performance update handler -->
   <updateHandler class="solr.DirectUpdateHandler2">
 
+    <!-- Enables a transaction log, used for real-time get, durability, and
+         and solr cloud replica recovery.  The log can grow as big as
+         uncommitted changes to the index, so use of a hard autoCommit
+         is recommended (see below).
+         "dir" - the target directory for transaction logs, defaults to the
+                solr data directory.  --> 
+    <updateLog>
+      <str name="dir">${solr.ulog.dir:}</str>
+    </updateLog>
+ 
     <!-- AutoCommit
 
          Perform a hard commit automatically under certain conditions.
@@ -310,11 +356,14 @@
                    commit before automatically triggering a new commit.
 
          maxTime - Maximum amount of time in ms that is allowed to pass
-                   since a document was added before automaticly
+                   since a document was added before automatically
                    triggering a new commit. 
          openSearcher - if false, the commit causes recent index changes
-         to be flushed to stable storage, but does not cause a new
-         searcher to be opened to make those changes visible.
+           to be flushed to stable storage, but does not cause a new
+           searcher to be opened to make those changes visible.
+
+         If the updateLog is enabled, then it's highly recommended to
+         have some sort of hard autoCommit to limit the log size.
       -->
      <autoCommit> 
        <maxTime>15000</maxTime> 
@@ -363,14 +412,6 @@
          <arr name="env"> <str>MYVAR=val1</str> </arr>
        </listener>
       -->
-
-    <!-- Enables a transaction log, currently used for real-time get.
-         "dir" - the target directory for transaction logs, defaults to the
-            solr data directory.  --> 
-    <updateLog>
-      <str name="dir">${solr.data.dir:}</str>
-    </updateLog>
-   
 
   </updateHandler>
   
@@ -631,7 +672,7 @@
        such as /select?qt=XXX
 
        handleSelect="true" will cause the SolrDispatchFilter to process
-       the request and dispatch the query to a handler specified by the
+       the request and dispatch the query to a handler specified by the 
        "qt" param, assuming "/select" isn't already registered.
 
        handleSelect="false" will cause the SolrDispatchFilter to
@@ -651,8 +692,13 @@
          enableRemoteStreaming - enables use of the stream.file
          and stream.url parameters for specifying remote streams.
 
-         multipartUploadLimitInKB - specifies the max size of
+         multipartUploadLimitInKB - specifies the max size (in KiB) of
          Multipart File Uploads that Solr will allow in a Request.
+         
+         formdataUploadLimitInKB - specifies the max size (in KiB) of
+         form data (application/x-www-form-urlencoded) sent via
+         POST. You can use POST to pass request parameters not
+         fitting into the URL.
          
          *** WARNING ***
          The settings below authorize Solr to fetch remote files, You
@@ -661,7 +707,8 @@
 
       --> 
     <requestParsers enableRemoteStreaming="true" 
-                    multipartUploadLimitInKB="2048000" />
+                    multipartUploadLimitInKB="2048000"
+                    formdataUploadLimitInKB="2048"/>
 
     <!-- HTTP Caching
 
@@ -732,7 +779,7 @@
        like so: http://host/app/[core/]select?qt=name  If no qt is
        given, then the requestHandler that declares default="true" will be
        used or the one named "standard".
-       
+
        If a Request Handler is declared with startup="lazy", then it will
        not be initialized until the first request that uses it.
 
@@ -1109,7 +1156,7 @@
 
        http://wiki.apache.org/solr/SolrReplication 
 
-       It is also neccessary for SolrCloud to function (in Cloud mode, the 
+       It is also necessary for SolrCloud to function (in Cloud mode, the
        replication handler is used to bulk transfer segments when nodes 
        are added or need to recover).
 
@@ -1118,7 +1165,7 @@
   <requestHandler name="/replication" class="solr.ReplicationHandler" > 
     <!--
        To enable simple master/slave replication, uncomment one of the 
-       sections below, depending on wether this solr instance should be 
+       sections below, depending on whether this solr instance should be
        the "master" or a "slave".  If this instance is a "slave" you will 
        also need to fill in the masterUrl to point to a real machine.
     -->
@@ -1189,7 +1236,7 @@
      -->
   <searchComponent name="spellcheck" class="solr.SpellCheckComponent">
 
-    <str name="queryAnalyzerFieldType">textSpell</str>
+    <str name="queryAnalyzerFieldType">text_general</str>
 
     <!-- Multiple "Spell Checkers" can be declared and used by this
          component
@@ -1198,7 +1245,7 @@
     <!-- a spellchecker built from a field of the main index -->
     <lst name="spellchecker">
       <str name="name">default</str>
-      <str name="field">name</str>
+      <str name="field">text</str>
       <str name="classname">solr.DirectSolrSpellChecker</str>
       <!-- the spellcheck distance measure used, the default is the internal levenshtein -->
       <str name="distanceMeasure">internal</str>
@@ -1332,7 +1379,7 @@
 
        http://wiki.apache.org/solr/ClusteringComponent
 
-       You'll need to set the solr.cluster.enabled system property
+       You'll need to set the solr.clustering.enabled system property
        when running solr to run with clustering enabled:
 
             java -Dsolr.clustering.enabled=true -jar start.jar
@@ -1684,6 +1731,7 @@
      <queryResponseWriter name="php" class="solr.PHPResponseWriter"/>
      <queryResponseWriter name="phps" class="solr.PHPSerializedResponseWriter"/>
      <queryResponseWriter name="csv" class="solr.CSVResponseWriter"/>
+     <queryResponseWriter name="schema.xml" class="solr.SchemaXmlResponseWriter"/>
     -->
 
   <queryResponseWriter name="json" class="solr.JSONResponseWriter">

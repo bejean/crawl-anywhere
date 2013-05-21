@@ -36,6 +36,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.eolya</groupId>
+			<artifactId>tika-wrapper</artifactId>
+			<version>0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.eolya</groupId>
 			<artifactId>utils</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<exclusions>
@@ -65,7 +70,7 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.5</version>
+			<version>1.6</version>
 		</dependency>
 		<dependency>
 			<groupId>net.htmlparser.jericho</groupId>
@@ -175,4 +180,17 @@
 			</exclusions>
 		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

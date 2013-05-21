@@ -16,4 +16,5 @@
 	<param name="proxy_username"></param>
 	<param name="proxy_password"></param>
 
+	<param name="crawler_user_agent">CaBot</param>
 </servlet>

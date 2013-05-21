@@ -73,7 +73,7 @@
 <param name="log_filename">log/crawler.log</param>
 <param name="log_filename_test">log/crawler_test.log</param>
 	
-<param name="country_include">en, fr, ca, ru, cn, pt, nl, it, es, al, af</param>
+<!--param name="country_include">en, fr, ca, ru, cn, pt, nl, it, es, al, af</param-->
 <param name="country_exclude"></param>
 
 <param name="ignore_url_fields">PHPSESSID,jsessionid</param>

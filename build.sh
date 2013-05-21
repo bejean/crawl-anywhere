@@ -144,7 +144,7 @@ mvn clean
 mvn package -Dmaven.test.skip=true
 cp target/crawlerws-0.0.1-SNAPSHOT.war $DISTRIB/install/crawler/tomcat/crawlerws-$VERSION.war
 #cp $DEV/install/bin/tomcat/crawlerws-jndi*.xml $DISTRIB/install/crawler/tomcat/.
-#cp config/crawlerws/crawlerws-default.xml $DISTRIB/install/crawler/tomcat/.
+cp config/crawlerws/crawlerws-default.xml $DISTRIB/install/crawler/tomcat/.
 #cp target/crawlerws-0.0.1-SNAPSHOT.war $DEV/install/bin/tomcat/crawlerws-$VERSION.war
 
 #=============================================

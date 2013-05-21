@@ -15,23 +15,18 @@ public class CrawlerUtils {
 	 * @return
 	 */	
 	public static boolean isAcceptedCountry(String country, List<String> countryInclude, List<String> countryExclude) {
-		if (country == null || "".equals(country))
-			return true;
+		if (country == null || "".equals(country)) return true;
 
 		country = country.toLowerCase();
 
 		if (countryInclude != null && countryInclude.size() > 0 && !"".equals(countryInclude.get(0))) {
-			if (countryInclude.contains(country))
-				return true;
+			if (countryInclude.contains(country)) return true;
 			return false;
 		}
-
 		if (countryExclude != null && countryExclude.size() > 0 && !"".equals(countryExclude.get(0))) {
-			if (countryExclude.contains(country))
-				return false;
+			if (countryExclude.contains(country)) return false;
 			return true;
 		}
-
 		return true;
 	}
 

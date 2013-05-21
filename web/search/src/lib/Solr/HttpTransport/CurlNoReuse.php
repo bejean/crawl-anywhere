@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2007-2011, Servigistics, Inc.
+ * Copyright (c) 2007-2012, Parametric Technology Corporation
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,13 +27,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @copyright Copyright 2007-2011 Servigistics, Inc. (http://servigistics.com)
+ * @copyright Copyright 2007-2012 Parametric Technology Corporation (http://ptc.com)
  * @license http://solr-php-client.googlecode.com/svn/trunk/COPYING New BSD
  * @version $Id: $
  *
  * @package Apache
  * @subpackage Solr
- * @author Timo Schmidt <timo.schmidt@aoemedia.de>, Donovan Jimenez <djimenez@conduit-it.com>
+ * @author Timo Schmidt <timo.schmidt@aoemedia.de>, Donovan Jimenez
  */
 
 // Require Apache_Solr_HttpTransport_Abstract
@@ -55,7 +55,27 @@ class Apache_Solr_HttpTransport_CurlNoReuse extends Apache_Solr_HttpTransport_Ab
 	 * SVN ID meta data for this class
 	 */
 	const SVN_ID = '$Id:$';
+	
+	private $_authString = false;
+	private $_proxy = '';
+	private $_proxyPort = '';
+	private $_proxyUsername = '';
+	private $_proxyPassword = '';
+	
+	public function setAuthenticationCredentials($username, $password)
+	{
+		// this is how curl wants it for the CURLOPT_USERPWD
+		$this->_authString = $username . ":" . $password;	
+	}
 
+	public function setProxy($proxy, $port, $username = '', $password = '')
+	{
+		$this->_proxy = $proxy;
+		$this->_proxyPort = $port;
+		$this->_proxyUsername = $username;
+		$this->_proxyPassword = $password;
+	}
+	
 	public function performGetRequest($url, $timeout = false)
 	{
 		// check the timeout value
@@ -84,6 +104,32 @@ class Apache_Solr_HttpTransport_CurlNoReuse extends Apache_Solr_HttpTransport_Ab
 			// set the timeout
 			CURLOPT_TIMEOUT => $timeout
 		));
+		
+		// set auth if appropriate
+		if ($this->_authString !== false)
+		{
+			curl_setopt_array($curl, array(
+				CURLOPT_USERPWD => $this->_authString,
+				CURLOPT_HTTPAUTH => CURLAUTH_BASIC		
+			));
+		}
+				
+		// set proxy
+		if ($this->_proxy != '' && $this->_proxyPort != '') 
+		{
+			curl_setopt_array($this->_curl, array(
+				CURLOPT_PROXY => $this->_proxy,
+				CURLOPT_PROXYPORT => $this->_proxyPort
+			));
+		
+			if ($this->_proxyUsername != '' && $this->_proxyPassword != '') 
+			{
+				curl_setopt_array($this->_curl, array(
+				CURLOPT_PROXYAUTH => CURLAUTH_BASIC,
+				CURLOPT_PROXYUSERPWD => "$this->_proxyUsername:$this->_proxyPassword"
+				));
+			}
+		}
 
 		// make the request
 		$responseBody = curl_exec($curl);
@@ -130,6 +176,32 @@ class Apache_Solr_HttpTransport_CurlNoReuse extends Apache_Solr_HttpTransport_Ab
 			CURLOPT_TIMEOUT => $timeout
 		));
 
+		// set auth if appropriate
+		if ($this->_authString !== false)
+		{
+			curl_setopt_array($curl, array(
+				CURLOPT_USERPWD => $this->_authString,
+				CURLOPT_HTTPAUTH => CURLAUTH_BASIC		
+			));
+		}
+		
+		// set proxy
+		if ($this->_proxy != '' && $this->_proxyPort != '') 
+		{
+			curl_setopt_array($this->_curl, array(
+				CURLOPT_PROXY => $this->_proxy,
+				CURLOPT_PROXYPORT => $this->_proxyPort
+			));
+		
+			if ($this->_proxyUsername != '' && $this->_proxyPassword != '') 
+			{
+				curl_setopt_array($this->_curl, array(
+				CURLOPT_PROXYAUTH => CURLAUTH_BASIC,
+				CURLOPT_PROXYUSERPWD => "$this->_proxyUsername:$this->_proxyPassword"
+				));
+			}
+		}
+		
 		// make the request
 		$responseBody = curl_exec($curl);
 
@@ -181,6 +253,32 @@ class Apache_Solr_HttpTransport_CurlNoReuse extends Apache_Solr_HttpTransport_Ab
 			CURLOPT_TIMEOUT => $timeout
 		));
 
+		// set auth if appropriate
+		if ($this->_authString !== false)
+		{
+			curl_setopt_array($curl, array(
+				CURLOPT_USERPWD => $this->_authString,
+				CURLOPT_HTTPAUTH => CURLAUTH_BASIC		
+			));
+		}
+		
+		// set proxy
+		if ($this->_proxy != '' && $this->_proxyPort != '') 
+		{
+			curl_setopt_array($this->_curl, array(
+				CURLOPT_PROXY => $this->_proxy,
+				CURLOPT_PROXYPORT => $this->_proxyPort
+			));
+		
+			if ($this->_proxyUsername != '' && $this->_proxyPassword != '') 
+			{
+				curl_setopt_array($this->_curl, array(
+				CURLOPT_PROXYAUTH => CURLAUTH_BASIC,
+				CURLOPT_PROXYUSERPWD => "$this->_proxyUsername:$this->_proxyPassword"
+				));
+			}
+		}
+		
 		// make the request
 		$responseBody = curl_exec($curl);
 

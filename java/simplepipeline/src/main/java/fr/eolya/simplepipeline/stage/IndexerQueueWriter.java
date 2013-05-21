@@ -158,13 +158,15 @@ public class IndexerQueueWriter extends Stage {
             
             urlBoosts = new ArrayList<UrlBoost>();
             
-            List<Element> urlsList = boostdoc.selectNodes("//urls");
+            @SuppressWarnings("unchecked")
+			List<Element> urlsList = boostdoc.selectNodes("//urls");
             Iterator<Element> urlsIter = urlsList.iterator();
             while (urlsIter.hasNext()) {
                 Element urls = (Element) urlsIter.next();
                 String boost = urls.attributeValue("boost");
                 String fields = urls.attributeValue("fields");
-                List<Element> urlList = urls.elements();
+                @SuppressWarnings("unchecked")
+				List<Element> urlList = urls.elements();
                 Iterator<Element> urlIter = urlList.iterator();
                 while (urlIter.hasNext()) {
                     Element url = (Element) urlIter.next();
@@ -217,8 +219,8 @@ public class IndexerQueueWriter extends Stage {
             action = "add";
         
         Element job = solrqueuedoc.addElement("doc");
-        job.setAttributeValue("action", action);		
-        job.setAttributeValue("target_type", targetType);        
+        job.addAttribute("action", action);		
+        job.addAttribute("target_type", targetType);        
         
         
         String targetName = doc.getElementAttribute("//job", "target_name");
@@ -226,7 +228,7 @@ public class IndexerQueueWriter extends Stage {
         //target_parameters="http://a/a"
         String targetUrl = doc.getElementAttribute("//job", "target_parameters");
         if (targetUrl!=null & !"".equals(targetUrl))
-            job.setAttributeValue("target_url", targetUrl);		
+            job.addAttribute("target_url", targetUrl);		
         
         
         UrlBoost urlBoost = null;
@@ -237,7 +239,7 @@ public class IndexerQueueWriter extends Stage {
                     urlBoost = getUrlBoost(e.getText());
                     if (urlBoost!=null && urlBoost.all) {
                         if (logger!=null && urlBoost!=null) logger.log("    SolrIndexerQueueWriter - apply doc boost : " + urlBoost.boost);
-                        job.setAttributeValue("boost", urlBoost.boost);                        
+                        job.addAttribute("boost", urlBoost.boost);                        
                     }
                 }
             }    
@@ -302,13 +304,16 @@ public class IndexerQueueWriter extends Stage {
                     boolean noData = true;
                     String sources[] = null;
                     String temp = mappingElement.attributeValue("source");
-                    if (temp!=null && !"".equals(temp)) {
-                        
+                	String targets[] = mappingElement.attributeValue("target").split(",");
+
+                	if (temp!=null && !"".equals(temp)) {
+                    	
                         if (temp.indexOf("(")!=-1 && temp.indexOf(")")!=-1) {
                             // regex
                             // <mapping source="meta_custom_(.*)"   target="1"  />
                             
-                            List<Element> fields = ((Element) document.selectSingleNode("job")).elements();                            
+                            @SuppressWarnings("unchecked")
+							List<Element> fields = ((Element) document.selectSingleNode("job")).elements();                            
                             for (int i=0;i<fields.size(); i++) {
                                 Element e = fields.get(i);
                                 String name = e.getName();
@@ -319,7 +324,7 @@ public class IndexerQueueWriter extends Stage {
                                         String values[] = new String[1];
                                         values[0] = value;
                                         
-                                        String targets[] = mappingElement.attributeValue("target").split(",");
+                                        //String targets[] = mappingElement.attributeValue("target").split(",");
                                         for (int j=0;j<targets.length; j++) {
                                             targets[j] = targets[j].replace("$", target).trim();
                                         }
@@ -331,7 +336,8 @@ public class IndexerQueueWriter extends Stage {
                             sources = temp.split(",");
                             if (sources.length==1) {
                                 String source = temp.trim();
-                                List<Element> fields = ((Element) document.selectSingleNode("job")).elements();                            
+                                @SuppressWarnings("unchecked")
+								List<Element> fields = ((Element) document.selectSingleNode("job")).elements();                            
                                 for (int i=0;i<fields.size(); i++) {
                                     
                                     Element e = fields.get(i);
@@ -344,7 +350,7 @@ public class IndexerQueueWriter extends Stage {
                                             String values[] = new String[1];
                                             values[0] = value;
                                             
-                                            String targets[] = mappingElement.attributeValue("target").split(",");
+                                            //String targets[] = mappingElement.attributeValue("target").split(",");
                                             //for (int j=0;j<targets.length; j++) {
                                             //    targets[j] = targets[j].replace("$", target).trim();
                                             //}
@@ -365,7 +371,7 @@ public class IndexerQueueWriter extends Stage {
                                     
                                     if (sources[i]!=null && !"".equals(sources[i])) noData = false;
                                 }
-                                String targets[] = mappingElement.attributeValue("target").split(",");
+                                //String targets[] = mappingElement.attributeValue("target").split(",");
                                 if (!noData) addElement(sources, targets, job, mappingElement, urlBoost);                                
                             }
                         }
@@ -378,7 +384,7 @@ public class IndexerQueueWriter extends Stage {
                             sources[i] = sources[i].trim();
                             if (sources[i]!=null && !"".equals(sources[i])) noData = false;
                         }
-                        String targets[] = mappingElement.attributeValue("target").split(",");
+                        //String targets[] = mappingElement.attributeValue("target").split(",");
                         if (!noData) addElement(sources, targets, job, mappingElement, urlBoost);
                     }
                 }
@@ -488,13 +494,16 @@ public class IndexerQueueWriter extends Stage {
             strOut = normalizevalue(strOut, normalization);
             
             for (int i=0; i<targets.length; i++) {
+            	
+            	targets[i] = String.format(targets[i], (Object[])sources);
+            	
                 targets[i] = targets[i].trim();
                 if ("".equals(split)) {
                     Element e = job.addElement(targets[i]);
                     e.setText(strOut);
                     if (urlBoost!=null && urlBoost.fields.contains(targets[i])) {
                         if (logger!=null && urlBoost!=null) logger.log("    SolrIndexerQueueWriter - apply field boost : " + targets[i] + " -> " + urlBoost.boost);
-                        e.setAttributeValue("boost", urlBoost.boost);                        
+                        e.addAttribute("boost", urlBoost.boost);                        
                     }
                 }
                 else {
@@ -504,7 +513,7 @@ public class IndexerQueueWriter extends Stage {
                         e.setText(aOut[j].trim());
                         if (urlBoost!=null && urlBoost.fields.contains(targets[i])) {
                             if (logger!=null && urlBoost!=null) logger.log("    SolrIndexerQueueWriter - apply field boost : " + targets[i] + " -> " + urlBoost.boost);
-                            e.setAttributeValue("boost", urlBoost.boost);                        
+                            e.addAttribute("boost", urlBoost.boost);                        
                         }
                     }
                 }
@@ -520,7 +529,7 @@ public class IndexerQueueWriter extends Stage {
             res = res.toUpperCase();
         if ("date".equals(normalization.toLowerCase())) {
             res = null;
-            Pattern p = Pattern.compile("[0-9]{4}\\-[0-9]{2}\\-[0-9]{2}\\s[0-9]{2}:[0-9]{2}:[0-9]{2}.*");
+            Pattern p = Pattern.compile("[0-9]{4}\\-[0-9]{2}\\-[0-9]{2}(\\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}.*");
             Matcher m = p.matcher(value);
             if (m.find()) res = value;
 
@@ -539,17 +548,15 @@ public class IndexerQueueWriter extends Stage {
     }
     
     private boolean isIn(String value, String valuesList) {
-        if (value == null || "".equals(value))
-            return false;
-        
-        value = value.toLowerCase();
+        if (value == null || "".equals(value)) return false;
         
         if (valuesList != null && !"".equals(valuesList)) {
+            value = value.toLowerCase();
+
             // si value est dans valuesList, on retourne true
             String[] aValue = valuesList.split(",");
             for (int i = 0; i < aValue.length; i++) {
-                if (value.startsWith(aValue[i].trim()))
-                    return true;
+                if (value.startsWith(aValue[i].trim())) return true;
             }
             return false;
         }

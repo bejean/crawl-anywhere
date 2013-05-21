@@ -1,0 +1,6 @@
+<Context docBase="c:\cygwin\opt\crawler\webapps\crawlerws\crawlerws.war" debug="0" crossContext="true" >
+    <Environment
+        name="home"
+        type="java.lang.String"
+        value="c:\cygwin\opt\crawler" override="true" />
+</Context>

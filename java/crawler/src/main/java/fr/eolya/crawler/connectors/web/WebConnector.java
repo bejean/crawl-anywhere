@@ -7,10 +7,13 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +36,7 @@ import crawlercommons.sitemaps.SiteMapURL;
 import crawlercommons.sitemaps.UnknownFormatException;
 
 import fr.eolya.crawler.ICrawlerController;
+import fr.eolya.crawler.cache.DocumentCacheItem;
 import fr.eolya.crawler.connectors.Connector;
 import fr.eolya.crawler.connectors.IConnector;
 import fr.eolya.crawler.connectors.ISource;
@@ -40,7 +44,7 @@ import fr.eolya.crawler.connectors.web.robots.Robots;
 import fr.eolya.crawler.database.ICrawlerDB;
 import fr.eolya.crawler.queue.ISourceItemsQueue;
 import fr.eolya.crawler.queue.QueueFactory;
-import fr.eolya.extraction.MultiFormatTextExtractor;
+import fr.eolya.extraction.tika.TikaWrapper;
 import fr.eolya.utils.CrawlerUtilsCommon;
 import fr.eolya.utils.GeoLocalisation;
 import fr.eolya.utils.Logger;
@@ -165,6 +169,19 @@ public class WebConnector extends Connector implements IConnector {
 			if (scriptName==null || "".equals(scriptName))
 				scriptName = ScriptSnippet.getScriptFilename (scriptPath, startingUrls.getUrlHome());
 		}
+		
+        //if (src.isDeeper()) {
+        //	// TODO: V4
+        //}
+        
+        //if (src.isRescan() || src.isCheckForDeletion()) {
+        //	// TODO: V4
+        //}
+
+        if (src.isReset()) { // || src.isClear()) {
+        	 dh.resetSource(String.valueOf(src.getId()));
+        }
+		
 		return true;
 	}
 	
@@ -318,7 +335,15 @@ public class WebConnector extends Connector implements IConnector {
 							params.put("contentSize", Integer.toString(urlLoader.getContentLength()));
 
 						if (!HttpLoader.isRss(contentType, null)) {
-							params.put("firstCrawlDate", queue.getCreated(itemData));
+                            SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+							String firstCrawlDate = queue.getCreated(itemData);
+							Date d = null;
+                            if ("".equals(firstCrawlDate)) {
+                            	d = new Date();
+                            } else {
+                            	d = new Date(Long.parseLong(firstCrawlDate));
+                            }	
+                            params.put("firstCrawlDate", dateFormat.format(d.getTime()));
 							
 							if (!HttpLoader.isHtmlOrText(contentType)) {
 								if ((isIndexedUrl(pageURL.toExternalForm(), src.getFilteringRules())) && (!startingUrls.isNotIndexableStartingUrl(pageURL.toExternalForm()))){
@@ -334,9 +359,15 @@ public class WebConnector extends Connector implements IConnector {
 										if (!src.isTest() && write) {
 											String sendUrl = getUrlWithoutSessionIdFields(pageURL.toExternalForm());
 											sendUrl = getUrlWithoutIgnoredFields(sendUrl);
-											dh.sendDoc(new Integer(currentUrlItem.getSourceId()).toString(), sendUrl, new Integer(src.getAccountId()).toString(), urlLoader.getStream(), params, metas, src.getExtra(), this);
-											//if (cache!=null) cache.sendToCache(new Integer(currentUrlItem.getSourceId()).toString(), sendUrl, new Integer(src.getAccountId()).toString(), urlLoader.getStream(), params, metas, src.getExtra());
-											if (docCache!=null) docCache.put(sendUrl, urlLoader.getStream(), 0, params, metas, src.getExtra());											
+											if (docCache==null) {
+												dh.sendDoc(new Integer(currentUrlItem.getSourceId()).toString(), sendUrl, new Integer(src.getAccountId()).toString(), urlLoader.getStream(), params, metas, src.getExtra(), this);												
+											} else {
+												docCache.put(sendUrl, urlLoader.getStream(), 0, params, metas, src.getExtra());	
+												DocumentCacheItem cacheItem = docCache.get(sendUrl);
+												dh.sendDoc(new Integer(currentUrlItem.getSourceId()).toString(), sendUrl, new Integer(src.getAccountId()).toString(), cacheItem.streamData, params, metas, src.getExtra(), this);																								
+											}
+											//dh.sendDoc(new Integer(currentUrlItem.getSourceId()).toString(), sendUrl, new Integer(src.getAccountId()).toString(), urlLoader.getStream(), params, metas, src.getExtra(), this);
+											//if (docCache!=null) docCache.put(sendUrl, urlLoader.getStream(), 0, params, metas, src.getExtra());											
 										}
 									} catch(Exception e) {
 										e.printStackTrace();
@@ -359,10 +390,16 @@ public class WebConnector extends Connector implements IConnector {
 									params.put("originalContentType", "application/x-shockwave-flash");
 									contentType = "text/html; charset=utf-8";
 
-									MultiFormatTextExtractor extractor = new MultiFormatTextExtractor();
 									String swfToHtmlPath = Utils.getValidPropertyPath(config.getProperty("/crawler/param[@name='swfToHtmlPath']", ""), null, "HOME");
-									extractor.setSwfToHtmlPath(swfToHtmlPath);
-									rawPage = extractor.swfInputStreamToHtml(urlLoader.getStream());
+
+									TikaWrapper tikaWrapper = new TikaWrapper(TikaWrapper.OUTPUT_FORMAT_HTML, TikaWrapper.CONTENT_TYPE_SWF);
+									tikaWrapper.setSwfToHtmlPath(swfToHtmlPath);
+									tikaWrapper.process(urlLoader.getStream());
+									rawPage = tikaWrapper.getText();
+									
+									//MultiFormatTextExtractor extractor = new MultiFormatTextExtractor();
+									//extractor.setSwfToHtmlPath(swfToHtmlPath);
+									//rawPage = extractor.swfInputStreamToHtml(urlLoader.getStream());
 
 									if (urlLoader.getContentLength()==0)
 										params.put("contentSize", Integer.toString(rawPage.length()));
@@ -442,7 +479,6 @@ public class WebConnector extends Connector implements IConnector {
 													String sendUrl = getUrlWithoutSessionIdFields(pageURL.toExternalForm());
 													sendUrl = getUrlWithoutIgnoredFields(sendUrl);
 													dh.sendDoc(new Integer(currentUrlItem.getSourceId()).toString(), sendUrl, new Integer(src.getAccountId()).toString(), rawPage, params, metas, src.getExtra(), this);
-													//if (cache!= null) cache.sendToCache(new Integer(currentUrlItem.getSourceId()).toString(), sendUrl, new Integer(src.getAccountId()).toString(), rawPage, params, metas, src.getExtra());
 													if (docCache!=null) {
 														InputStream stream = new ByteArrayInputStream(rawPage.getBytes("UTF-8"));
 														docCache.put(sendUrl, stream, 0, params, metas, src.getExtra());											
@@ -499,7 +535,6 @@ public class WebConnector extends Connector implements IConnector {
 										String sendUrl = getUrlWithoutSessionIdFields(pageURL.toExternalForm());
 										sendUrl = getUrlWithoutIgnoredFields(sendUrl);
 										dh.sendDoc(new Integer(currentUrlItem.getSourceId()).toString(), sendUrl, new Integer(src.getAccountId()).toString(), xmlInput, params, metas, src.getExtra(), this);
-										//if (cache!=null) cache.sendToCache(new Integer(currentUrlItem.getSourceId()).toString(), sendUrl, new Integer(src.getAccountId()).toString(), xmlInput, params, metas, src.getExtra());
 										if (docCache!=null) {
 											xmlInput = new ByteArrayInputStream(rawPage.getBytes("UTF-8"));
 											docCache.put(sendUrl, xmlInput, 0, params, metas, src.getExtra());											

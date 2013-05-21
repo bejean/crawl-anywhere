@@ -24,7 +24,8 @@ import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session;
 import com.dropbox.client2.session.WebAuthSession;
 
-import fr.eolya.extraction.MultiFormatTextExtractor;
+import fr.eolya.extraction.tika.TikaWrapper;
+//import fr.eolya.extraction.MultiFormatTextExtractor;
 import fr.eolya.utils.*;
 import fr.eolya.utils.http.HttpLoader;
 import fr.eolya.utils.http.HttpStream;
@@ -204,7 +205,7 @@ public class CrawlerWS extends HttpServlet {
         }
         
         try {
-            MultiFormatTextExtractor extractor = new MultiFormatTextExtractor();
+            //MultiFormatTextExtractor extractor = new MultiFormatTextExtractor();
         	HttpLoader urlLoader;
 			try {
 				urlLoader = new HttpLoader();
@@ -216,33 +217,56 @@ public class CrawlerWS extends HttpServlet {
             if (urlLoader.open(url.toExternalForm()) == HttpLoader.LOAD_SUCCESS) {
                 String ret = "<?xml version=\"1.0\" encoding=\"utf-8\"?><result>";
                 
-                String contentType = urlLoader.getContentType();
-                String contentEncoding = urlLoader.getContentEncoding();
+                //String contentType = urlLoader.getContentType();
+                //String contentEncoding = urlLoader.getContentEncoding();
                 
-                HttpStream ws = new HttpStream(urlLoader.getStream(), "", contentType, contentEncoding);
-                String data = ws.getString();
-                ws.clear();
+                //HttpStream ws = new HttpStream(urlLoader.getStream(), "", contentType, contentEncoding);
+                //String data = ws.getString();
+                //ws.clear();
                 
-                String rawPage = extractor.htmlPageToText(data, page, "");
-                String title = extractor.getTitle();
-                
+                //String rawPage = extractor.htmlPageToText(data, page, "");
+                //String title = extractor.getTitle();
+				TikaWrapper tikaWrapper = new TikaWrapper(TikaWrapper.OUTPUT_FORMAT_HTML);
+				tikaWrapper.process(urlLoader.getStream());
+				String rawPage = tikaWrapper.getText();
+				String title = tikaWrapper.getMetaTitle();
+
                 ret += "<page_0><![CDATA[" + rawPage + "]]>" + "</page_0>";
                 ret += "<title_0><![CDATA[" + title + "]]>" + "</title_0>";
                 
-                rawPage = extractor.htmlPageToText(data, page, "boilerpipe_article");
-                title = extractor.getTitle();
+                //rawPage = extractor.htmlPageToText(data, page, "boilerpipe_article");
+                //title = extractor.getTitle();
+				tikaWrapper = new TikaWrapper(TikaWrapper.OUTPUT_FORMAT_TEXT_MAIN_BOILERPIPE_ARTICLE, TikaWrapper.CONTENT_TYPE_HTML);
+				tikaWrapper.process(urlLoader.getStream());
+				rawPage = tikaWrapper.getText();
+				title = tikaWrapper.getMetaTitle();
                 ret += "<page_1><![CDATA[" + rawPage + "]]>" + "</page_1>";
                 ret += "<title_1><![CDATA[" + title + "]]>" + "</title_1>";
-                rawPage = extractor.htmlPageToText(data, page, "boilerpipe_default");
-                title = extractor.getTitle();
+ 
+                //rawPage = extractor.htmlPageToText(data, page, "boilerpipe_default");
+                //title = extractor.getTitle();
+				tikaWrapper = new TikaWrapper(TikaWrapper.OUTPUT_FORMAT_TEXT_MAIN_BOILERPIPE_DEFAULT, TikaWrapper.CONTENT_TYPE_HTML);
+				tikaWrapper.process(urlLoader.getStream());
+				rawPage = tikaWrapper.getText();
+				title = tikaWrapper.getMetaTitle();
                 ret += "<page_2><![CDATA[" + rawPage + "]]>" + "</page_2>";
                 ret += "<title_2><![CDATA[" + title + "]]>" + "</title_2>";
-                rawPage = extractor.htmlPageToText(data, page, "boilerpipe_canola");
-                title = extractor.getTitle();
+ 
+                //rawPage = extractor.htmlPageToText(data, page, "boilerpipe_canola");
+                //title = extractor.getTitle();
+				tikaWrapper = new TikaWrapper(TikaWrapper.OUTPUT_FORMAT_TEXT_MAIN_BOILERPIPE_CANOLA, TikaWrapper.CONTENT_TYPE_HTML);
+				tikaWrapper.process(urlLoader.getStream());
+				rawPage = tikaWrapper.getText();
+				title = tikaWrapper.getMetaTitle();
                 ret += "<page_3><![CDATA[" + rawPage + "]]>" + "</page_3>";
                 ret += "<title_3><![CDATA[" + title + "]]>" + "</title_3>";
-                rawPage = extractor.htmlPageToText(data, page, "snacktory");
-                title = extractor.getTitle();
+
+                //rawPage = extractor.htmlPageToText(data, page, "snacktory");
+                //title = extractor.getTitle();
+				tikaWrapper = new TikaWrapper(TikaWrapper.OUTPUT_FORMAT_TEXT_MAIN_SNACKTORY, TikaWrapper.CONTENT_TYPE_HTML);
+				tikaWrapper.process(urlLoader.getStream());
+				rawPage = tikaWrapper.getText();
+				title = tikaWrapper.getMetaTitle();
                 ret += "<page_4><![CDATA[" + rawPage + "]]>" + "</page_4>";
                 ret += "<title_4><![CDATA[" + title + "]]>" + "</title_4>";
                 

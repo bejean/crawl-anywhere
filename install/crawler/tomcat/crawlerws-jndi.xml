@@ -1,0 +1,6 @@
+<Context docBase="/opt/crawler/webapps/crawlerws/crawlerws.war" debug="0" crossContext="true" >
+    <Environment
+        name="home"
+        type="java.lang.String"
+        value="/opt/crawler" override="true" />
+</Context>

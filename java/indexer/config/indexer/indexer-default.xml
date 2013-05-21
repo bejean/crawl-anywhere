@@ -11,10 +11,6 @@
 	<param name="logfilename">log/indexer.log</param>
 	<param name="queuepath">queue_solr</param>
 	<param name="queuefilepattern">^j[.].*[.]xml$</param>
-	<param name="onsuccessmoveto"></param>
+	<!--param name="onsuccessmoveto">queue_solr/_success</param-->
 	<param name="onerrormoveto">queue_solr/_error</param>
 </indexer>	
-
-
-
-

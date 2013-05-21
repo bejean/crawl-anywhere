@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2007-2011, Servigistics, Inc.
+ * Copyright (c) 2007-2012, Parametric Technology Corporation
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,13 +27,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @copyright Copyright 2007-2011 Servigistics, Inc. (http://servigistics.com)
+ * @copyright Copyright 2007-2012 Parametric Technology Corporation (http://ptc.com)
  * @license http://solr-php-client.googlecode.com/svn/trunk/COPYING New BSD
  * @version $Id: $
  *
  * @package Apache
  * @subpackage Solr
- * @author Timo Schmidt <timo.schmidt@aoemedia.de>, Donovan Jimenez <djimenez@conduit-it.com>
+ * @author Timo Schmidt <timo.schmidt@aoemedia.de>, Donovan Jimenez
  */
 
 // require Apache_Solr_HttpTransport_Response
@@ -59,7 +59,29 @@ interface Apache_Solr_HttpTransport_Interface
 	 * @param float $timeout
 	 */
 	public function setDefaultTimeout($timeout);
-		
+	
+	/**
+	 * Set authentication credentials to pass along with the requests.
+	 * 
+	 * These will be used to perform HTTP Basic authentication.
+	 * 
+	 * @param string $username
+	 * @param string $password
+	 */
+	public function setAuthenticationCredentials($username, $password);
+	
+	/**
+	 * Set proxy.
+	 * 
+	 * These will be used to perform HTTP connection througt proxy.
+	 * 
+	 * @param string $proxy
+	 * @param string $port
+	 * @param string $username
+	 * @param string $password
+	 */
+	public function setProxy($proxy, $port, $username = '', $password = '');
+	
 	/**
 	 * Perform a GET HTTP operation with an optional timeout and return the response
 	 * contents, use getLastResponseHeaders to retrieve HTTP headers

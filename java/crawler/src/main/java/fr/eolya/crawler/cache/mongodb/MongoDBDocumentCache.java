@@ -66,7 +66,7 @@ public class MongoDBDocumentCache implements IDocumentCache {
 
 		for (Map.Entry<String, String> item : params.entrySet()) {
 			String key = item.getKey();
-			xml_params_items.addElement(key).addText(item.getValue());
+			if (item.getValue()!=null) xml_params_items.addElement(key).addText(item.getValue());
 		}
 		doc.put("item_params", xml_params.asXML());
 
@@ -79,14 +79,14 @@ public class MongoDBDocumentCache implements IDocumentCache {
 			if (item.getKey().startsWith("meta_")) {
 				key = key.replace(':', '_').replace('-', '_').replace('.', '_').replace('/', '_');
 			}
-			xml_metas_items.addElement(key).addText(item.getValue());
+			if (item.getValue()!=null) xml_metas_items.addElement(key).addText(item.getValue());
 		}	
 		doc.put("item_metas", xml_metas.asXML());
 
 		if (dataStream!=null) {
 			String contentBase64 = "";
 			try {
-				dataStream.reset();
+				//dataStream.reset();
 				contentBase64 = Base64.inputStreamToStringBase64(dataStream);
 				doc.put("content_base64", contentBase64);
 
@@ -111,6 +111,7 @@ public class MongoDBDocumentCache implements IDocumentCache {
 	public DocumentCacheItem get(String itemId) {
 		if (coll == null) return null;
 		BasicDBObject docsearch = new BasicDBObject();
+		docsearch.put("item_id", itemId);
 		BasicDBObject doc = coll.get(docsearch);
 		return doc2DocumentCacheItem(doc);
 	}

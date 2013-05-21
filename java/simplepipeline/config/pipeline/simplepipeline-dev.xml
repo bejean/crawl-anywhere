@@ -16,17 +16,7 @@
 			<param name="contentTypeElement">item_contenttype</param>
 			<param name="acceptedContentType">application/x-shockwave-flash,text/html,text/plain,application/pdf,application/xhtml+xml,application/msword,application/rtf,text/rtf,application/vnd.ms-excel,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</param>
  		</stage>
- 		<!--
- 		<stage classname="fr.eolya.simplepipeline.stage.ContentAsFileQueueWriter">
- 			<param name="onaction">add</param>
- 			<param name="source">content</param>
- 			<param name="contenttype">item_contenttype</param>
- 			<param name="queuedir">queue_files/{//item_id}</param>
- 			<param name="acceptedContentType">application/pdf,application/msword,application/xhtml+xml,application/xml,text/html,text/xml</param>
- 			<param name="tempfilenameprefix">t.</param>
- 		</stage>
- 		-->
- 		<stage classname="fr.eolya.simplepipeline.stage.FieldMapping">
+		<stage classname="fr.eolya.simplepipeline.stage.FieldMapping">
 			<param name="onaction">add</param>
 			<param name="source">item_contenttype</param>
 			<param name="sourcecapture">^([a-zA-Z_\/\-\.\+]*).*</param>
@@ -131,6 +121,13 @@
 			<param name="queuedir">queue_solr_2</param>
 			<param name="tempfilenameprefix">t.</param>
 			<param name="filenameprefix">j.</param>
+		</stage>
+		<stage classname="fr.eolya.simplepipeline.stage.ContentAsFileQueueWriter">
+ 			<param name="source">content</param>
+ 			<param name="contenttype">item_contenttype</param>
+			<param name="queuedir">queue_file</param>
+			<param name="tempfilenameprefix">t.</param>
+			<param name="acceptedContentType">*</param>
 		</stage>
 	</stages>
 </pipeline>

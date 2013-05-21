@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2007-2011, Servigistics, Inc.
+ * Copyright (c) 2007-2012, Parametric Technology Corporation
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,13 +27,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @copyright Copyright 2007-2011 Servigistics, Inc. (http://servigistics.com)
+ * @copyright Copyright 2007-2012 Parametric Technology Corporation (http://ptc.com)
  * @license http://solr-php-client.googlecode.com/svn/trunk/COPYING New BSD
  * @version $Id: $
  *
  * @package Apache
  * @subpackage Solr
- * @author Donovan Jimenez <djimenez@conduit-it.com>
+ * @author Donovan Jimenez
  */
 
 // Require Apache_Solr_HttpTransport_Abstract
@@ -62,6 +62,15 @@ class Apache_Solr_HttpTransport_FileGetContents extends Apache_Solr_HttpTranspor
 	private $_getContext, $_headContext, $_postContext;
 	
 	/**
+	 * For POST operations, we're already using the Header context value for
+	 * specifying the content type too, so we have to keep our computed
+	 * authorization header around
+	 * 
+	 * @var string
+	 */
+	private $_authHeader = "";
+	
+	/**
 	 * Initializes our reuseable get and post stream contexts
 	 */
 	public function __construct()
@@ -70,7 +79,40 @@ class Apache_Solr_HttpTransport_FileGetContents extends Apache_Solr_HttpTranspor
 		$this->_headContext = stream_context_create();
 		$this->_postContext = stream_context_create();
 	}
+	
+	public function setAuthenticationCredentials($username, $password)
+	{
+		// compute the Authorization header
+		$this->_authHeader = "Authorization: Basic " . base64_encode($username . ":" . $password);
+		
+		// set it now for get and head contexts
+		stream_context_set_option($this->_getContext, 'http', 'header', $this->_authHeader);
+		stream_context_set_option($this->_headContext, 'http', 'header', $this->_authHeader);
+		
+		// for post, it'll be set each time, so add an \r\n so it can be concatenated
+		// with the Content-Type
+		$this->_authHeader .= "\r\n";
+	}
 
+	public function setProxy($proxy, $port, $username = '', $password = '') 
+	{
+		$proxy = "tcp://$proxy:$port";
+
+		// set it now for get and head contexts
+		stream_context_set_option($this->_getContext, 'http', 'proxy', $proxy);
+		stream_context_set_option($this->_headContext, 'http', 'proxy', $proxy);
+		
+		if ($username != '' && $password != '') 
+		{
+			$authProxy = base64_encode("$username:$password");
+			$proxyAutorization = "Proxy-Authorization: Basic $authProxy";
+			
+			// set it now for get and head contexts
+			stream_context_set_option($this->_getContext, 'http', 'header', $proxyAutorization);
+			stream_context_set_option($this->_headContext, 'http', 'header', $proxyAutorization);
+		}
+	}
+	
 	public function performGetRequest($url, $timeout = false)
 	{
 		// set the timeout if specified
@@ -87,7 +129,7 @@ class Apache_Solr_HttpTransport_FileGetContents extends Apache_Solr_HttpTranspor
 			// use the default timeout pulled from default_socket_timeout otherwise
 			stream_context_set_option($this->_getContext, 'http', 'timeout', $this->getDefaultTimeout());
 		}
-
+		
 		// $http_response_headers will be updated by the call to file_get_contents later
 		// see http://us.php.net/manual/en/wrappers.http.php for documentation
 		// Unfortunately, it will still create a notice in analyzers if we don't set it here
@@ -136,8 +178,8 @@ class Apache_Solr_HttpTransport_FileGetContents extends Apache_Solr_HttpTranspor
 					// set HTTP method
 					'method' => 'POST',
 
-					// Add our posted content type
-					'header' => "Content-Type: $contentType",
+					// Add our posted content type (and auth header - see setAuthentication)
+					'header' => "{$this->_authHeader}Content-Type: {$contentType}",
 
 					// the posted content
 					'content' => $rawPost,

@@ -57,7 +57,7 @@ public class MongoDBCrawlerDB implements ICrawlerDB {
 		// TODO : should work on a specific account or all account of an engine if either engine_id or account_id are specified ???
 
 		MongoDBCollection coll = new MongoDBCollection(db,"sources");
-		String query = String.format("{\"$or\": [{\"crawl_process_status\": \"1\"}, {\"_poped\": true}]}");	
+		String query = String.format("{\"$or\": [{\"crawl_process_status\": \"1\"}, {\"crawl_process_status\": \"5\"}, {\"_poped\": true}]}");	
 
 		BasicDBObject docsearch = MongoDBHelper.JSON2BasicDBObject(query);
 

@@ -54,46 +54,51 @@ cp -r $DEV/scripts $DISTRIB/.
 mkdir $DISTRIB/bin
 mkdir $DISTRIB/lib
 
-# utils
-cd $DEV/java/utils
+# all
+cd $DEV/java
 mvn clean
 mvn package -Dmaven.test.skip=true
+
+# utils
+cd $DEV/java/utils
+#mvn clean
+#mvn package -Dmaven.test.skip=true
 rm -rf $DEV/java/utils/target/dependency
-mvn dependency:copy-dependencies
+#mvn dependency:copy-dependencies
 cp target/utils-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-utils-$VERSION.jar
 
 # crawler
 cd $DEV/java/crawler
-mvn clean
-mvn package -Dmaven.test.skip=true
+#mvn clean
+#mvn package -Dmaven.test.skip=true
 rm -rf $DEV/java/crawler/target/dependency
-mvn dependency:copy-dependencies
+#mvn dependency:copy-dependencies
 cp target/crawler-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-crawler-$VERSION.jar
 
 # simplepipeline
 cd $DEV/java/simplepipeline
-mvn clean
-mvn package -Dmaven.test.skip=true
+#mvn clean
+#mvn package -Dmaven.test.skip=true
 rm -rf $DEV/java/simplepipeline/dependency
-mvn dependency:copy-dependencies
+#mvn dependency:copy-dependencies
 cp target/pipeline-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-pipeline-$VERSION.jar
  
 # indexer
 cd $DEV/java/indexer
-mvn clean
-mvn package -Dmaven.test.skip=true
+#mvn clean
+#mvn package -Dmaven.test.skip=true
 rm -rf $DEV/java/indexer/dependency
-mvn dependency:copy-dependencies
+#mvn dependency:copy-dependencies
 cp target/indexer-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-indexer-$VERSION.jar
 
 ## solr
 cd $DEV/java/solr
-mvn clean
-mvn package -Dmaven.test.skip=true
+#mvn clean
+#mvn package -Dmaven.test.skip=true
 rm -rf $DEV/java/solr/target/dependency
-mvn dependency:copy-dependencies
-rm target/dependency/*lucene*
-rm target/dependency/*solr*
+#mvn dependency:copy-dependencies
+#rm target/dependency/*lucene*
+#rm target/dependency/*solr*
 
 mkdir $DISTRIB/install/solr/solr430/lib
 cp target/solr-0.0.1-SNAPSHOT.jar $DISTRIB/install/solr/solr430/lib/eolya-solr4.jar
@@ -140,8 +145,8 @@ cp target/dependency/*.jar $DISTRIB/install/solr/solr430/lib/.
 #=============================================
 mkdir -p $DISTRIB/install/crawler/tomcat
 cd $DEV/java/crawlerws
-mvn clean
-mvn package -Dmaven.test.skip=true
+#mvn clean
+#mvn package -Dmaven.test.skip=true
 cp target/crawlerws-0.0.1-SNAPSHOT.war $DISTRIB/install/crawler/tomcat/crawlerws-$VERSION.war
 #cp $DEV/install/bin/tomcat/crawlerws-jndi*.xml $DISTRIB/install/crawler/tomcat/.
 cp config/crawlerws/crawlerws-default.xml $DISTRIB/install/crawler/tomcat/.
@@ -150,6 +155,11 @@ cp config/crawlerws/crawlerws-default.xml $DISTRIB/install/crawler/tomcat/.
 #=============================================
 # lib
 #=============================================
+
+cd $DEV/java
+mvn install:install-file -DgroupId=fr.eolya -DartifactId=utils -Dversion=0.0.1-SNAPSHOT -Dpackaging=jar -Dfile=utils/target/utils-0.0.1-SNAPSHOT.jar
+mvn dependency:copy-dependencies
+
 cp -r $DEV/java/crawler/target/dependency/* $DISTRIB/lib/.
 cp -r $DEV/java/simplepipeline/target/dependency/* $DISTRIB/lib/.
 cp -r $DEV/java/indexer/target/dependency/* $DISTRIB/lib/.

@@ -1,0 +1,19 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>fr.eolya</groupId>
+	<artifactId>crawl-anywhere</artifactId>
+	<packaging>pom</packaging>
+	<version>4.0.0</version>
+	<name>Craw-Anywhere</name>
+	<modules>
+		<module>utils</module>
+		<module>crawler</module>
+		<module>simplepipeline</module>
+		<module>indexer</module>
+		<module>crawlerws</module>
+		<module>solr</module>
+	</modules>
+</project>

@@ -28,7 +28,7 @@ Build distribution
 
 Pre-requisites : 
 
-* Maven 2.0 or > 
+* Maven 2.2.1 or > 
 * Oracle Java 6 or >
 
 Steps :

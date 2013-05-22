@@ -69,3 +69,6 @@ web/crawler/src/config/preprod
 web/crawler/src/config/prod
 web/search/src/pub/themes/taligentia
 web/search/src/pub/themes/amnesty
+java/indexer/config/indexer/indexer-dev.xml
+java/indexer/config/indexer/indexer-default-350.xml
+java/indexer/config/indexer/indexer-default-400.xml

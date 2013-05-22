@@ -72,3 +72,10 @@ web/search/src/pub/themes/amnesty
 java/indexer/config/indexer/indexer-dev.xml
 java/indexer/config/indexer/indexer-default-350.xml
 java/indexer/config/indexer/indexer-default-400.xml
+java/simplepipeline/config/pipeline/solrboost-dev.xml
+java/simplepipeline/config/pipeline/solrmapping-dev.xml
+java/simplepipeline/config/pipeline/esmapping-dev.xml
+java/simplepipeline/config/pipeline/simplepipeline-dev.xml
+web/crawler/src/config/config-dev.ini
+web/search/src/config/config-dev.ini
+java/solr/config/multilingual.xml

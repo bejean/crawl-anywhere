@@ -26,7 +26,7 @@ A web crawler is a program that discovers and read all HTML pages or documents (
 Support
 -------
 
-* For a reproducible bugs, use the Github issues features : https://github.com/bejean/crawl-anywhere/issues?state=open
+* For a reproducible bug, use the Github issues features : https://github.com/bejean/crawl-anywhere/issues?state=open
 
 * For questions or suggestions, use the Google forum : https://groups.google.com/forum/#!forum/crawl-anywhere
 

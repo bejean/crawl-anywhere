@@ -27,7 +27,7 @@ if ($solr->connect($theme->getSolrHost(), $theme->getSolrPort(), $theme->getSolr
 		
 	$queryField = getQueryField($search_multilingual, $search_language_code);
 	
-	$response = $solr->query($crit, $queryField, $querylang, '', 0, 0, 100, $fqitms, $word_variations, $filter_lang, $filter_country, $filter_mimetype, $filter_source, $filter_collection, $filter_tag, '', '', '', '', true, false);
+	$response = $solr->query($crit, $queryField, $querylang, '', 0, 0, 100, $fqitms, $word_variations, $filter_lang, $filter_country, $filter_mimetype, $filter_source, $filter_collection, $filter_tag, '', '', '', '', '', true, false);
 	if ( $response->getHttpStatus() == 200 ) {
 		//print_r( $response->getRawResponse() );
 		

@@ -336,7 +336,7 @@ public class WebConnector extends Connector implements IConnector {
 
 						if (!HttpLoader.isRss(contentType, null)) {
                             SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-							String firstCrawlDate = queue.getCreated(itemData);
+							String firstCrawlDate = StringUtils.trimToEmpty(queue.getCreated(itemData));
 							Date d = null;
                             if ("".equals(firstCrawlDate)) {
                             	d = new Date();

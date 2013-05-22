@@ -23,6 +23,14 @@ Project home page : http://www.crawl-anywhere.com/
 A web crawler is a program that discovers and read all HTML pages or documents (HTML, PDF, Office, ...) on a web site in order for example to index these data and build a search engine (like google). Wikipedia provides a great description of what is a Web crawler : http://en.wikipedia.org/wiki/Web_crawler.
 
 
+Support
+-------
+
+* For a reproducible bugs, use the Github issues features : https://github.com/bejean/crawl-anywhere/issues?state=open
+
+* For questions or suggestions, use the Google forum : https://groups.google.com/forum/#!forum/crawl-anywhere
+
+
 Build distribution
 ------------------
 
@@ -72,7 +80,7 @@ History
 -------
 
 * release 4.0.0-alpha-1 : April, 28 2013
-* release 4.0.0-alpha-2 : May, 21 2013
+* release 4.0.0-alpha-2 : May, 22 2013
 
 
 Roadmap

@@ -175,6 +175,10 @@ cp -r $DEV/web/crawler/src $DISTRIB/web/crawler
 rm -rf $DISTRIB/web/crawler/config/*
 cp $DEV/web/crawler/src/config/config-default.ini $DISTRIB/web/crawler/config/.
 
+sed -e "s/#version#/$VERSION/" $DISTRIB/web/crawler/pub/ressources/mongodb/init_db-infos.json > $DISTRIB/web/crawler/pub/ressources/mongodb/init_db-infos.json.2
+rm $DISTRIB/web/crawler/pub/ressources/mongodb/init_db-infos.json
+mv $DISTRIB/web/crawler/pub/ressources/mongodb/init_db-infos.json.2 $DISTRIB/web/crawler/pub/ressources/mongodb/init_db-infos.json
+
 cp -r $DEV/web/search/src $DISTRIB/web/search
 rm -rf $DISTRIB/web/search/config/*
 cp $DEV/web/search/src/config/config-default.ini $DISTRIB/web/search/config/.

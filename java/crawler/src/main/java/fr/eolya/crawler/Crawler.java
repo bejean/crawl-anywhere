@@ -13,6 +13,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import gnu.getopt.Getopt;
 
 import fr.eolya.crawler.connectors.ConnectorFactory;
@@ -252,8 +254,20 @@ public class Crawler implements ICrawlerController {
 		int limit = Integer.parseInt(config.getProperty("/crawler/param[@name='max_simultaneous_source']", "4"));
 		if (!"".equals(sourceId)) limit = 1;
 
+		String dbType = config.getProperty("/crawler/database/param[@name='dbtype']", "");
+		String dbName = config.getProperty("/crawler/database/param[@name='dbname']", "");
+
+		dbConnection = getDBConnection(true);
+		if (dbConnection==null) {
+			logger.log("Failed to connect do database !");
+			System.out.println("Failed to connect do database !");
+			return;
+		}
+		ISourceQueue sourceQueue = QueueFactory.getSourceQueueInstance(dbType, dbConnection, dbName, "sources", test, interactiveOnly, suspiciousOnly, accountId, sourceId, engineId);
+		crawlerDB = CrawlerDBFactory.getCrawlerDBInstance(dbType, dbConnection, dbName);
+
 		logger.log("=================================");
-		logger.log("Crawler starting");
+		logger.log("Crawler starting (version: " + StringUtils.trimToEmpty(crawlerDB.getVersion()) + ")");
 		logger.log("    Simultaneous sources crawled : " + String.valueOf(limit));
 		if (!"".equals(accountId))
 			logger.log("    account : " + accountId);
@@ -278,19 +292,6 @@ public class Crawler implements ICrawlerController {
 		if (verbose)
 			logger.log("    mode verbose");
 		logger.log("");
-
-
-		String dbType = config.getProperty("/crawler/database/param[@name='dbtype']", "");
-		String dbName = config.getProperty("/crawler/database/param[@name='dbname']", "");
-
-		dbConnection = getDBConnection(true);
-		if (dbConnection==null) {
-			logger.log("Failed to connect do database !");
-			System.out.println("Failed to connect do database !");
-			return;
-		}
-		ISourceQueue sourceQueue = QueueFactory.getSourceQueueInstance(dbType, dbConnection, dbName, "sources", test, interactiveOnly, suspiciousOnly, accountId, sourceId, engineId);
-		crawlerDB = CrawlerDBFactory.getCrawlerDBInstance(dbType, dbConnection, dbName);
 
 		logger.log("=================================");
 		logger.log("");

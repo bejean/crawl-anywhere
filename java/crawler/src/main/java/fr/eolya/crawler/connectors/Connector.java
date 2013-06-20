@@ -145,7 +145,7 @@ public abstract class Connector {
 		return true;
 	}
 
-	protected synchronized void updateProcessingInfo(int srcId, long queueSize, long doneQueueSize, long processedItemCount, boolean force) {
+	protected synchronized void updateProcessingInfo(int srcId, long queueSize, long doneQueueSize, long processedItemCount) { //, boolean force) {
 		boolean doIt = false;
 		long nowTime = new Date().getTime();
 		if (updateProcessingInfoLastTime==0) {
@@ -156,7 +156,7 @@ public abstract class Connector {
 				doIt = true;   
 			}
 		}
-		doIt = (processedItemCount>0 && doIt) || force;
+		doIt = (processedItemCount>0 && doIt); //|| force;
 		if (!doIt) return;
 
 		updateProcessingInfoLastTime = nowTime;

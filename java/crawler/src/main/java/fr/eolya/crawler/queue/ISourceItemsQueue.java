@@ -36,8 +36,16 @@ public interface ISourceItemsQueue {
 	
 	public Long start();
 	public Long reStart();
+	public Long reStart(int startDepth);
+	public Long reScan();
 	public Long stop();
 	public void close();
 	
+	public int getStartDepth();
+	public int getCurrentMaxDepth();
+	
+	public boolean setCheckDeletionMode();
+	public boolean isCheckDeletionMode();
+
 	public String getCreated(Map<String,Object> item);
 }

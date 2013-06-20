@@ -7,6 +7,7 @@ import fr.eolya.utils.XMLConfig;
 
 public interface ICrawlerDB {
 
+	public String getVersion();
 	public String getSourceClass(String sourceType);
 	public HashMap<String,String> getTarget(String targetId);
 	public void close();

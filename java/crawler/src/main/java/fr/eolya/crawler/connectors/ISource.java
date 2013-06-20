@@ -18,12 +18,12 @@ public interface ISource {
 	public static String CRAWL_PROCESS_MODE_RESCAN = "1";
 	public static String CRAWL_PROCESS_MODE_RESET = "2";
 	public static String CRAWL_PROCESS_MODE_DEEPER = "3";
-	public static String CRAWL_PROCESS_MODE_RESET_FROM_CACHE = "4";
+	public static String CRAWL_PROCESS_MODE_RESCAN_FROM_CACHE = "4";
 	public static String CRAWL_PROCESS_MODE_CLEAR = "5";
 	
 	// !!!!!!!!!!!!!!!!!!!
-	public static String CRAWL_PROCESS_MODE_CHECK_FOR_DELETION = "7";
-	public static String CRAWL_PROCESS_MODE_CLEAN = "6";
+	//public static String CRAWL_PROCESS_MODE_CHECK_FOR_DELETION = "7";
+	//public static String CRAWL_PROCESS_MODE_CLEAN = "6";
 	// !!!!!!!!!!!!!!!!!!!
 	
 	public void memLogAppend (String message) ;
@@ -38,11 +38,11 @@ public interface ISource {
     public boolean isDeleted();
     public boolean isDisabled();
 	public boolean isRescan();
-    public boolean isCheckForDeletion();
+    //public boolean isCheckForDeletion();
 	public boolean isReset();
 	public boolean isDeeper();
     public boolean isClear();
-	public boolean isResetFromCache();
+	public boolean isRescanFromCache();
 	public int getType();
 	public boolean isTest();
 	public String getName();
@@ -79,6 +79,4 @@ public interface ISource {
     public String getClassName();
     
 	public boolean isOptimized();
-
-    
 }

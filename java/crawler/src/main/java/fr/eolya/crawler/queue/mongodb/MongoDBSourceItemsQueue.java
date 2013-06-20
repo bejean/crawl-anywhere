@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Map;
 
 import com.mongodb.*;
+
 import org.bson.types.ObjectId;
 
 import fr.eolya.utils.nosql.mongodb.*;
@@ -63,6 +64,10 @@ public class MongoDBSourceItemsQueue implements ISourceItemsQueue {
 	private long size; 
 	private long doneCount; 
 	private final String stateId = "000000000000000000000000";
+	
+	private boolean rescan;
+	private int startDepth;
+	private boolean checkDeletionMode;
 
 	/** 
 	 * Connect to the DB and create an empty queue collection if it doesn't exist 
@@ -91,6 +96,9 @@ public class MongoDBSourceItemsQueue implements ISourceItemsQueue {
 		} else {
 			this.coll = createCollection();
 		}
+		rescan = false;
+		startDepth = 0;
+		checkDeletionMode = false;
 		readState();
 /*
 		startTime = 0; 
@@ -177,9 +185,31 @@ public class MongoDBSourceItemsQueue implements ISourceItemsQueue {
 		startTime = doc.getLong("starttime");
 
 		// read sizes
-		if (startTime==0) {
-			// previous crawl terminated fine
-			size = 0; 
+		if (startTime==0 || rescan || startDepth>0) {
+// TODO v4 : in fact startTime never = 0 !!!
+			if (!rescan) {
+				// previous crawl terminated fine
+				
+				if (startDepth>0) {
+					//String queryTimeStamp =	"{\"" + timestampFieldName + "\": {\"$ne\": " + String.valueOf(startTime) + "}}";		
+					//String queryMode = "{\"crawl_mode\":a}";			
+					//String query = "{\"$and\": [" + queryTimeStamp + ", " + queryMode + "]}";
+					String query = "{\"depth\":" + String.valueOf(startDepth) + "}";
+					size = count(query);				
+				} else {
+					size = 0; 
+				}
+			} else {
+				// get queue size : timestamp != starttime => in queue
+				//String query = "{\"" + timestampFieldName + "\": {\"$ne\": " + String.valueOf(startTime) + "}}";		
+
+				String queryTimeStamp =	"{\"" + timestampFieldName + "\": {\"$ne\": " + String.valueOf(startTime) + "}}";		
+				String queryMode = "{\"crawl_mode\":\"a\"}";			
+				String query200 = "{\"crawl_status\":200}";			
+				String query = "{\"$and\": [" + queryTimeStamp + ", " + queryMode + ", " + query200 + "]}";
+
+				size = count(query);				
+			}
 			doneCount = 0;
 		}
 		else {
@@ -187,18 +217,27 @@ public class MongoDBSourceItemsQueue implements ISourceItemsQueue {
 
 			// get queue size : timestamp > starttime => in queue
 			String query = "{\"" + timestampFieldName + "\": {\"$gt\": " + String.valueOf(startTime) + "}}";			
-			docsearch = MongoDBHelper.JSON2BasicDBObject(query);
-			cur = coll.getColl().find(docsearch);
-			size = cur.size();
-
-			// get done count : timestamp = starttime =>done
+			//docsearch = MongoDBHelper.JSON2BasicDBObject(query);
+			//cur = coll.getColl().find(docsearch);
+			//size = cur.size();
+			size = count(query);
+			
+			// get done count : timestamp = starttime => done
 			query = "{\"" + timestampFieldName + "\": "+ String.valueOf(startTime) + "}";
-			docsearch = MongoDBHelper.JSON2BasicDBObject(query);
-			cur = coll.getColl().find(docsearch);
-			doneCount = cur.size();
+			//docsearch = MongoDBHelper.JSON2BasicDBObject(query);
+			//cur = coll.getColl().find(docsearch);
+			//doneCount = cur.size();
+			doneCount = count(query);
 		}
 		return startTime;
-	}		
+	}	
+	
+	private long count(String query) {
+		BasicDBObject docsearch = new BasicDBObject();
+		docsearch = MongoDBHelper.JSON2BasicDBObject(query);
+		DBCursor cur = coll.getColl().find(docsearch);
+		return cur.size();
+	}
 
 
 	/** 
@@ -239,7 +278,67 @@ public class MongoDBSourceItemsQueue implements ISourceItemsQueue {
 	 * @return new start time
 	 */
 	public Long reStart() {
-		return writeState(new Date().getTime());
+		return reStart(0);
+	}
+	public Long reStart(int startDepth) {
+		this.startDepth = startDepth;
+		long time2 = writeState(new Date().getTime());
+		if (startDepth>0) {
+			long time = readState();
+			time = time;
+		}
+		return time2;
+	}
+	public int getStartDepth() {
+		return this.startDepth;
+	}
+	public int getCurrentMaxDepth() {
+		//String queryTimeStamp =	"{\"" + timestampFieldName + "\": {\"$ne\": " + String.valueOf(startTime) + "}}";		
+		//String queryMode = "{\"crawl_mode\":a}";			
+		//String query = "{\"$and\": [" + queryTimeStamp + ", " + queryMode + "]}";
+		
+		String query1 = "{\"crawl_mode\":\"a\"}";
+		String query2 = "{\"crawl_status\":200}";
+		String query = "{\"$and\": [" + query1 + ", " + query2 + "]}";
+
+		BasicDBObject docsearch = new BasicDBObject();
+		docsearch = MongoDBHelper.JSON2BasicDBObject(query);
+		
+		DBCursor cur = coll.getColl().find(docsearch).sort(new BasicDBObject("depth", -1));		
+
+		if (cur.count()==0) return 0;
+		BasicDBObject doc = (BasicDBObject) cur.next();
+		return doc.getInt("depth");
+	}
+	public boolean setCheckDeletionMode() {
+		if (checkDeletionMode) return true;
+		if (rescan || startDepth > 0) return false;
+
+		synchronized (collMonitor) {
+			String query1 =	"{\"" + timestampFieldName + "\": {\"$gt\": " + String.valueOf(startTime) + "}}";				
+			String query2_1 = "{\"" + timestampFieldName + "\": {\"$lt\": " + String.valueOf(startTime) + "}}";		
+			String query2_2 = "{\"crawl_status\":200}";
+			String query_2 = "{\"$and\": [" + query2_1 + ", " + query2_2 + "]}";
+			String query = "{\"$or\": [" + query1 + ", " + query_2 + "]}";
+			size = count(query);				
+			checkDeletionMode = true;
+		}
+		return true;
+	}
+	public boolean isCheckDeletionMode() {
+		return checkDeletionMode;
+	}
+	
+	
+	/** 
+	 * Restart queue
+	 * 
+	 * @return new start time
+	 */
+	public Long reScan() {
+		rescan = true;
+		writeState(new Date().getTime());
+		return readState();
 	}
 
 	/** 
@@ -348,8 +447,13 @@ public class MongoDBSourceItemsQueue implements ISourceItemsQueue {
 	private BasicDBObject getInternal(String keyValue, boolean done) {		
 
 		String queryTimeStamp;
-		if (done)
-			queryTimeStamp = "{\"" + timestampFieldName + "\":" + String.valueOf(startTime) + "}";	
+		if (done) {
+			if (startDepth==0)
+				queryTimeStamp = "{\"" + timestampFieldName + "\":" + String.valueOf(startTime) + "}";	
+			else {
+				queryTimeStamp = "{\"" + timestampFieldName + "\": {\"$lte\": " + String.valueOf(startTime) + "}}";			
+			}
+		}
 		else
 			queryTimeStamp = "{\"" + timestampFieldName + "\": {\"$gt\": " + String.valueOf(startTime) + "}}";			
 
@@ -387,7 +491,32 @@ public class MongoDBSourceItemsQueue implements ISourceItemsQueue {
 	 */
 	public Map<String,Object> pop(String extraSortField) {
 
-		String query = "{\"" + timestampFieldName + "\": {\"$gt\": " + String.valueOf(startTime) + "}}";
+		String query;
+		if (!rescan) {			
+			if (startDepth==0) {
+				if (checkDeletionMode) {
+					String query1 =	"{\"" + timestampFieldName + "\": {\"$gt\": " + String.valueOf(startTime) + "}}";				
+					String query2_1 = "{\"" + timestampFieldName + "\": {\"$lt\": " + String.valueOf(startTime) + "}}";		
+					String query2_2 = "{\"crawl_status\":200}";
+					String query_2 = "{\"$and\": [" + query2_1 + ", " + query2_2 + "]}";
+					query = "{\"$or\": [" + query1 + ", " + query_2 + "]}";
+				} else {
+					query =	"{\"" + timestampFieldName + "\": {\"$gt\": " + String.valueOf(startTime) + "}}";		
+				}
+			} else {
+				String query1 =	"{\"" + timestampFieldName + "\": {\"$gt\": " + String.valueOf(startTime) + "}}";				
+				String query2_1 = "{\"" + timestampFieldName + "\": {\"$lt\": " + String.valueOf(startTime) + "}}";		
+				String query2_2 = "{\"depth\":" + String.valueOf(startDepth) + "}";
+				String query2_3 = "{\"crawl_status\":200}";
+				String query_2 = "{\"$and\": [" + query2_1 + ", " + query2_2 + ", " + query2_3 + "]}";
+				query = "{\"$or\": [" + query1 + ", " + query_2 + "]}";
+			}
+		} else {
+			String queryTimeStamp =	"{\"" + timestampFieldName + "\": {\"$ne\": " + String.valueOf(startTime) + "}}";		
+			String queryMode = "{\"crawl_mode\":\"a\"}";			
+			String query200 = "{\"crawl_status\":200}";			
+			query = "{\"$and\": [" + queryTimeStamp + ", " + queryMode + ", " + query200 + "]}";
+		}
 		BasicDBObject docsearch = MongoDBHelper.JSON2BasicDBObject(query);
 
 		DBCursor cur = null;
@@ -477,6 +606,7 @@ public class MongoDBSourceItemsQueue implements ISourceItemsQueue {
 	}
 	
 	public String getCreated(Map<String,Object> item) {
+		if (item.get(createdFieldName) == null) return ""; // TODO v4 : warning String.valueOf(null) return "null"
 		return String.valueOf(item.get(createdFieldName));
 	}
 }

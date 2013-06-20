@@ -1,7 +1,6 @@
 package fr.eolya.crawler.database.mongodb;
 
 import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -27,6 +26,12 @@ public class MongoDBCrawlerDB implements ICrawlerDB {
 	public MongoDBCrawlerDB(MongoDBConnection con, String dbName) throws UnknownHostException {
 		this.con = con;
 		this.db = new MongoDBDatabase(this.con, dbName);
+	}
+
+	public String getVersion() {
+		MongoDBCollection coll = new MongoDBCollection(db,"infos");
+		String query = "{\"name\": \"version\"}";	
+		return coll.getValue(MongoDBHelper.JSON2BasicDBObject (query), "value");		
 	}
 
 	public String getSourceClass(String sourceType) {

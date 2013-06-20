@@ -47,11 +47,16 @@ public class ProcessorSource extends Processor implements Callable<Integer>, ISo
 		String dbType = config.getProperty("/crawler/database/param[@name='dbtype']", "");
 		String dbName = config.getProperty("/crawler/database/param[@name='dbname']", "");
 		queueItems = ConnectorFactory.getSourceItemsQueueInstance(src, dbType, crawlerController.getDBConnection(false), dbName, "pages" );
-		if (queueItems==null || !connector.initialize( logger, config, src, queueItems, crawlerController)) {
+		if (queueItems==null) {
 			// TODO: V4 - updateSourceStatusDueToStartupError();
 			throw new InstantiationException("Fail too initalize connetor (type = " + src.getType() + ")");
 		}
 
+		if (!connector.initialize( logger, config, src, queueItems, crawlerController)) {
+			// TODO: V4 - updateSourceStatusDueToStartupError();
+			throw new InstantiationException("Fail too initalize connetor (type = " + src.getType() + ")");
+		}
+		
 		String dbCacheType = config.getProperty("/crawler/cache/param[@name='dbtype']", "");
 		String dbCacheName = config.getProperty("/crawler/cache/param[@name='dbname']", "");
         if (!"".equals(dbCacheType)) {

@@ -118,8 +118,10 @@ public class MongoDBSourceQueue implements ISourceQueue {
 		String qStatus = String.format("{ \"$and\": [{\"crawl_process_status\": { \"$ne\": \"%1$s\"}}, {\"crawl_process_status\": { \"$ne\": \"%2$s\"}}, {\"crawl_process_status\": { \"$ne\": \"%3$s\"}}]}",
 				ISource.CRAWL_PROCESS_STATUS_CRAWLING, ISource.CRAWL_PROCESS_STATUS_PAUSE_REQUESTED, ISource.CRAWL_PROCESS_STATUS_STOP_REQUESTED);
 
-		String qMode = String.format("{ \"$or\": [{\"crawl_mode\": \"%1$s\"}, {\"crawl_mode\": \"%2$s\"}, {\"crawl_mode\": \"%3$s\"}]}",
-				ISource.CRAWL_PROCESS_MODE_RESET, ISource.CRAWL_PROCESS_MODE_CLEAR, ISource.CRAWL_PROCESS_MODE_CLEAN);
+		//String qMode = String.format("{ \"$or\": [{\"crawl_mode\": \"%1$s\"}, {\"crawl_mode\": \"%2$s\"}, {\"crawl_mode\": \"%3$s\"}]}",
+		//		ISource.CRAWL_PROCESS_MODE_RESET, ISource.CRAWL_PROCESS_MODE_CLEAR, ISource.CRAWL_PROCESS_MODE_CLEAN);
+		String qMode = String.format("{ \"$or\": [{\"crawl_mode\": \"%1$s\"}, {\"crawl_mode\": \"%2$s\"}]}",
+				ISource.CRAWL_PROCESS_MODE_RESET, ISource.CRAWL_PROCESS_MODE_CLEAR);
 		
 		String qStatusMode = String.format("{ \"$or\": [%1$s, %2$s]}",
 				qStatus, qMode);

@@ -116,6 +116,14 @@ public class MongoDBDocumentCache implements IDocumentCache {
 		return doc2DocumentCacheItem(doc);
 	}
 
+	@Override
+	public boolean contains(String itemId) {
+		if (coll == null) return false;
+		BasicDBObject docsearch = new BasicDBObject();
+		docsearch.put("item_id", itemId);
+		return coll.contains(docsearch);
+	}
+
 	public static DocumentCacheItem doc2DocumentCacheItem(BasicDBObject doc) {
 		try {
 			String itemId = doc.get("item_id").toString();
@@ -202,11 +210,11 @@ public class MongoDBDocumentCache implements IDocumentCache {
 		this.maxDocSize = maxDocSize;
 	}
 
-	@Override
-	public Iterator<DocumentCacheItem> getIterator() {
-		if (coll == null) return null;
-		DBCursor cur = coll.getCursor(new BasicDBObject());
-		return new  MongoDBDocumentCacheIterator(cur);
-	}
+//	@Override
+//	public Iterator<DocumentCacheItem> getIterator() {
+//		if (coll == null) return null;
+//		DBCursor cur = coll.getCursor(new BasicDBObject());
+//		return new  MongoDBDocumentCacheIterator(cur);
+//	}
 
 }

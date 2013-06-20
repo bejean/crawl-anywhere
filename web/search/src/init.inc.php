@@ -193,7 +193,7 @@ $usecontenttype = $config->get("search.use_contenttype");
 $usesourcename = $config->get("search.use_sourcename");
 $uselocation = $config->get("search.use_location");
 
-$facet_union = ($config->getDefault("facet.mode_union", "0", true)=="1");
+$facet_union = ($config->getDefault("facet.mode_union", "0", false)=="1");
 $facet_union = false;
 $facetuse = $theme->getFacet($config->get("facet.use"));
 $facetlimit = $config->get("facet.limit", "10");

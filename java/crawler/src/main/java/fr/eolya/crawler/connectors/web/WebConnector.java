@@ -10,10 +10,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -51,8 +49,6 @@ import fr.eolya.utils.Logger;
 import fr.eolya.utils.ScriptSnippet;
 import fr.eolya.utils.Utils;
 import fr.eolya.utils.XMLConfig;
-import fr.eolya.utils.http.HttpLoader;
-import fr.eolya.utils.http.HttpStream;
 import fr.eolya.utils.http.HttpUtils;
 import fr.eolya.utils.nosql.IDBConnection;
 
@@ -178,7 +174,7 @@ public class WebConnector extends Connector implements IConnector {
         //	// TODO: V4
         //}
 
-        if (src.isReset()) { // || src.isClear()) {
+        if (src.isReset() || src.isClear() || src.isRescan() || src.isRescanFromCache()) {
         	 dh.resetSource(String.valueOf(src.getId()));
         }
 		
@@ -196,7 +192,7 @@ public class WebConnector extends Connector implements IConnector {
 		try {		
 			String rawPage = null;
 			String contentType = null;
-			String contentEncoding= null;
+			//String contentEncoding= null;
 			String refererCharSet = null;
 
 			boolean follow = true;
@@ -239,19 +235,30 @@ public class WebConnector extends Connector implements IConnector {
 			 * manage protocol conflict according to protocol strategy
 			 */
 			boolean write = true;
-			String alternateUrl = getAlternateProtocolUrl(pageURL.toExternalForm());
-			if (alternateUrl!=null) {
-				HttpLoader urlLoader = new HttpLoader();
-				int statusCode = urlLoader.getHeadStatusCode(alternateUrl);
-				write = (statusCode!=200);
-				if (!write) {
-					logger.log("[" + String.valueOf(threadId) + "]     won't write due to duplicate protocol");
-					urlMode = "l";
+			if (!src.isRescan() && !src.isRescanFromCache()) {
+				String alternateUrl = getAlternateProtocolUrl(pageURL.toExternalForm());
+				if (alternateUrl!=null) {
+					WebPageLoader urlLoader = new WebPageLoader();
+					//HttpLoader urlLoader = new HttpLoader();
+					int statusCode = urlLoader.getHeadStatusCode(alternateUrl);
+					write = (statusCode!=200);
+					if (!write) {
+						logger.log("[" + String.valueOf(threadId) + "]     won't write due to duplicate protocol");
+						urlMode = "l";
+					}
+					urlLoader.close();
 				}
-				urlLoader.close();
 			}
 
-			HttpLoader urlLoader = new HttpLoader();	
+			WebPageLoader urlLoader = null;
+			if (src.isRescanFromCache()) {
+				String dbCacheType = config.getProperty("/crawler/cache/param[@name='dbtype']", "");
+				String dbCacheName = config.getProperty("/crawler/cache/param[@name='dbname']", "");
+				urlLoader = new WebPageLoader(WebPageLoader.CACHE_ONLY, dbCacheType, crawlerController.getDBConnection(false), dbCacheName, "pages_cache", String.valueOf(src.getId()));
+			} else {
+				urlLoader = new WebPageLoader();
+			}
+			
 			try {
 				// load page
 				urlLoader.setUserAgent(getUserAgent (config.getProperty("/crawler/param[@name='user_agent']", "CaBot"), this.src.getUserAgent()));
@@ -260,19 +267,19 @@ public class WebConnector extends Connector implements IConnector {
 				int ret = 0;
 				int checkForDeletionStatusCode = 0;
 
-				if (src.isCheckForDeletion()) {
+				if (queue.isCheckDeletionMode()) {
 					checkForDeletionStatusCode = urlLoader.getHeadStatusCode(pageURL.toExternalForm());
 					if (checkForDeletionStatusCode==200) 
-						ret = HttpLoader.LOAD_SUCCESS;
+						ret = WebPageLoader.LOAD_SUCCESS;
 					else
-						ret = HttpLoader.LOAD_ERROR;
+						ret = WebPageLoader.LOAD_ERROR;
 				}
 				else {
 					ret = urlLoader.openRetry(pageURL.toExternalForm(), 3);
 				}
 
-				if (ret == HttpLoader.LOAD_SUCCESS) {
-					if (!src.isCheckForDeletion()) {
+				if (ret == WebPageLoader.LOAD_SUCCESS) {
+					if (!queue.isCheckDeletionMode()) {
 						if (level == 0 && "m".equals(currentUrlItem.getRootUrlMode())) {
 							// process sitemaps
 							processSitemaps( currentUrlItem, urlLoader, currentNormalizedUrl, pageURL, "", threadId);
@@ -302,7 +309,7 @@ public class WebConnector extends Connector implements IConnector {
 							}
 						}
 
-						contentEncoding = urlLoader.getContentEncoding();
+						//String contentEncoding = urlLoader.getContentEncoding();
 
 						int maxContentLength = Integer.parseInt(config.getProperty("/crawler/param[@name='max_page_length']", "0"));
 						if (maxContentLength > 0 && urlLoader.getContentLength() > 0 && maxContentLength < urlLoader.getContentLength()) {
@@ -334,18 +341,18 @@ public class WebConnector extends Connector implements IConnector {
 						if (urlLoader.getContentLength()>0)
 							params.put("contentSize", Integer.toString(urlLoader.getContentLength()));
 
-						if (!HttpLoader.isRss(contentType, null)) {
+						if (!WebPageLoader.isRss(contentType, null)) {
                             SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 							String firstCrawlDate = StringUtils.trimToEmpty(queue.getCreated(itemData));
 							Date d = null;
-                            if ("".equals(firstCrawlDate)) {
+                            if ("".equals(firstCrawlDate) ) {
                             	d = new Date();
                             } else {
                             	d = new Date(Long.parseLong(firstCrawlDate));
                             }	
                             params.put("firstCrawlDate", dateFormat.format(d.getTime()));
 							
-							if (!HttpLoader.isHtmlOrText(contentType)) {
+							if (!WebPageLoader.isHtmlOrText(contentType)) {
 								if ((isIndexedUrl(pageURL.toExternalForm(), src.getFilteringRules())) && (!startingUrls.isNotIndexableStartingUrl(pageURL.toExternalForm()))){
 									if (write) logger.log("[" + String.valueOf(threadId) + "]     Send to document handler " + pageURL.toExternalForm());
 									/*
@@ -422,21 +429,26 @@ public class WebConnector extends Connector implements IConnector {
 									declaredLanguage = HttpUtils.getHtmlDeclaredLanguage(rawPage);
 								} 
 								else {
+									/*
 									HttpStream ws = new HttpStream(urlLoader.getStream(), "", contentType, contentEncoding);
 									rawPage = ws.getString();
 									charSet = ws.getCharSet();
 									declaredLanguage = ws.getDeclaredLanguage();
 									ws.clear();
-
+									*/
+									rawPage = urlLoader.getString();
+									charSet = urlLoader.getCharSet();
+									declaredLanguage = urlLoader.getDeclaredLanguage();
+									
 									if (urlLoader.getContentLength()==0)
 										params.put("contentSize", Integer.toString(rawPage.length()));
 
 									// Re-check if it is a feed ?
-									if (HttpLoader.isFeed(rawPage)) {
+									if (WebPageLoader.isFeed(rawPage)) {
 										isFeed = true;
 									}
 									else {
-										if (HttpLoader.isHtml(contentType)) {
+										if (WebPageLoader.isHtml(contentType)) {
 											HashMap<String, String> m = HttpUtils.extractMetas(rawPage);
 											if (m!=null && m.size() > 0) {
 												for (Map.Entry<String, String> item : m.entrySet()) {
@@ -455,7 +467,7 @@ public class WebConnector extends Connector implements IConnector {
 									// Extract Links
 									logger.log("[" + String.valueOf(threadId) + "] " + pageURL.toExternalForm() + " - parsing links");
 									if (currentUrlItem.getDepth()<=memlogMaxDepth) src.memLogAppend("    parsing links");
-									links = new Links(rawPage, pageURL.toExternalForm(), HttpLoader.isRss(contentType, null) || isFeed, scriptName);
+									links = new Links(rawPage, pageURL.toExternalForm(), WebPageLoader.isRss(contentType, null) || isFeed, scriptName);
 									if (links!=null) {
 										String[] pushLink = Utils.mergeStringArrays(links.getLinks0(), links.getLinks1());
 										if (pushLink!=null) {
@@ -502,9 +514,12 @@ public class WebConnector extends Connector implements IConnector {
 							}
 						}
 						else {
+							/*
 							HttpStream ws = new HttpStream(urlLoader.getStream(), "", contentType, contentEncoding);
 							rawPage = ws.getString();
 							ws.clear();					
+							*/
+							rawPage = urlLoader.getString();
 
 							if (urlLoader.getContentLength()==0)
 								params.put("contentSize", Integer.toString(rawPage.length()));
@@ -514,7 +529,7 @@ public class WebConnector extends Connector implements IConnector {
 							// Extract Links
 							logger.log("[" + String.valueOf(threadId) + "] " + pageURL.toExternalForm() + " - parsing links");
 							if (currentUrlItem.getDepth()<=memlogMaxDepth) src.memLogAppend("    parsing links");
-							links = new Links(rawPage, pageURL.toExternalForm(), HttpLoader.isRss(contentType, null) || isFeed, scriptName);
+							links = new Links(rawPage, pageURL.toExternalForm(), WebPageLoader.isRss(contentType, null) || isFeed, scriptName);
 							if (links!=null) {
 								String[] pushLink = Utils.mergeStringArrays(links.getLinks0(), links.getLinks1());
 								int i=1;
@@ -546,11 +561,11 @@ public class WebConnector extends Connector implements IConnector {
 							}
 						}
 					}
-				} // if (ret == HttpLoader.LOAD_SUCCESS) 
+				} // if (ret == WebPageLoader.LOAD_SUCCESS) 
 				else
-				{ // if (ret != HttpLoader.LOAD_SUCCESS) 
+				{ // if (ret != WebPageLoader.LOAD_SUCCESS) 
 					int httpStatusCode = 0;
-					if (src.isCheckForDeletion()) 
+					if (queue.isCheckDeletionMode()) 
 						httpStatusCode = checkForDeletionStatusCode;
 					else
 						httpStatusCode = urlLoader.getErrorCode();
@@ -559,13 +574,14 @@ public class WebConnector extends Connector implements IConnector {
 					if (removeDocHttpStatus!=null && removeDocHttpStatus.contains(String.valueOf(httpStatusCode))) {
 						// check 
 						String startUrl = currentUrlItem.getUrlStart();
-						HttpLoader urlLoaderCheck = new HttpLoader();   
+						WebPageLoader urlLoaderCheck = new WebPageLoader();
+						//HttpLoader urlLoaderCheck = new HttpLoader();   
 						try {
 							// load page
 							urlLoaderCheck.setUserAgent(getUserAgent (config.getProperty("/crawler/param[@name='user_agent']", "CaBot"), this.src.getUserAgent()));
 							if (authCookies!=null) urlLoaderCheck.setCookies(authCookies);
 
-							//if (urlLoaderCheck.openRetry(3) == URLLoader.LOAD_SUCCESS) {
+							//if (urlLoaderCheck.openRetry(3) == WebPageLoader.LOAD_SUCCESS) {
 							int statusCode = urlLoaderCheck.getHeadStatusCode(startUrl);
 							if (statusCode==200) {
 								logger.log("[" + String.valueOf(threadId) + "]     Page not available (" + removeDocHttpStatus + ") -> send delete job");                                    
@@ -590,7 +606,7 @@ public class WebConnector extends Connector implements IConnector {
 					
 					urlLoader.getResponseStatusCode();
 
-					if (ret == HttpLoader.LOAD_PAGEREDIRECTED) { 
+					if ((ret == WebPageLoader.LOAD_PAGEREDIRECTED) && (!queue.isCheckDeletionMode())) { 
 						int maxRedirection = Integer.parseInt(config.getProperty("/crawler/param[@name='max_redirection']", "6"));
 						if (currentUrlItem.getRedirectionCount()<=maxRedirection) {
 							String strLink = urlLoader.getRedirectionLocation();
@@ -648,7 +664,7 @@ public class WebConnector extends Connector implements IConnector {
 						urlLoader = null;
 						return 0;
 					}
-				} // if (ret != HttpLoader.LOAD_SUCCESS) 
+				} // if (ret != WebPageLoader.LOAD_SUCCESS) 
 				urlLoader.close();
 			}
 			catch (Exception e)
@@ -675,6 +691,8 @@ public class WebConnector extends Connector implements IConnector {
 				return 0;
 			}
 
+			// TODO : v4 - double update here if ret != WebPageLoader.LOAD_SUCCESS ???
+			
 			// Update item in queue with crawl status + conditional get info + timestanp
 			currentUrlItem.setContentType(contentType);
 			currentUrlItem.setCrawlStatus(urlLoader.getResponseStatusCode());
@@ -688,25 +706,25 @@ public class WebConnector extends Connector implements IConnector {
 			urlLoader = null;
 
 			// If checkfordeletion mode : exit (do not inject new urls)
-			if (src.isCheckForDeletion()) {
+			if (queue.isCheckDeletionMode()) {
 				logger.log("[" + String.valueOf(threadId) + "] " + pageURL.toExternalForm() + " - checkfordeletion mode - skip link parsing");
+				return 1;
+			}
+			
+			// If rescan mode : exit (do not inject new urls)
+			if (src.isRescan() || src.isRescanFromCache()) {
+				logger.log("[" + String.valueOf(threadId) + "] " + pageURL.toExternalForm() + " - rescan mode - skip link parsing");
 				return 1;
 			}
 
 			// HTML / RSS ???
-			if (!HttpLoader.isHtmlOrText(contentType) && !HttpLoader.isRss(contentType, null)) return 1;
+			if (!WebPageLoader.isHtmlOrText(contentType) && !WebPageLoader.isRss(contentType, null)) return 1;
 
 			// TODO : Send page to cache
 
 			if (rawPage==null) {
 				logger.log("[" + String.valueOf(threadId) + "] " + pageURL.toExternalForm() + " - no content");
 				if (currentUrlItem.getDepth()<=memlogMaxDepth) src.memLogAppend("    no content");
-				return 1;
-			}
-
-			// If rescan mode : exit (do not inject new urls)
-			if (src.isRescan() || src.isCheckForDeletion()) {
-				logger.log("[" + String.valueOf(threadId) + "] " + pageURL.toExternalForm() + " - rescan or checkfordeletion mode - skip link parsing");
 				return 1;
 			}
 
@@ -717,7 +735,7 @@ public class WebConnector extends Connector implements IConnector {
 			if (isStartingUrl (pageURL.toExternalForm()) || isLinksParsedUrl(pageURL.toExternalForm(), src.getFilteringRules())) {
 				//if (verbose) logger.log("[" + String.valueOf(threadId) + "] " + pageURL.toExternalForm() + " - parsing links");
 				//if (currentUrlItem.getDepth()<=memlogMaxDepth) src.memLogAppend("    parsing links");
-				if (!HttpLoader.isRss(contentType, null) && !isFeed) {
+				if (!WebPageLoader.isRss(contentType, null) && !isFeed) {
 					if (("1".equals(config.getProperty("/crawler/param[@name='bypass_robots_meta']", "0"))) || (follow)) {
 
 						// If RSS / Links
@@ -786,27 +804,42 @@ public class WebConnector extends Connector implements IConnector {
 		ISourceItemsQueue sourceQueue = QueueFactory.getSourceItemsQueueInstance(type, src.getId(), con, dbName, dbCollName);
 		if (sourceQueue==null) return null;
 		
-		if (src.isReset()) sourceQueue.reset();
-		
+		if (src.isReset() || src.isClear()) 
+			sourceQueue.reset();
+
+		if (src.isClear()) return sourceQueue;
+
 		// TODO : v4 - Utile ???
-		if (sourceQueue.getQueueSize()>0)
+		if (sourceQueue.getQueueSize()>0 && !src.isRescan() && !src.isRescanFromCache())
 			sourceQueue.start();
-		else
-			sourceQueue.reStart();
+		else {
+			if (!src.isRescan() && !src.isRescanFromCache()) {
+				int startDepth = 0;
+				if (src.isDeeper()) {
+					startDepth = sourceQueue.getCurrentMaxDepth();
+				}
+				sourceQueue.reStart(startDepth);
+			} else {
+				sourceQueue.reScan();
+			}
+
+		}
 		// Utile ???
 
-		// Add or update starting urls
-		boolean haveSiteMode = false;
-		for (int i=0; i<startingUrls.size(); i++) {
-			if ("s".equals(startingUrls.get(i).mode)) haveSiteMode = true;
-		}
-		for (int i=0; i<startingUrls.size(); i++) {
-			if (!startingUrls.get(i).onlyFirstCrawl || !src.isFirstCrawlCompleted()) {
-				if (haveSiteMode && !src.isFirstCrawlCompleted() && !"s".equals(startingUrls.get(i).mode)) continue;
-				try {
-					sourceQueue.push(startingUrls.get(i).getMap(src.getId()));
-				} catch (Exception e) {
-					e.printStackTrace();
+		if (!src.isRescan() && !src.isRescanFromCache() && !src.isDeeper()) {
+			// Add or update starting urls
+			boolean haveSiteMode = false;
+			for (int i=0; i<startingUrls.size(); i++) {
+				if ("s".equals(startingUrls.get(i).mode)) haveSiteMode = true;
+			}
+			for (int i=0; i<startingUrls.size(); i++) {
+				if (!startingUrls.get(i).onlyFirstCrawl || !src.isFirstCrawlCompleted()) {
+					if (haveSiteMode && !src.isFirstCrawlCompleted() && !"s".equals(startingUrls.get(i).mode)) continue;
+					try {
+						sourceQueue.push(startingUrls.get(i).getMap(src.getId()));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -1081,14 +1114,14 @@ public class WebConnector extends Connector implements IConnector {
 
 
 
-	private void processSitemaps(SourceItemWeb currentUrlItem, HttpLoader urlLoader, String currentNormalizedUrl, URL pageURL, String refererCharSet, long threadId) {
+	private void processSitemaps(SourceItemWeb currentUrlItem, WebPageLoader pageLoader, String currentNormalizedUrl, URL pageURL, String refererCharSet, long threadId) {
 
 		List<String> links = new ArrayList<String>();
 		int level = 1;
 
 		try {
 			crawlercommons.sitemaps.SiteMapParser parser = new SiteMapParser();
-			AbstractSiteMap asm = parser.parseSiteMap(urlLoader.getContentType(), IOUtils.toByteArray(urlLoader.getStream()), new URL(currentUrlItem.getUrl()));
+			AbstractSiteMap asm = parser.parseSiteMap(pageLoader.getContentType(), IOUtils.toByteArray(pageLoader.getStream()), new URL(currentUrlItem.getUrl()));
 
 			if (asm.isIndex()) {
 				// push all url with depth = 0
@@ -1310,6 +1343,6 @@ public class WebConnector extends Connector implements IConnector {
             queueSize = Math.max(0,cache.getCacheSize() - processedItemCount);
         }
         */
-        updateProcessingInfo(src.getId(), queueSize, queue.getDoneQueueSize(), processedItemCount, src.isResetFromCache());
+        updateProcessingInfo(src.getId(), queueSize, queue.getDoneQueueSize(), processedItemCount); //, src.isRescanFromCache());
     }
 }

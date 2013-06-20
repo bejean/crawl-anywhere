@@ -1,6 +1,6 @@
 <?php
 $max_links_per_page = 4;
-$max_pages = 10;
+$max_pages = 20;
 $include_https_each = 0;
 
 function generateLink($count, $max_pages, $include_https_each) {

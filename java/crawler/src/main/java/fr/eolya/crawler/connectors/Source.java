@@ -198,28 +198,29 @@ abstract public class Source {
 	}
 
 	public boolean isRescan() {
-		return "1".equals(crawlMode);
+		return ISource.CRAWL_PROCESS_MODE_RESCAN.equals(crawlMode);
 	}
 
 	public boolean isReset() {
-		return "2".equals(crawlMode);
+		return ISource.CRAWL_PROCESS_MODE_RESET.equals(crawlMode);
 	}
 
 	public boolean isDeeper() {
-		return "3".equals(crawlMode);
+		return ISource.CRAWL_PROCESS_MODE_DEEPER.equals(crawlMode);
 	}
 
-	public boolean isResetFromCache() {
-		return "4".equals(crawlMode);
+	public boolean isRescanFromCache() {
+		return ISource.CRAWL_PROCESS_MODE_RESCAN_FROM_CACHE.equals(crawlMode);
 	}
 
 	public boolean isClear() {
-		return "5".equals(crawlMode);
+		return ISource.CRAWL_PROCESS_MODE_CLEAR.equals(crawlMode);
 	}
 
-	public boolean isCheckForDeletion() {
-		return "6".equals(crawlMode);
-	}
+//	public boolean isCheckForDeletion() {
+//		return false;
+////		return "6".equals(crawlMode);
+//	}
 
 	public int getType(){
 		return getSrcDataInt("type");

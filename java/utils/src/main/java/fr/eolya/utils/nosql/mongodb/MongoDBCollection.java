@@ -139,6 +139,13 @@ public class MongoDBCollection {
 		return (String)doc.getString(field);
 	}
 	
+	public String getFirstValue(BasicDBObject docsearch, String field) {
+		DBCursor cur = coll.find(docsearch);
+		if (cur.count()==0) return null;
+		BasicDBObject doc = (BasicDBObject) cur.next();
+		return (String)doc.getString(field);
+	}
+
 //	public HashMap<String,String> getItemMap(BasicDBObject docsearch) {
 //		DBCursor cur = coll.find(docsearch);
 //		if (cur.count()!=1) return null;

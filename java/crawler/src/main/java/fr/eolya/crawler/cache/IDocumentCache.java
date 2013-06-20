@@ -10,7 +10,8 @@ public interface IDocumentCache {
     public String put(String itemId, InputStream dataStream, long dataSize, HashMap<String, String> params, HashMap<String, String> metas, XMLConfig extra);
     public void remove(String itemId);
     public DocumentCacheItem get(String itemId);
+    public boolean contains(String itemId);
 	public long size();
     public void reset();
-    public Iterator<DocumentCacheItem> getIterator();
+    //public Iterator<DocumentCacheItem> getIterator();
 }

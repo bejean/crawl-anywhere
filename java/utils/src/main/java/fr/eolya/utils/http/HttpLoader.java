@@ -17,9 +17,7 @@
  */
 package fr.eolya.utils.http;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -116,7 +114,7 @@ public class HttpLoader {
 	public static final int LOAD_PAGEUNCHANGED = 1;
 	public static final int LOAD_PAGEREDIRECTED = 2;
 
-	public HttpLoader() throws URISyntaxException {
+	public HttpLoader() {
 		proxyHost = null;
 		//proxyExclude = null;
 		proxyUserName = null;

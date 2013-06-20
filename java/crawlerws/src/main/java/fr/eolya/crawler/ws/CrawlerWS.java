@@ -9,13 +9,11 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletOutputStream;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.dropbox.client2.DropboxAPI;
-import com.dropbox.client2.DropboxAPI.DeltaPage;
 import com.dropbox.client2.DropboxAPI.DropboxInputStream;
 import com.dropbox.client2.DropboxAPI.Entry;
 import com.dropbox.client2.exception.DropboxException;
@@ -25,7 +23,6 @@ import com.dropbox.client2.session.Session;
 import com.dropbox.client2.session.WebAuthSession;
 
 import fr.eolya.extraction.tika.TikaWrapper;
-//import fr.eolya.extraction.MultiFormatTextExtractor;
 import fr.eolya.utils.*;
 import fr.eolya.utils.http.HttpLoader;
 import fr.eolya.utils.http.HttpStream;
@@ -117,12 +114,12 @@ public class CrawlerWS extends HttpServlet {
         
         try {
         	HttpLoader urlLoader;
-			try {
+			//try {
 				urlLoader = new HttpLoader();
-			} catch (URISyntaxException e1) {
-				e1.printStackTrace();
-                return XmlResponse.buildErrorXml(10, "Failed load page (bad url : " + page + ")");
-			}
+			//} catch (URISyntaxException e1) {
+			//	e1.printStackTrace();
+            //    return XmlResponse.buildErrorXml(10, "Failed load page (bad url : " + page + ")");
+			//}
             
             String userAgent = ServletUtils.getSetting(this, xmlConfig, "crawler_user_agent", "CaBot");
             urlLoader.setUserAgent(userAgent);
@@ -207,12 +204,12 @@ public class CrawlerWS extends HttpServlet {
         try {
             //MultiFormatTextExtractor extractor = new MultiFormatTextExtractor();
         	HttpLoader urlLoader;
-			try {
+			//try {
 				urlLoader = new HttpLoader();
-			} catch (URISyntaxException e1) {
-				e1.printStackTrace();
-                return XmlResponse.buildErrorXml(10, "Failed load page (bad url : " + page + ")");
-			}
+			//} catch (URISyntaxException e1) {
+			//	e1.printStackTrace();
+            //    return XmlResponse.buildErrorXml(10, "Failed load page (bad url : " + page + ")");
+			//}
  
             if (urlLoader.open(url.toExternalForm()) == HttpLoader.LOAD_SUCCESS) {
                 String ret = "<?xml version=\"1.0\" encoding=\"utf-8\"?><result>";
@@ -378,8 +375,8 @@ public class CrawlerWS extends HttpServlet {
             System.out.println("User ID: " + userId);
             System.out.println("Access Key: " + was.getAccessTokenPair().key);
             System.out.println("Access Secret " + was.getAccessTokenPair().secret);
-            DropboxAPI<WebAuthSession> api = new DropboxAPI<WebAuthSession>(was);
-            DeltaPage<Entry> deltaPage = api.delta("");
+            //DropboxAPI<WebAuthSession> api = new DropboxAPI<WebAuthSession>(was);
+            //DeltaPage<Entry> deltaPage = api.delta("");
         } catch (DropboxException e) {
             e.printStackTrace();
             return XmlResponse.buildErrorXml(-1, "Dropbox unlinked");

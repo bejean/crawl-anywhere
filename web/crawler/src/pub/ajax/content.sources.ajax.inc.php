@@ -561,11 +561,11 @@ if ($action=="loadsources")
 					if (!$_SESSION["mysolrserver_url"]) $res .= "&nbsp;<a href='#' onClick='indexnow(" . $rs["id"] . ");return false;' title='Crawl now'><img src='images/timer.png'></a>";
 					$res .= "&nbsp;<a href='#' onClick='resetSource(" . $rs["id"] . ");return false;' title='Reset'><img src='images/reset.png'></a>";
 					// TODO: V4 - reactivate all these features
-					//if (!$_SESSION["mysolrserver_url"]) $res .= "&nbsp;<a href='#' onClick='clearSource(" . $rs["id"] . ");return false;' title='Clear'><img src='images/clear.png'></a>";
+					if (!$_SESSION["mysolrserver_url"]) $res .= "&nbsp;<a href='#' onClick='clearSource(" . $rs["id"] . ");return false;' title='Clear'><img src='images/clear.png'></a>";
 					//if (!$_SESSION["mysolrserver_url"]) $res .= "&nbsp;<a href='#' onClick='cleanSource(" . $rs["id"] . ");return false;' title='Clean'><img src='images/clean.png'></a>";
-					//if (!$_SESSION["mysolrserver_url"] && $cache_enabled) $res .= "&nbsp;<a href='#' onClick='resetCacheSource(" . $rs["id"] . ");return false;' title='Reset with cache'><img src='images/reset_cache.png'></a>";
-					//if (!$_SESSION["mysolrserver_url"]) $res .= "&nbsp;<a href='#' onClick='rescanSource(" . $rs["id"] . ");return false;' title='Rescan'><img src='images/rescan.png'></a>";
-					//if (!$_SESSION["mysolrserver_url"]) $res .= "&nbsp;<a href='#' onClick='deeperSource(" . $rs["id"] . ");return false;' title='Deeper'><img src='images/deeper.png'></a>";
+					if (!$_SESSION["mysolrserver_url"] && $cache_enabled) $res .= "&nbsp;<a href='#' onClick='resetCacheSource(" . $rs["id"] . ");return false;' title='Reset with cache'><img src='images/reset_cache.png'></a>";
+					if (!$_SESSION["mysolrserver_url"]) $res .= "&nbsp;<a href='#' onClick='rescanSource(" . $rs["id"] . ");return false;' title='Rescan'><img src='images/rescan.png'></a>";
+					if (!$_SESSION["mysolrserver_url"]) $res .= "&nbsp;<a href='#' onClick='deeperSource(" . $rs["id"] . ");return false;' title='Deeper'><img src='images/deeper.png'></a>";
 					$res .= "&nbsp;<a href='log.php?id=" . $rs["id"] . "' title='Log' target='log'><img src='images/log_16.png'></a>";
 				} else {
 					if (!$_SESSION["mysolrserver_url"] && $cache_enabled && $rs["type"]=='1') {
@@ -864,7 +864,7 @@ if ($action=="deletesource")
 	exit();
 }
 
-if ($action=="resetsource" || $action=="resetcachesource" || $action=="rescansource" || $action=="deepersource" || $action=="indexnow" || $action=="clearsource" || $action=="cleansource")
+if ($action=="resetsource" || $action=="resetcachesource" || $action=="rescansource" || $action=="deepersource" || $action=="indexnow" || $action=="clearsource") // || $action=="cleansource")
 {
 	$mg = mg_connect ($config, "", "", "");
 	if ($mg)

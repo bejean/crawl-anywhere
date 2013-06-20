@@ -1,6 +1,5 @@
 package fr.eolya.crawler;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -15,7 +14,7 @@ public class ProcessorSourceItems extends Processor implements Callable<Integer>
 	private IConnector connector;
 	private ISourceControler sourceController;
 	private ISourceItemsQueue queueItems;
-	private long lastActivityTimeStamp;
+	//private long lastActivityTimeStamp;
 	private int id;
 
 	public ProcessorSourceItems(ISourceItemsQueue queueItems, IConnector connector, XMLConfig config, Logger logger, ICrawlerController crawlerController, ISourceControler sourceController, int id) {
@@ -24,7 +23,7 @@ public class ProcessorSourceItems extends Processor implements Callable<Integer>
 		this.connector = connector;
 		this.queueItems = queueItems;
 		this.id = id;
-		setLastActivityTimeStamp();
+		//setLastActivityTimeStamp();
 	}
 
 	public Integer call() throws Exception {
@@ -35,6 +34,13 @@ public class ProcessorSourceItems extends Processor implements Callable<Integer>
 			process(itemData);
 		}
 		Utils.sleep(10000);
+		if (queueItems.setCheckDeletionMode()) {
+			for (itemData = queueItems.pop(); itemData != null && !sourceController.stopRun(); itemData = queueItems.pop()) {
+				// Process the item
+				process(itemData);
+			}
+			Utils.sleep(10000);
+		}
 		return 1;
 	}
 
@@ -44,7 +50,7 @@ public class ProcessorSourceItems extends Processor implements Callable<Integer>
 			sourceController.incrementProcessedItemCount(count);
 			if (id==0) {
 				connector.incrProcessedItemCount(count);
-				setLastActivityTimeStamp();
+				//setLastActivityTimeStamp();
 			}
 		}
 		catch (Exception e) {
@@ -56,8 +62,8 @@ public class ProcessorSourceItems extends Processor implements Callable<Integer>
 		return Thread.currentThread().getId();
 	}
 	
-	public synchronized void setLastActivityTimeStamp() {
-		lastActivityTimeStamp = new Date().getTime();
-	}
+//	public synchronized void setLastActivityTimeStamp() {
+//		lastActivityTimeStamp = new Date().getTime();
+//	}
 
 }

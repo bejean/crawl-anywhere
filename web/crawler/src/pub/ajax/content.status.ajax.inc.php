@@ -114,6 +114,11 @@ if ($action=="showstatus")
 	$mg = mg_connect ($config, "", "", "");
 	if ($mg)
 	{
+		mg_get_value($mg, 'infos', 'value', array("name" => 'version'), $version);
+		$res .= "<tr><td class='head'>Version</td><td>";
+		$res .= $version;
+		$res .= "</td></tr>";
+		
 		$res .= "<tr><td class='head'>Number of sources</td><td>";
 		$res .= mg_row_count($mg, "sources", array('$and' => array(array("deleted" => 0), array("id_account" => intval($id_account_current)))));
 		$res .= "</td></tr>";

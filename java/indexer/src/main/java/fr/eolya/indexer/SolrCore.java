@@ -17,6 +17,8 @@ public class SolrCore extends EngineAbstract implements IEngine {
     
     private String url = null;
     private CommonsHttpSolrServer server = null;
+    private String requestHandler = null;
+
     //	private int optimizeDocsCount = 0;
     //	private int commitDocsCount = 0;
     //	private int optimizeEach = 0;
@@ -31,7 +33,7 @@ public class SolrCore extends EngineAbstract implements IEngine {
         return url;
     }
     
-    public SolrCore(String url, int commitWithin, int commitEach, int optimizeEach, Logger logger) {
+    public SolrCore(String url, int commitWithin, int commitEach, int optimizeEach, Logger logger, String requestHandler) {
         this.url = url;
         if ((optimizeEach>0) && (optimizeEach<commitEach)) optimizeEach=commitEach;
         if (commitWithin>0) commitEach=0;
@@ -40,6 +42,7 @@ public class SolrCore extends EngineAbstract implements IEngine {
         this.commitEach = commitEach;
         this.optimizeEach = optimizeEach;
         this.logger = logger;
+        this.requestHandler = requestHandler;
     }
     
     
@@ -137,15 +140,18 @@ public class SolrCore extends EngineAbstract implements IEngine {
         }
         
         try {
-            if (commitWithin==0) {
-                server.add(solrDocs);
-            }
-            else {
+            //if (commitWithin==0) {
+            //    server.add(solrDocs);
+            //}
+            //else {
                 UpdateRequest req = new UpdateRequest();
+                if ((this.requestHandler != null) && (!this.requestHandler.isEmpty()))
+                    req.setPath(this.requestHandler);
                 req.add(solrDocs);
-                req.setCommitWithin(commitWithin);
+                if (commitWithin>0)
+                	req.setCommitWithin(commitWithin);
                 req.process(server);
-            }
+            //}
         } catch (Exception e) {
             log("     error : " + e.getMessage());
             if (outputStackTrace) e.printStackTrace();

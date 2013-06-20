@@ -17,16 +17,16 @@ import gnu.getopt.Getopt;
 
 public class Indexer {
     
-    protected Logger logger;
+	protected Logger logger;
     protected boolean stopRequested;
     
-    //protected Hashtable<String,SolrCore> solrCores = null; 
-    //protected Hashtable<String,ElasticSearchIndex> elasticSearchIndexes = null;
     protected Hashtable<String,IEngine> engines = null; 
     
     protected int commitEach = 0;
     protected int commitWithin = 0;
     protected int optimizeEach = 0;
+
+    private String requestHandler = null;
     
     protected String settingsDirectoryPath = null;
     protected XMLConfig config;
@@ -48,7 +48,7 @@ public class Indexer {
             System.exit(-1);
         }
         
-        Getopt g = new Getopt("Indexer", args, "p:orcvu:f");
+        Getopt g = new Getopt("Indexer", args, "p:orcvus:f");
         g.setOpterr(false);
         int c;
         
@@ -190,6 +190,7 @@ public class Indexer {
         commitWithin = Integer.parseInt(config.getProperty("/indexer/solr/param[@name='commitwithin']", "0").trim());
         commitEach = Integer.parseInt(config.getProperty("/indexer/solr/param[@name='commiteach']", "0").trim());
         optimizeEach = Integer.parseInt(config.getProperty("/indexer/solr/param[@name='optimizeeach']", "0").trim());
+        requestHandler = config.getProperty("/indexer/solr/param[@name='requesthandler']");
         
         int stopAfterMaxSuccessiveError = Integer.parseInt(config.getProperty("/indexer/param[@name='stopaftermaxsuccessivesolrerror']", "3").trim());
         
@@ -222,7 +223,7 @@ public class Indexer {
         }
         
         if (solrUrl!=null && !"".equals(solrUrl)) {
-            SolrCore solrCore = createSolrCore(solrUrl, commitWithin, commitEach, optimizeEach, logger, verbose);
+            SolrCore solrCore = createSolrCore(solrUrl, commitWithin, commitEach, optimizeEach, logger, verbose, requestHandler);
             if (solrCore!=null) {
                 //return;
                 
@@ -473,7 +474,7 @@ public class Indexer {
                 if (docTargetUrl!=null && !"".equals(docTargetUrl) && !(!"".equals(targetUrl) && forceUrl)) {
                     engine = engines.get(docTargetUrl);
                     if (engine==null) {
-                        engine = createEngine(docTargetType, docTargetUrl, commitWithin, commitEach, optimizeEach, logger, verbose);                        
+                        engine = createEngine(docTargetType, docTargetUrl, commitWithin, commitEach, optimizeEach, logger, verbose, requestHandler);
                         if (engine!=null)
                             engines.put(docTargetUrl, engine);
                     }
@@ -624,18 +625,15 @@ public class Indexer {
     }
     
     
-    private IEngine createEngine(String docTargetType,String docTargetUrl, int commitWithin, int commitEach, int optimizeEach, Logger logger, boolean verbose) {
-        if ("solr".equals(docTargetType)) return createSolrCore(docTargetUrl, commitWithin, commitEach, optimizeEach, logger, verbose);
+    private IEngine createEngine(String docTargetType,String docTargetUrl, int commitWithin, int commitEach, int optimizeEach, Logger logger, boolean verbose, String requestHandler) {
+        if ("solr".equals(docTargetType)) return createSolrCore(docTargetUrl, commitWithin, commitEach, optimizeEach, logger, verbose, requestHandler);
         if ("es".equals(docTargetType)) return createElasticSearchIndex(docTargetUrl, commitWithin, commitEach, optimizeEach, logger, verbose);
         return null;
     }
     
-    private SolrCore createSolrCore(String solrUrl, int commitWithin, int commitEach, int optimizeEach, Logger logger, boolean verbose) {
+    private SolrCore createSolrCore(String solrUrl, int commitWithin, int commitEach, int optimizeEach, Logger logger, boolean verbose, String requestHandler) {
         logger.log("Create new Solr core connection : " + solrUrl);
-        SolrCore solrCore = new SolrCore(solrUrl, commitWithin, commitEach, optimizeEach, logger);
-        if (solrCore==null) 
-            return null;
-        
+        SolrCore solrCore = new SolrCore(solrUrl, commitWithin, commitEach, optimizeEach, logger, requestHandler);        
         solrCore.setOutputStackTrace(verbose);
         
         if (!solrCore.connect())

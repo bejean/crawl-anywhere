@@ -3,6 +3,7 @@
 	<solr>
 		<param name="baseurl">http://localhost:8180/solr/</param>
 		<param name="corename">crawler</param>
+		<!--param name="requesthandler">/updatex</param-->
 		<param name="commitwithin">60000</param>
 		<param name="commiteach">0</param>
 		<param name="optimizeeach">0</param>

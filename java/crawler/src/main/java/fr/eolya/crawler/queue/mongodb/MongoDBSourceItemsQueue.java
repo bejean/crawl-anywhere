@@ -381,23 +381,27 @@ public class MongoDBSourceItemsQueue implements ISourceItemsQueue {
 			BasicDBObject curDoc = null;
 			DBCursor cur = coll.getColl().find(docsearch);
 			if (cur.count()>0) {
-				if (cur.count()>1) throw new QueueIncoherenceException("more than one item");
-				curDoc = (BasicDBObject) cur.next();
-				if (keyValue.equals(curDoc.getString(uniqueKeyFieldName))) {
+				while (cur.hasNext() && curDoc==null) {
+					curDoc = (BasicDBObject) cur.next();
+					if (!keyValue.equals(doc.getString(uniqueKeyFieldName))) {
+						curDoc = null;
+					}
+				}
+				if (curDoc!=null) {
 					currentDepth = curDoc.getString(depthFieldName);
 					currentReferers = curDoc.getString(referersFieldName);
 					currentTimestamp = curDoc.getLong(timestampFieldName);
+	
+					/*
+					 * Remember : for an item of the collection :
+					 * 		timestamp < starttime	=> not in queue
+					 * 		timestamp > starttime	=> in queue
+					 * 		timestamp = starttime	=> done
+					 */
+					if ((Long.parseLong(depth) >= Long.parseLong(currentDepth)) && (currentTimestamp>=startTime)) return false;
 				}
 			}
-
-			/*
-			 * Remember : for an item of the collection :
-			 * 		timestamp < starttime	=> not in queue
-			 * 		timestamp > starttime	=> in queue
-			 * 		timestamp = starttime	=> done
-			 */
-			if ((curDoc!=null) && (Long.parseLong(depth) >= Long.parseLong(currentDepth)) && (currentTimestamp>=startTime)) return false;
-
+			
 			// build new doc
 			doc.put(hashFieldName, keyValue.hashCode());
 			doc.put(timestampFieldName, new Date().getTime());

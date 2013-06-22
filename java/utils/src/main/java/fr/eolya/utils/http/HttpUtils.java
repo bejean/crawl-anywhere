@@ -787,10 +787,18 @@ public class HttpUtils {
 	public static List<String> extractAbsoluteLinks(String rawPage, String urlPage, int depth) throws IOException {
 
 		List<String> links = extractLinks(rawPage, depth);
+		String baseHref = getBaseHref(rawPage);
 
 		for (int i=0; i<links.size(); i++) {
 			try {
-				links.set(i, urlGetAbsoluteURL(urlPage, links.get(i).trim()));
+				String url1 = urlGetAbsoluteURL(urlPage, links.get(i).trim());
+				if (baseHref!=null) {
+					String url2 = urlGetAbsoluteURL(baseHref, links.get(i).trim());
+					if (url2!=null && !url2.equals(url1)) {
+						links.add(url2);
+					}
+				}
+				links.set(i, url1);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -799,6 +807,17 @@ public class HttpUtils {
 		return links;
 	}
 
+	public static String getBaseHref(String rawPage) throws IOException {
+		HtmlCleaner cleaner = new HtmlCleaner();
+		//CleanerProperties props = cleaner.getProperties();		 
+		//props.setXXX(...);
+		TagNode node = cleaner.clean(rawPage);
+		TagNode[] myNodes = node.getElementsByName("base", true);
+		if (myNodes==null || myNodes.length!=1) return null;
+		String href = myNodes[0].getAttributeByName("href");
+		if (href!=null) return href;
+		return null;
+	}
 	/**
 	 * Extract link in html string according to depth parameter
 	 * if depth = 0 : extract only redirection or iframe or framset urls links 

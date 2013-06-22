@@ -160,6 +160,7 @@ abstract class SourceBase {
 
 		$xml->addChild('crawl_maxdepth',$values["source_crawl_max_depth"]);
 		$xml->addChild('crawl_url_concurrency',$values["source_crawl_url_concurrency"]);
+		$xml->addChild('crawl_url_per_minute',$values["source_crawl_url_per_minute"]);
 		$xml->addChild('automatic_cleaning',$values["source_automatic_cleaning"]);
 
 		// crawl_schedule

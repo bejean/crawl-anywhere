@@ -54,6 +54,7 @@ public interface ISource {
 	public String getComment();
 	public String getContact();
 	public String getUrlConcurrency();
+	public String getUrlPerMinute();
 	public String getFilteringRules();
     public String getMetadata();
 	public void setExtra(XMLConfig extra);

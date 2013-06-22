@@ -302,7 +302,12 @@ abstract public class Source {
 	}
 
 	public String getUrlConcurrency() {
+		if (!"0".equals(getUrlPerMinute())) return "1";
 		return getSrcDataString("crawl_url_concurrency", "1");
+	}
+
+	public String getUrlPerMinute() {
+		return getSrcDataString("crawl_url_per_minute", "0");
 	}
 
 	public String getFilteringRules() {

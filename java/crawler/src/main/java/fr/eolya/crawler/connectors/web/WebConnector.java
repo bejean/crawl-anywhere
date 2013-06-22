@@ -60,6 +60,8 @@ public class WebConnector extends Connector implements IConnector {
 	private List<String> removeDocHttpStatus = null;
 
 	private Map<String, String> authCookies;
+	
+	private long lastPageReadTime = 0;
 
 	//private int cachePos;
 
@@ -256,6 +258,16 @@ public class WebConnector extends Connector implements IConnector {
 				String dbCacheName = config.getProperty("/crawler/cache/param[@name='dbname']", "");
 				urlLoader = new WebPageLoader(WebPageLoader.CACHE_ONLY, dbCacheType, crawlerController.getDBConnection(false), dbCacheName, "pages_cache", String.valueOf(src.getId()));
 			} else {
+				if (!"0".equals(src.getUrlPerMinute())) {
+					if (lastPageReadTime!=0) {
+						long delay = 60000 / Integer.parseInt(src.getUrlPerMinute());
+						long n = new Date().getTime();
+						if ((n-lastPageReadTime) < delay) {
+							Utils.sleep((int)(delay-(n-lastPageReadTime)));
+						}
+					}
+					lastPageReadTime = new Date().getTime();
+				}
 				urlLoader = new WebPageLoader();
 			}
 			

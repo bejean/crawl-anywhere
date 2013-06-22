@@ -40,6 +40,7 @@ import org.apache.http.ParseException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.conn.ClientConnectionManager;
@@ -52,6 +53,7 @@ import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.impl.cookie.BasicClientCookie;
@@ -77,7 +79,8 @@ import fr.eolya.utils.Utils;
  */
 public class HttpLoader {
 
-	private DefaultHttpClient client;
+	//private DefaultHttpClient client;
+	private HttpClient client;
 	private HttpGet get;
 	private HttpResponse response;
 
@@ -450,7 +453,7 @@ public class HttpLoader {
 	 * @param 
 	 * @return
 	 */
-	private DefaultHttpClient getHttpClient() {
+	private HttpClient getHttpClient() {
 		try {
 			// ClientConnectionManager
 			SSLSocketFactory sf = new SSLSocketFactory(new TrustStrategy() {
@@ -490,9 +493,9 @@ public class HttpLoader {
 				httpClient.setCookieStore(cookieStore); 		
 			}
 
-			return httpClient;
+			return new DecompressingHttpClient(httpClient);
 		} catch (Exception e) {
-			return new DefaultHttpClient();
+			return new DecompressingHttpClient(new DefaultHttpClient());
 		}
 	} 
 

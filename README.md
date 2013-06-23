@@ -1,8 +1,8 @@
 ![Crawl-Anywhere](http://www.crawl-anywhere.com/logo.png "Crawl-Anywhere")
 
-<strong>April 2013 - Starting version 4.0, Crawl-Anywhere becomes an open-source project. Current version is 4.0.0-alpha-3</strong>
+<strong>April 2013 - Starting version 4.0, Crawl-Anywhere becomes an open-source project. Current version is 4.0.0-alpha-4</strong>
 
-Stable version 3.x is still available at http://www.crawl-anywhere.com/
+Stable version 3.0.x is still available at http://www.crawl-anywhere.com/
 
 
 Introduction
@@ -82,6 +82,7 @@ History
 * release 4.0.0-alpha-1 : April, 28 2013
 * release 4.0.0-alpha-2 : May, 22 2013
 * release 4.0.0-alpha-3 : June, 21 2013
+* release 4.0.0-alpha-4 : June, 23 2013
 
 
 Roadmap

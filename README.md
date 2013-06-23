@@ -65,7 +65,7 @@ Pre-requisites :
 
 Steps :
 
-* Either build (see above) or download a pre-built version (http://www.crawl-anywhere.com/get-crawl-anywhere/)
+* Build
 * Copy the build result or extract the downloaded archives into the installation directory (for instance "/opt/crawler")
 * Follow instructions here : http://www.crawl-anywhere.com/installation-v400/
 

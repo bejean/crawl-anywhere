@@ -1,97 +1,195 @@
-Apache Commons Lang			
-	home    : http://commons.apache.org/lang/ 
+Apache James Mime4J
+	home    : http://james.apache.org/mime4j/
 	license : http://www.apache.org/licenses/
+	required by : Tika
 	
+Asm
+	home    : http://asm.ow2.org/
+	license : http://asm.ow2.org/license.html
+	required by : Tika
+
+AspaectJ
+	home    : http://eclipse.org/aspectj/
+	license : http://en.wikipedia.org/wiki/Eclipse_Public_License
+	required by : Tika
+
+Legion of the Bouncy Castle
+	home    : http://www.bouncycastle.org/java.html
+	licence : http://www.bouncycastle.org/licence.html
+	required by : Tika
+
+Boilerpipe
+    home    : https://code.google.com/p/boilerpipe/
+    license : http://www.apache.org/licenses/LICENSE-2.0
+	required by : Tika
+    	
+Apache Commons Codec
+    home    : http://commons.apache.org/proper/commons-codec/
+	license : http://www.apache.org/licenses/
+    
+Apache Commons Compress
+    home    : http://commons.apache.org/proper/commons-compress/
+	license : http://www.apache.org/licenses/
+
+Apache Commons HttpClient 3.x
+    home    : http://hc.apache.org/httpclient-3.x/
+	license : http://www.apache.org/licenses/
+
 Apache Commons IO			
-	home    : http://commons.apache.org/io/
+	home    : http://commons.apache.org/proper/commons-io/
 	license : http://www.apache.org/licenses/
 	
+Apache Commons Lang			
+	home    : http://commons.apache.org/proper/commons-lang/
+	license : http://www.apache.org/licenses/
+	
+Crawler-Commons
+	home    : https://code.google.com/p/crawler-commons/
+	license : http://www.apache.org/licenses/
+	 
+Dom4j 1.x
+	home    : http://dom4j.sourceforge.net/
+	license : http://dom4j.sourceforge.net/dom4j-1.6.1/license.html
+
+Apache Geronimo
+	home    : http://geronimo.apache.org/
+	license : http://www.apache.org/licenses/
+	required by : Tika
+
+Apache PIO
+    home    : http://poi.apache.org/
+    license : http://poi.apache.org/legal.html
+	required by : Tika
+	
+Apache XML (xerces2)
+     home    : http://xerces.apache.org/xerces2-j/
+	license : http://www.apache.org/licenses/LICENSE-2.0     
+    
+Hamcrest
+	home    : https://code.google.com/p/hamcrest/
+	license : http://opensource.org/licenses/BSD-3-Clause
+	required by : Junit
+
+HttpCleaner
+	home    : http://htmlcleaner.sourceforge.net/
+	license : http://htmlcleaner.sourceforge.net/license.php
+
 Apache HttpComponents    	
 	home    : http://hc.apache.org/ 
 	license : http://www.apache.org/licenses/
 
-FasterXML / jackson-core 		- https://github.com/FasterXML/jackson-core/wiki
-FasterXML / jackson-databind 	- https://github.com/FasterXML/jackson-databind/wiki
-FasterXML / jackson-annotations - https://github.com/FasterXML/jackson-annotations/wiki
+ICU - International Components for Unicode
+	home    : http://site.icu-project.org/
+	license : http://source.icu-project.org/repos/icu/icu/trunk/license.html
 
-//bson4jackson
-//	home    : https://github.com/michel-kraemer/bson4jackson
-//	license : Apache License 2.0 - https://github.com/michel-kraemer/bson4jackson/blob/master/LICENSE.txt
+Mp4parser
+	home    : https://code.google.com/p/mp4parser/
+	license : http://www.apache.org/licenses/LICENSE-2.0
+	required by : Tika
 
-Junit                    	- http://junit.sourceforge.net/cpl-v10.html
+Jackson
+	home    : http://jackson.codehaus.org/
+	license : http://www.apache.org/licenses/LICENSE-2.0
 
-MongoDB                  	- http://www.mongodb.org/display/DOCS/Licensing
+Java Base64
+    home    : http://www.sauronsoftware.it/projects/javabase64/
+    license : https://en.wikipedia.org/wiki/GNU_Lesser_General_Public_License
 
-//Jongo
-//	home    : http://jongo.org/
-//	license : https://github.com/bguerout/jongo/blob/master/LICENSE.txt
-		<dependency>
-			<groupId>org.jongo</groupId>
-			<artifactId>jongo</artifactId>
-			<version>0.3</version>
-		</dependency>
-		
 Java-getopt
 	home    : http://www.urbanophile.com/arenn/hacking/download.html
 	license : https://github.com/arenn/java-getopt/blob/master/gnu/getopt/COPYING.LIB
-	
-Dom4j
-	home    : http://dom4j.sourceforge.net/
-	license : http://dom4j.sourceforge.net/dom4j-1.6.1/license.html
 
+Jaxen
+    home    : http://jaxen.codehaus.org/
+    license : http://jaxen.codehaus.org/license.html
+    
+Jchardet
+    home    : http://jchardet.sourceforge.net/    
+    license : http://www.mozilla.org/MPL/1.1/
+    
+Slf4j
+    home    : http://www.slf4j.org/
+    license : http://www.slf4j.org/license.html
+ 
+Jdom
+	home    : http://www.jdom.org/
+	license : http://www.apache.org/licenses/
+	required by : htmlcleaner
 
-jaxen
-http://jaxen.codehaus.org/
+Jericho-HtmlParser
+	home    : http://jericho.htmlparser.net/docs/index.html	
+    license : https://en.wikipedia.org/wiki/GNU_Lesser_General_Public_License
 
-//xerces2-j
-//https://xerces.apache.org/xerces2-j/
-		<dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xercesImpl</artifactId>
-			<version>2.10.0</version>
-		</dependency>
-		
-		
+Jsoup
+    home    : http://jsoup.org/ 
+    license : http://jsoup.org/license
+      
+Junit
+    home    : http://junit.org/
+    license : https://github.com/junit-team/junit/blob/master/LICENSE.txt
+
+Juniversalchardet
+    home    : https://code.google.com/p/juniversalchardet/
+    license : http://www.mozilla.org/MPL/
+   
+Langdetect
+    home    : https://code.google.com/p/language-detection/
+	license : http://www.apache.org/licenses/LICENSE-2.0
+
+Log4j
+    home    : http://logging.apache.org/log4j/1.2/
+	license : http://www.apache.org/licenses/
+           
+Lucene / Solr   
+    home    : http://lucene.apache.org/solr/
+	license : http://www.apache.org/licenses/LICENSE-2.0
+
+metadata-extractor
+    home : https://code.google.com/p/metadata-extractor/
+	license : http://www.apache.org/licenses/LICENSE-2.0
+	required by : Tika
+        
+MongoDB
+    home    : http://www.mongodb.org/
+    license : http://www.mongodb.org/about/licensing/
+    
+netcfd
+    home    : http://www.unidata.ucar.edu/software/netcdf-java/
+    license : http://www.unidata.ucar.edu/blogs/developer/en/entry/new_license_for_netcdf_java
+
+Pdfbox 
+    home    : http://pdfbox.apache.org/
+	license : http://www.apache.org/licenses/LICENSE-2.0
+	required by : Tika
+   
 Rome
-		<dependency>
-			<groupId>rome</groupId>
-			<artifactId>rome</artifactId>
-			<version>1.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>jdom</groupId>
-					<artifactId>jdom</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+    home    : https://rometools.jira.com/wiki/display/ROME/Home
+ 	license : http://www.apache.org/licenses/LICENSE-2.0
+
+Shell
+	home    : http://blog.developpez.com/adiguba/p3035/java/runtime_exec_n_est_pas_des_plus_simple
+	license : http://www.cecill.info/licences.fr.html
+    
+Snacktory
+    home    : https://github.com/karussell/snacktory
+ 	license : http://www.apache.org/licenses/LICENSE-2.0
+
+Tagsoup
+    home    : http://ccil.org/~cowan/XML/tagsoup/          
+    license : http://opensource.org/licenses/apache2.0.php   
+	required by : Tika
+   
+Tika
+    home    : http://tika.apache.org/
+    license : http://www.apache.org/licenses/
+    
+Vorbis
+    home    : http://downloads.xiph.org/releases/vorbis-java/
+    license : http://en.wikipedia.org/wiki/BSD_licenses
+
+Woodstox
+    home    : http://woodstox.codehaus.org/
+    license : http://woodstox.codehaus.org/Download
+       
 
 
-Jdom - http://www.jdom.org
-		<dependency>
-			<groupId>org.jdom</groupId>
-			<artifactId>jdom</artifactId>
-			<version>1.1.3</version>
-		</dependency>
-
-
-http://htmlcleaner.sourceforge.net/
-
-http://jericho.htmlparser.net
-
-http://jsoup.org/
-
-https://github.com/karussell/snacktory
-
-http://tika.apache.org/
-
-Shell - 
-http://blog.developpez.com/adiguba/p3035/java/runtime_exec_n_est_pas_des_plus_simple - http://www.cecill.info/licences.fr.html
-
-
-http://www.sauronsoftware.it/projects/javabase64/manual.php
-
-jchardet
-
-http://iharder.net/base64 
-
-com.cybozu.labs.langdetect

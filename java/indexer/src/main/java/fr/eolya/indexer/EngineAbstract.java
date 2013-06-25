@@ -40,7 +40,6 @@ public abstract class EngineAbstract {
     protected long lastCommitTimestamp = 0;
     
     public boolean commit(boolean force) {
-        //if (server==null) return false;
         if (commitDocsCount==0) return true;
         try {       
             Date now = new Date();
@@ -70,7 +69,6 @@ public abstract class EngineAbstract {
     }
     
     public boolean optimize(boolean force) {
-        //if (server==null) return false;
         if (optimizeDocsCount==0) return true;
         try {       
             if ((optimizeEach>0) && (optimizeDocsCount >= optimizeEach || force)) {
@@ -89,7 +87,6 @@ public abstract class EngineAbstract {
     }
     
     public boolean deleteByQuery(String query) {
-        //if (server==null) return false;
         try {
             internalDeleteByQuery(query);
             commitDocsCount++;
@@ -98,12 +95,10 @@ public abstract class EngineAbstract {
             if (outputStackTrace) e.printStackTrace();
             return false;
         }
-        //commit(true);
         return true;
     }
     
     public boolean resetIndex() {
-        //if (server==null) return false;
         try {
             internalDeleteByQuery("");
             internalCommit();

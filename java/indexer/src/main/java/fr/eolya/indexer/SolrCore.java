@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.SolrPingResponse;
@@ -16,24 +16,15 @@ import fr.eolya.utils.Logger;
 public class SolrCore extends EngineAbstract implements IEngine {
     
     private String url = null;
-    private CommonsHttpSolrServer server = null;
+    private HttpSolrServer server = null;
     private String requestHandler = null;
-
-    //	private int optimizeDocsCount = 0;
-    //	private int commitDocsCount = 0;
-    //	private int optimizeEach = 0;
-    //	private int commitWithin = 0;
-    //	private int commitEach = 0;
-    //	private long lastCommitTimestamp = 0;
-    
-    //SimpleHttpConnectionManager connectionManager = null;
-    ///HttpClient httpClient = null;
+    private boolean solrUseJavaBin = false;
     
     public String getUrl() {
         return url;
     }
     
-    public SolrCore(String url, int commitWithin, int commitEach, int optimizeEach, Logger logger, String requestHandler) {
+    public SolrCore(String url, int commitWithin, int commitEach, int optimizeEach, Logger logger, String requestHandler, boolean solrUseJavaBin) {
         this.url = url;
         if ((optimizeEach>0) && (optimizeEach<commitEach)) optimizeEach=commitEach;
         if (commitWithin>0) commitEach=0;
@@ -43,39 +34,14 @@ public class SolrCore extends EngineAbstract implements IEngine {
         this.optimizeEach = optimizeEach;
         this.logger = logger;
         this.requestHandler = requestHandler;
+        this.solrUseJavaBin = solrUseJavaBin;
     }
-    
-    
-    
-    //	public boolean connect(boolean useHttpClient) {
-    //		if (useHttpClient) {
-    //			connectionManager = new SimpleHttpConnectionManager();
-    //			if (connectionManager == null) return false;
-    //
-    //			HttpConnectionManagerParams params = connectionManager.getParams();
-    //			params.setConnectionTimeout(5000);
-    //			params.setSoTimeout(20000);
-    //
-    //			httpClient = new HttpClient(connectionManager);
-    //			if (httpClient == null) return false;
-    //
-    //			httpClient.getParams().setSoTimeout(20000);			
-    //		}
-    //		else {
-    //			connectionManager = null;
-    //			httpClient = null;
-    //		}
-    //		return connect();
-    //
-    //	}
-    
+        
     public boolean connect() {
         try {
-            //			if (httpClient!=null)
-            //				server = new CommonsHttpSolrServer(url, httpClient);
-            //			else
-            server = new CommonsHttpSolrServer(url);
-            server.setParser(new XMLResponseParser());
+            server = new HttpSolrServer(url);
+            if (!solrUseJavaBin)
+            	server.setParser(new XMLResponseParser());
             return true;
         } catch (Exception e) {
             log("error connecting to solr (" + url + ") " + e.getMessage());
@@ -97,7 +63,6 @@ public class SolrCore extends EngineAbstract implements IEngine {
             SolrPingResponse ping = server.ping();
         } catch (SolrServerException sse) {
             lastExceptionCauseName = sse.getMessage();
-            //.getCause().getClass().getName();
             log("Ping failed on solr (" + url + ") " + sse.getMessage());
             if (outputStackTrace) {
                 System.out.println(sse.getMessage());
@@ -107,7 +72,6 @@ public class SolrCore extends EngineAbstract implements IEngine {
             return false;			
         } catch (Exception e) {
             lastExceptionCauseName = e.getMessage();
-            //.getCause().getClass().getName();
             log("Ping failed on solr (" + url + ") " + e.getMessage());
             if (outputStackTrace) {
                 System.out.println(e.getMessage());
@@ -120,13 +84,11 @@ public class SolrCore extends EngineAbstract implements IEngine {
     }	
     
     public int addDocuments(Collection<InputDocument> docs) {
-        //public int add(Collection<SolrInputDocument> docs) {
         
         Collection<SolrInputDocument> solrDocs = new ArrayList<SolrInputDocument>();
         for (Iterator<InputDocument> iter = docs.iterator(); iter.hasNext();) {
             InputDocument doc = (InputDocument) iter.next();
             SolrInputDocument solrDoc = new SolrInputDocument();
-            //addDocument(doc);
             
             Collection<InputField> fields = doc.getFields();
             for (Iterator<InputField> iterFields = fields.iterator(); iterFields.hasNext();) {
@@ -140,18 +102,13 @@ public class SolrCore extends EngineAbstract implements IEngine {
         }
         
         try {
-            //if (commitWithin==0) {
-            //    server.add(solrDocs);
-            //}
-            //else {
-                UpdateRequest req = new UpdateRequest();
-                if ((this.requestHandler != null) && (!this.requestHandler.isEmpty()))
-                    req.setPath(this.requestHandler);
-                req.add(solrDocs);
-                if (commitWithin>0)
-                	req.setCommitWithin(commitWithin);
-                req.process(server);
-            //}
+            UpdateRequest req = new UpdateRequest();
+            if ((this.requestHandler != null) && (!this.requestHandler.isEmpty()))
+                req.setPath(this.requestHandler);
+            req.add(solrDocs);
+            if (commitWithin>0)
+            	req.setCommitWithin(commitWithin);
+            req.process(server);
         } catch (Exception e) {
             log("     error : " + e.getMessage());
             if (outputStackTrace) e.printStackTrace();
@@ -185,95 +142,4 @@ public class SolrCore extends EngineAbstract implements IEngine {
             e.printStackTrace();
         }
     }
-    
-//    public boolean commit(boolean force) {
-//        if (server==null) return false;
-//        if (commitDocsCount==0) return true;
-//        try {		
-//            Date now = new Date();
-//            if ( (optimizeEach>0) && (optimizeDocsCount >= optimizeEach)) {
-//                log("Commiting index");
-//                server.commit();
-//                log("Optimizing index");
-//                server.optimize();
-//                optimizeDocsCount = 0;
-//                commitDocsCount = 0;
-//                lastCommitTimestamp = now.getTime();
-//            } else {
-//                long lastCommitDelay = (now.getTime() - lastCommitTimestamp) / 1000;
-//                if ((commitDocsCount >= commitEach && commitEach > 0) || force || (lastCommitDelay > 300  && commitEach > 0)) {
-//                    log("Commiting index");
-//                    server.commit();
-//                    commitDocsCount = 0;
-//                    lastCommitTimestamp = now.getTime();
-//                }
-//            }
-//            return true;
-//        }
-//        catch (Exception e) {
-//            if (outputStackTrace) e.printStackTrace();
-//            return false;
-//        }
-//    }
-    
-//    public boolean optimize(boolean force) {
-//        if (server==null) return false;
-//        if (optimizeDocsCount==0) return true;
-//        try {		
-//            if ((optimizeEach>0) && (optimizeDocsCount >= optimizeEach || force)) {
-//                log("Optimizing index");
-//                server.commit();
-//                server.optimize();
-//                optimizeDocsCount = 0;
-//                commitDocsCount = 0;
-//            }
-//            return true;
-//        }
-//        catch (Exception e) {
-//            if (outputStackTrace) e.printStackTrace();
-//            return false;
-//        }
-//    }
-    
-//    public boolean deleteByQuery(String query) {
-//        if (server==null) return false;
-//        try {
-//            server.deleteByQuery(query);
-//            commitDocsCount++;
-//            optimizeDocsCount++;
-//        } catch (Exception e) {
-//            if (outputStackTrace) e.printStackTrace();
-//            return false;
-//        }
-//        commit(true);
-//        return true;
-//    }
-    
-//    public boolean resetIndex() {
-//        if (server==null) return false;
-//        try {
-//            server.deleteByQuery("*:*");
-//            server.commit();
-//            server.optimize();
-//            return true;
-//        } catch (Exception e) {
-//            log("failed to reset index");
-//            if (outputStackTrace) e.printStackTrace();
-//            return false;
-//        }
-//    }
-    
-    
-    
-    //	public static void main(String[] args) {
-    //		String url = "http://localhost:8180/solr_3e193e3f-45d6-4fe5-9ec9-995dcf762180/core";
-    //		SolrCore core = new SolrCore(url, 1000, 0, 0, null);
-    //		core.setOutputStackTrace(true);
-    //		if (core.connect(true)) {
-    //			if (!core.ping()) {
-    //				System.out.println(core.getLastExceptionCauseName());		
-    //			}
-    //		}
-    //	}
-    
 }

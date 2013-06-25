@@ -7,6 +7,7 @@
 		<param name="commitwithin">60000</param>
 		<param name="commiteach">0</param>
 		<param name="optimizeeach">0</param>
+		<param name="javabin">0</param>
 	</solr>
 	<param name="witnessfilespath">log</param>
 	<param name="logfilename">log/indexer.log</param>

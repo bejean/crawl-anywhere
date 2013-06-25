@@ -1,27 +1,19 @@
 package fr.eolya.indexer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 public class InputDocument {
     private Collection<InputField> fields;
     private String boost;
-    private String type;
-    private String language;
-    private String configuredLanguages;
     
-    public InputDocument(String type, String configuredLanguages) {
+    public InputDocument() {
         fields = new ArrayList<InputField>();
         boost = null;
-        this.type = type;
-        this.configuredLanguages = configuredLanguages;
     }
     
     public void addField(String name, Object value) {
         addField(name, value, null);
-        if ("language".equals(name.toLowerCase())) language = ((String)value).toLowerCase();
     }
     
     public void addField(String name, Object value, String boost) {
@@ -39,12 +31,5 @@ public class InputDocument {
     
     public String getDocumentBoost() {
         return boost;
-    }
-    
-    public String getDocumentType() {
-        if (type!=null) return type;
-        List<String> items = Arrays.asList(configuredLanguages.split("\\s*,\\s*"));
-        if (language!=null && items.contains(language)) return "mapping_" + language;
-        return null;
     }
 }

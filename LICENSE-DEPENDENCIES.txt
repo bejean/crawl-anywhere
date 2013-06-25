@@ -31,10 +31,6 @@ Apache Commons Compress
     home    : http://commons.apache.org/proper/commons-compress/
 	license : http://www.apache.org/licenses/
 
-Apache Commons HttpClient 3.x
-    home    : http://hc.apache.org/httpclient-3.x/
-	license : http://www.apache.org/licenses/
-
 Apache Commons IO			
 	home    : http://commons.apache.org/proper/commons-io/
 	license : http://www.apache.org/licenses/

@@ -945,12 +945,6 @@ public class HttpUtils {
 					if (isValidUrl(link))
 						if (!list.contains(link))
 							list.add(link);
-				/*
-			if (href==null) continue;
-			// A element can contain other tags so need to extract the text from it:
-			String label=linkElement.getContent().getTextExtractor().toString();
-			System.out.println(label+" <"+href+'>');
-				 */
 			}
 		}
 		if (depth==1 || depth==2) {

@@ -1,11 +1,9 @@
 package fr.eolya.indexer;
 
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 
 import org.apache.commons.io.FileUtils;
-//import org.apache.solr.common.SolrInputDocument;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -27,18 +25,18 @@ public class Indexer {
     protected int optimizeEach = 0;
 
     private String requestHandler = null;
+    private boolean solrUseJavaBin = false;
     
     protected String settingsDirectoryPath = null;
     protected XMLConfig config;
     
     private static void usage() {
-        System.out.println("Usage : java Indexer -p <properties file> [-o] [-v] [-r] [-c] [-s url] [-e url] [-f]");
+        System.out.println("Usage : java Indexer -p <properties file> [-o] [-v] [-r] [-c] [-s url] [-f]");
         System.out.println("    -o : once");
         System.out.println("    -v : verbose");
         System.out.println("    -r : reset index");
         System.out.println("    -c : optimize index only");
         System.out.println("    -s : solr core url");
-        System.out.println("    -e : elasticsearch index url");
         System.out.println("    -f : force url");
     }
     
@@ -58,7 +56,6 @@ public class Indexer {
         boolean resetindex = false;
         String propFileName = "";
         String solrCoreUrl = "";
-        String elasticsearchIndexUrl = "";
         boolean forceUrl = false;
         
         while ((c = g.getopt()) != -1) {
@@ -86,11 +83,7 @@ public class Indexer {
                 case 's':
                     solrCoreUrl = g.getOptarg();
                     break;
-                    
-                case 'e':
-                    elasticsearchIndexUrl = g.getOptarg();
-                    break;
-                    
+                                        
                 case 'f':
                     forceUrl = true;
                     break;
@@ -148,7 +141,7 @@ public class Indexer {
         
         try {
             Indexer indexer = new Indexer(config, settingsDirectoryPath);
-            indexer.run(once, verbose, resetindex, optimizeOnly, solrCoreUrl, elasticsearchIndexUrl, forceUrl);
+            indexer.run(once, verbose, resetindex, optimizeOnly, solrCoreUrl, forceUrl);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -163,7 +156,7 @@ public class Indexer {
         this.settingsDirectoryPath = settingsDirectoryPath;
     }
     
-    public void run(boolean once, boolean verbose, boolean resetindex, boolean optimizeOnly, String solrCoreUrl, String elasticsearchIndexUrl, boolean forceUrl) {
+    public void run(boolean once, boolean verbose, boolean resetindex, boolean optimizeOnly, String solrCoreUrl, boolean forceUrl) {
         
         String logFilesPath = config.getProperty("/indexer/param[@name='logfilename']");
         logFilesPath = Utils.getValidPropertyPath(logFilesPath, null, "HOME");
@@ -191,6 +184,7 @@ public class Indexer {
         commitEach = Integer.parseInt(config.getProperty("/indexer/solr/param[@name='commiteach']", "0").trim());
         optimizeEach = Integer.parseInt(config.getProperty("/indexer/solr/param[@name='optimizeeach']", "0").trim());
         requestHandler = config.getProperty("/indexer/solr/param[@name='requesthandler']");
+        solrUseJavaBin = ("javabin".equals(config.getProperty("/indexer/solr/param[@name='jababin']", "")));
         
         int stopAfterMaxSuccessiveError = Integer.parseInt(config.getProperty("/indexer/param[@name='stopaftermaxsuccessivesolrerror']", "3").trim());
         
@@ -206,10 +200,8 @@ public class Indexer {
         logger.log("");
         
         // initiate Solr
-        
         engines = new Hashtable<String,IEngine> ();
         
-        //solrCores = new Hashtable<String,SolrCore> ();
         String solrUrl = "";
         if (solrCoreUrl!=null && !"".equals(solrCoreUrl)) {
             solrUrl = solrCoreUrl;
@@ -223,7 +215,7 @@ public class Indexer {
         }
         
         if (solrUrl!=null && !"".equals(solrUrl)) {
-            SolrCore solrCore = createSolrCore(solrUrl, commitWithin, commitEach, optimizeEach, logger, verbose, requestHandler);
+            SolrCore solrCore = createSolrCore(solrUrl, commitWithin, commitEach, optimizeEach, logger, verbose, requestHandler, solrUseJavaBin);
             if (solrCore!=null) {
                 //return;
                 
@@ -239,41 +231,7 @@ public class Indexer {
                 engines.put(solrUrl, solrCore);
             }
         }
-        
-        
-        // initiate elasticsearch
-        //elasticSearchIndexes = new Hashtable<String,ElasticSearchIndex> ();
-        String elasticSearchUrl = "";
-        if (elasticsearchIndexUrl!=null && !"".equals(elasticsearchIndexUrl)) {
-            elasticSearchUrl = elasticsearchIndexUrl;
-        } else {
-            elasticSearchUrl = config.getProperty("/indexer/elasticsearch/param[@name='baseurl']");
-            if (elasticSearchUrl!=null && !"".equals(elasticSearchUrl)) {
-                String elasticSearchIndexName = config.getProperty("/indexer/elasticsearch/param[@name='indexname']");
-                if (elasticSearchIndexName != null && !"".equals(elasticSearchIndexName))
-                    elasticSearchUrl = elasticSearchUrl + elasticSearchIndexName;
-            }
-        }
-        
-        if (elasticSearchUrl!=null && !"".equals(elasticSearchUrl)) {
-            ElasticSearchIndex elasticSearchIndex = createElasticSearchIndex(elasticSearchUrl, commitWithin, commitEach, optimizeEach, logger, verbose);
-            if (elasticSearchIndex!=null) {
-                //return;
-                
-                if (optimizeOnly) {
-                    elasticSearchIndex.optimize(true);
-                }
-                
-                if (resetindex)
-                    if (!elasticSearchIndex.resetIndex())
-                        return;
-                
-                //elasticSearchIndexes.put(elasticSearchUrl, elasticSearchIndex);
-                engines.put(elasticSearchUrl, elasticSearchIndex);
-                
-            }
-        }
-        
+               
         if (optimizeOnly) {
             filePid.delete();
             logger.log("Indexer ending");
@@ -307,7 +265,7 @@ public class Indexer {
                             if (fl[i].isFile() && fl[i].getName().matches(filesPattern)) {
                                 logger.log("processing : " + filesQueue + "/" + fl[i].getName());
                                 System.out.println("processing : " + filesQueue + "/" + fl[i].getName());
-                                int ret = processOneFile(filesQueue + "/" + fl[i].getName(), solrUrl, elasticSearchUrl, forceUrl, verbose);
+                                int ret = processOneFile(filesQueue + "/" + fl[i].getName(), solrUrl, forceUrl, verbose);
                                 if (ret == -2) {
                                     // Not pinging -> file will be retry later.
                                     logger.log("Solr not pinging. Current file processing will be retry later in a few seconds.");
@@ -417,10 +375,9 @@ public class Indexer {
             f.delete();	
     }
     
-    private int processOneFile(String fileName, String solrUrl, String elasticsearchUrl, boolean forceUrl, boolean verbose) {
+    private int processOneFile(String fileName, String solrUrl, boolean forceUrl, boolean verbose) {
         
         boolean allOk = true;
-        //SolrCore docSolrCore = null;
         IEngine engine = null;
         
         try {
@@ -440,41 +397,18 @@ public class Indexer {
             Iterator<Element> iterJobs = jobs.iterator();
             while (iterJobs.hasNext()) {
                 
-                //Collection<SolrInputDocument> docs = new ArrayList<SolrInputDocument>();
                 Collection<InputDocument> docs = new ArrayList<InputDocument>();
                 
                 Element job = (Element) iterJobs.next();
                 
-                String docTargetType = job.attributeValue("target_type");
-                String targetUrl = "";
-                if ("solr".equals(docTargetType)) targetUrl = solrUrl;
-                if ("es".equals(docTargetType)) targetUrl = elasticsearchUrl;
+                String targetUrl = solrUrl;
                 
                 // Specific solr core url ?
-                String docTargetUrl = job.attributeValue("target_url");
-                //if (docTargetUrl==null || "".equals(docTargetUrl)) docTargetUrl = job.attributeValue("solr_url"); // TODO: remove in a future version
-                
-                //                if (docTargetUrl!=null && !"".equals(docTargetUrl) && !(!"".equals(targetUrl) && forceUrl)) {
-                //                    docSolrCore = solrCores.get(docTargetUrl);
-                //                    if (docSolrCore==null) {
-                //                        docSolrCore = createSolrCore(docTargetUrl, commitWithin, commitEach, optimizeEach, logger, verbose);
-                //                        if (docSolrCore!=null)
-                //                            solrCores.put(docTargetUrl, docSolrCore);
-                //                    }
-                //                }
-                //                else {
-                //                    if (targetUrl!=null && !"".equals(targetUrl))
-                //                        docSolrCore = solrCores.get(targetUrl);
-                //                }
-                //                
-                //                if (docSolrCore!=null) {
-                //                    
-                //                    logger.log("    Solr url              = " + docSolrCore.getUrl());
-                
+                String docTargetUrl = job.attributeValue("target_url");                
                 if (docTargetUrl!=null && !"".equals(docTargetUrl) && !(!"".equals(targetUrl) && forceUrl)) {
                     engine = engines.get(docTargetUrl);
                     if (engine==null) {
-                        engine = createEngine(docTargetType, docTargetUrl, commitWithin, commitEach, optimizeEach, logger, verbose, requestHandler);
+                        engine = createEngine(docTargetUrl, commitWithin, commitEach, optimizeEach, logger, verbose, requestHandler, solrUseJavaBin);
                         if (engine!=null)
                             engines.put(docTargetUrl, engine);
                     }
@@ -495,7 +429,8 @@ public class Indexer {
                     if ("resetsource".equals(action) || "remove".equals(action)) {
                         String query = "";
                         
-                        List<Element> childs = job.elements();
+                        @SuppressWarnings("unchecked")
+						List<Element> childs = job.elements();
                         Iterator<Element> iterChilds = childs.iterator();
                         while (iterChilds.hasNext()) {
                             Element field = (Element) iterChilds.next();
@@ -514,12 +449,9 @@ public class Indexer {
                             } else {
                                 logger.log("     remove item (" + query+ ")");
                             }
-                            //docSolrCore.deleteByQuery(query);
                             engine.deleteByQuery(query);
-                            //if (!docSolrCore.commit(true)) {
                             if ("resetsource".equals(action) && !engine.commit(true)) {
                                 logger.log("     error during commit");
-                                //if (!docSolrCore.ping()) {
                                 if (!engine.ping()) {
                                     logger.log("     not pinging");
                                     return -2;
@@ -533,18 +465,14 @@ public class Indexer {
                     }
                     
                     if (action==null || "".equals(action) || "add".equals(action)) {
-                        
-                        //SolrInputDocument doc = new SolrInputDocument();
-                        
-                        InputDocument doc = new InputDocument(null, config.getProperty("/indexer/elasticsearch/param[@name='configured_languages']"));
-                        
+                        InputDocument doc = new InputDocument();
                         String boostDoc = job.attributeValue("boost");
                         if (boostDoc!=null && !"".equals(boostDoc)) {
-                            //doc.setDocumentBoost(Float.parseFloat(boostDoc));
                             doc.setDocumentBoost(boostDoc);
                         }
                         
-                        List<Element> childs = job.elements();
+                        @SuppressWarnings("unchecked")
+						List<Element> childs = job.elements();
                         Iterator<Element> iterChilds = childs.iterator();
                         while (iterChilds.hasNext()) {
                             Element field = (Element) iterChilds.next();
@@ -561,7 +489,6 @@ public class Indexer {
                                     fieldValue = fieldValue.trim().replace(' ', 'T') + "Z";		
                                 
                                 if (boostField!=null && !"".equals(boostField)) {
-                                    //doc.addField(fieldName, fieldValue, Float.parseFloat(boostField));
                                     doc.addField(fieldName, fieldValue, boostField);
                                 } else {
                                     doc.addField(fieldName, fieldValue);                                    
@@ -575,8 +502,6 @@ public class Indexer {
                     
                     if (docs.size() > 0) {
                         try {
-                            //                            if (docSolrCore.addDocuments(docs) == -1) {
-                            //                                if (!docSolrCore.ping())
                             if (engine.addDocuments(docs) == -1) {
                                 if (!engine.ping())
                                     return -2;
@@ -625,15 +550,14 @@ public class Indexer {
     }
     
     
-    private IEngine createEngine(String docTargetType,String docTargetUrl, int commitWithin, int commitEach, int optimizeEach, Logger logger, boolean verbose, String requestHandler) {
-        if ("solr".equals(docTargetType)) return createSolrCore(docTargetUrl, commitWithin, commitEach, optimizeEach, logger, verbose, requestHandler);
-        if ("es".equals(docTargetType)) return createElasticSearchIndex(docTargetUrl, commitWithin, commitEach, optimizeEach, logger, verbose);
+    private IEngine createEngine(String docTargetUrl, int commitWithin, int commitEach, int optimizeEach, Logger logger, boolean verbose, String requestHandler, boolean solrUseJavaBin) {
+        createSolrCore(docTargetUrl, commitWithin, commitEach, optimizeEach, logger, verbose, requestHandler, solrUseJavaBin);
         return null;
     }
     
-    private SolrCore createSolrCore(String solrUrl, int commitWithin, int commitEach, int optimizeEach, Logger logger, boolean verbose, String requestHandler) {
+    private SolrCore createSolrCore(String solrUrl, int commitWithin, int commitEach, int optimizeEach, Logger logger, boolean verbose, String requestHandler, boolean solrUseJavaBin) {
         logger.log("Create new Solr core connection : " + solrUrl);
-        SolrCore solrCore = new SolrCore(solrUrl, commitWithin, commitEach, optimizeEach, logger, requestHandler);        
+        SolrCore solrCore = new SolrCore(solrUrl, commitWithin, commitEach, optimizeEach, logger, requestHandler, solrUseJavaBin);        
         solrCore.setOutputStackTrace(verbose);
         
         if (!solrCore.connect())
@@ -645,41 +569,12 @@ public class Indexer {
         return solrCore;
     }
     
-    private ElasticSearchIndex createElasticSearchIndex(String elasticSearchUrl, int commitWithin, int commitEach, int optimizeEach, Logger logger, boolean verbose) {
-        logger.log("Create new elasticsearch index connection : " + elasticSearchUrl);
-        
-        try {
-            URL url = new URL(elasticSearchUrl);
-            String host = url.getHost();
-            int port = url.getPort();
-            if (port<=0) port = 9300;
-            String index = url.getPath().replaceAll("/", "");
-            ElasticSearchIndex es = new ElasticSearchIndex(host, port, index, logger);
-            es.connect();
-            es.open(settingsDirectoryPath, config.getProperty("/indexer/elasticsearch/param[@name='configured_languages']"), false);
-            return es;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    
     private void enginesCommit(boolean force) {
         Iterator<String> itr = engines.keySet().iterator();
         while (itr.hasNext()) {
             String url = itr.next();
             engines.get(url).commit(force);
         }
-        //        Iterator<String> itr = solrCores.keySet().iterator();
-        //        while (itr.hasNext()) {
-        //            String coreUrl = itr.next();
-        //            solrCores.get(coreUrl).commit(force);
-        //        }
-        //        itr = elasticSearchIndexes.keySet().iterator();
-        //        while (itr.hasNext()) {
-        //            String coreUrl = itr.next();
-        //            elasticSearchIndexes.get(coreUrl).commit(force);
-        //        }
     }
     
     private void enginesTerminate(boolean optimize) {
@@ -688,15 +583,5 @@ public class Indexer {
             String url = itr.next();
             engines.get(url).terminate(optimize);
         }
-        //        Iterator<String> itr = solrCores.keySet().iterator();
-        //        while (itr.hasNext()) {
-        //            String coreUrl = itr.next();
-        //            solrCores.get(coreUrl).terminate(optimize);
-        //        }
-        //        itr = elasticSearchIndexes.keySet().iterator();
-        //        while (itr.hasNext()) {
-        //            String coreUrl = itr.next();
-        //            elasticSearchIndexes.get(coreUrl).terminate(optimize);
-        //        }
     }
 }

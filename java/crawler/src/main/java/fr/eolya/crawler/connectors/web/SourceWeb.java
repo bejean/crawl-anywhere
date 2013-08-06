@@ -1,6 +1,7 @@
 package fr.eolya.crawler.connectors.web;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +82,7 @@ public class SourceWeb extends Source implements ISource {
     public List<String> getHostAliases() {
     	List<String> aliases = null;
     	if (StringUtils.trimToNull(getSrcDataString("alias_host"))!=null) 
-    		aliases = Arrays.asList(getSrcDataString("alias_host").split(","));
+    		aliases = new ArrayList<String>(Arrays.asList(getSrcDataString("alias_host").split(",")));
     	if (aliases==null) return Arrays.asList(getHost().split(","));
     	aliases.add(getHost());
     	return aliases;

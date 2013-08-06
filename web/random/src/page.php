@@ -1,6 +1,6 @@
 <?php
 $max_links_per_page = 4;
-$max_pages = 20;
+$max_pages = 40;
 $include_https_each = 0;
 
 function generateLink($count, $max_pages, $include_https_each) {
@@ -17,6 +17,7 @@ function generateLink($count, $max_pages, $include_https_each) {
 			$url = "http://" . $_SERVER["REMOTE_HOST"] . "/random/redirect/page2.php?id=" . $id . "&case=" . $param;
 		$ret.="<br /><a href='" . $url . "'>" . $url . "</a>";
 	}
+	$ret.="<br /><a href='http://www.tf1.fr'>TF1</a>";
 	return $ret;
 }
 

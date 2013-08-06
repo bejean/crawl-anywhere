@@ -3,7 +3,7 @@ export COPY_EXTENDED_ATTRIBUTES_DISABLE=true
 export COPYFILE_DISABLE=true
 export DEV=$(pwd)
 export VERSION=4.0.0
-export DISTRIB=/tmp/CA
+export DISTRIB=$DEV/build
 export RSYNCFLAGS="-au"
 
 #=============================================
@@ -102,7 +102,7 @@ rm -rf $DEV/java/solr/target/dependency
 
 mkdir $DISTRIB/install/solr/solr430/lib
 cp target/solr-0.0.1-SNAPSHOT.jar $DISTRIB/install/solr/solr430/lib/eolya-solr4.jar
-cp target/dependency/*.jar $DISTRIB/install/solr/solr430/lib/.
+#cp target/dependency/*.jar $DISTRIB/install/solr/solr430/lib/.
 
 
 ## solr3

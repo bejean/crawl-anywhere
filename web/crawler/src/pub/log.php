@@ -3,7 +3,7 @@ require_once("../init_gpc.inc.php");
 require_once("../init.inc.php");
 
 $id = $_GET['id'];
-$time = $_GET['time'];
+$row = $_GET['row'];
 
 if ($id=='') exit();
 
@@ -11,43 +11,40 @@ if ($id=='') exit();
 $mg = mg_connect ($config, "", "", "");
 if ($mg)
 {
-	$stmt = new mg_stmt_select($mg,"sources");
+	$stmt = new mg_stmt_select($mg,"sources_log");
 
 	$query = array ("id_source" => intval($id));
-	
-	if ($time!='') {
-	//	$where .= " and createtime = '" . $time . "'";
-	} else {
-		$RowCount = mg_row_count($mg, "sources_log", $query);
-	}
-	
+
 	$stmt->setQuery($query);
 	$stmt->setSort(array("createtime" => -1));
 	$count = $stmt->execute();
-	if ($count==0)
-	{
-		print "Error while reading log !";
+
+	header('Content-type: text/html; charset=UTF-8');
+
+	if ($count==0) {
+		print ("No log available !");
 		exit();
 	}
-	//print $s;
-	
-	if ($time=='') {
-		header('Content-type: text/html; charset=UTF-8');
-		
-		if ($RowCount==0) {
-			print ("No log available !");
-			exit();
-		}
-		
-		while ($cursor->hasNext())
-		{
+
+	$cursor = $stmt->getCursor();
+	if ($row=="") {
+		$row=0;
+		while ($cursor->hasNext()) {
 			$rs = $cursor->getNext();
-			print ("<a href='log.php?id=" . $id . "&time=" . $rs["createtime"] . "'>". $rs["createtime"] . "</a><br>");
+
+			$t = $rs["createtime"]/1000;
+			$created = date('Y-m-d h:i:s', $t);
+			//1.37271406957E+12
+
+
+			print ("<a href='log.php?id=" . $id . "&row=" . $row . "'>". $created . "</a><br>");
+			$row++;
 		}
 	}
 	else {
-		header('Content-type: text/plain; charset=UTF-8');
-		print ($rs["log"]);
+		$cursor->skip($row);
+		$rs = $cursor->getNext();
+		print ('<pre>' . $rs["log"] . '</pre>');
 	}
 
 }

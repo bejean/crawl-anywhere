@@ -61,7 +61,6 @@
 			<version>5.5.23</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>de.l3s.boilerpipe</groupId>
 			<artifactId>boilerpipe</artifactId>

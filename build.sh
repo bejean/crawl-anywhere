@@ -165,6 +165,7 @@ cp -r $DEV/java/simplepipeline/target/dependency/* $DISTRIB/lib/.
 cp -r $DEV/java/indexer/target/dependency/* $DISTRIB/lib/.
 cp -r $DEV/java/utils/target/dependency/* $DISTRIB/lib/.
 rm $DISTRIB/lib/utils-0.0.1-SNAPSHOT.jar
+rm $DISTRIB/lib/commons-lang-*.jar
 
 #=============================================
 # web

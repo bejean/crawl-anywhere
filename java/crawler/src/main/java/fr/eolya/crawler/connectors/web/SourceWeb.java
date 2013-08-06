@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fr.eolya.crawler.connectors.ISource;
 import fr.eolya.crawler.connectors.Source;
 import fr.eolya.crawler.connectors.web.StartingUrls;
@@ -30,6 +32,12 @@ public class SourceWeb extends Source implements ISource {
 		StartingUrls startingUrls = getStartingUrls();
 		if (startingUrls==null) return false;
 		return startingUrls.isOptimized();
+	}
+	
+	public String getUrlConcurrency() {
+		if (!"0".equals(getUrlPerMinute())) 
+			return String.valueOf(Math.min(16, Integer.parseInt(getSrcDataString("crawl_url_concurrency", "1"))));
+		return getSrcDataString("crawl_url_concurrency", "1");
 	}
 
 	public StartingUrls getStartingUrls() {
@@ -71,7 +79,12 @@ public class SourceWeb extends Source implements ISource {
     }
 
     public List<String> getHostAliases() {
-		return Arrays.asList(getSrcDataString("alias_host").split(","));
+    	List<String> aliases = null;
+    	if (StringUtils.trimToNull(getSrcDataString("alias_host"))!=null) 
+    		aliases = Arrays.asList(getSrcDataString("alias_host").split(","));
+    	if (aliases==null) return Arrays.asList(getHost().split(","));
+    	aliases.add(getHost());
+    	return aliases;
 	}
 
 	public String getAutomaticCleaning(){

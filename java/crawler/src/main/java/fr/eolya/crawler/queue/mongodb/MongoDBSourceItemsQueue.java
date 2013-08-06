@@ -283,10 +283,10 @@ public class MongoDBSourceItemsQueue implements ISourceItemsQueue {
 	public Long reStart(int startDepth) {
 		this.startDepth = startDepth;
 		long time2 = writeState(new Date().getTime());
-		if (startDepth>0) {
-			long time = readState();
-			time = time;
-		}
+		//if (startDepth>0) {
+		//	long time = readState();
+		//	time = time;
+		//}
 		return time2;
 	}
 	public int getStartDepth() {

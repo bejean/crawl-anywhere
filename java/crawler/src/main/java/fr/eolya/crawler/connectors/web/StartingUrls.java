@@ -52,9 +52,10 @@ public class StartingUrls {
 					urlHome = tmpUrl.getProtocol() + "://" + tmpUrl.getAuthority() + "/";
 				}
 
-				boolean bAllowOtherDomain = false;
-				if ("l".equals(mode.getText()) && "1".equals(allowOtherDomain.getText()))
-					bAllowOtherDomain = true;
+				//boolean bAllowOtherDomain = false;
+				//if ("l".equals(mode.getText()) && "1".equals(allowOtherDomain.getText()))
+				//	bAllowOtherDomain = true;
+				boolean bAllowOtherDomain = "1".equals(allowOtherDomain.getText());
 
 				StartingUrl startingUrl = new StartingUrl(itemUrl, itemMode, "1".equals(onlyFirstCrawl.getText()), bAllowOtherDomain);
 

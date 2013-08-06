@@ -23,7 +23,7 @@ public class ProcessorSource extends Processor implements Callable<Integer>, ISo
 	private ISourceItemsQueue queueItems;
 	private IDocumentCache docCache;
 	private IConnector connector;
-	private final Object monitor = new Object();
+	private static final Object monitor = new Object();
 
 	private int maxThreads;
 	private long processedItemCount;

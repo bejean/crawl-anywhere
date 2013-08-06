@@ -63,15 +63,15 @@ public class WebConnector extends Connector implements IConnector {
 	
 	private long lastPageReadTime = 0;
 
-	//private int cachePos;
-
 	private Robots robots = null;
 
 	private String scriptName = ""; 
 	private StartingUrls startingUrls = null;
 
 	private final int memlogMaxDepth = 1;
-	
+
+	private static final Object monitor = new Object();
+
 	public boolean initialize(Logger logger, XMLConfig config, ISource src, ISourceItemsQueue queue, ICrawlerController controller) {
 
 		this.src = (SourceWeb) src;
@@ -101,9 +101,6 @@ public class WebConnector extends Connector implements IConnector {
 				src.setProcessingElapsedTime(0);
 			}
 		}
-
-		//props.getProperty("web.done_url_case_sensitive", "1")));
-		//cachePos = 0;
 
 		String removeDoc = config.getProperty("/crawler/param[@name='removedoc_httpstatus']", "");
 		if (removeDoc!=null && !"".equals(removeDoc)) removeDocHttpStatus = Arrays.asList(removeDoc.replaceAll("\\s*", "").split(","));
@@ -168,14 +165,6 @@ public class WebConnector extends Connector implements IConnector {
 				scriptName = ScriptSnippet.getScriptFilename (scriptPath, startingUrls.getUrlHome());
 		}
 		
-        //if (src.isDeeper()) {
-        //	// TODO: V4
-        //}
-        
-        //if (src.isRescan() || src.isCheckForDeletion()) {
-        //	// TODO: V4
-        //}
-
         if (src.isReset() || src.isClear() || src.isRescan() || src.isRescanFromCache()) {
         	 dh.resetSource(String.valueOf(src.getId()));
         }
@@ -187,7 +176,7 @@ public class WebConnector extends Connector implements IConnector {
 		ICrawlerDB db = crawlerController.getCrawlerDB();
 		db.updateSourceStatusStop(src, queue.getQueueSize(), queue.getDoneQueueSize(), crawlerStopRequested, pause, pauseBySchedule, config);
 	}
-
+	
 	//public int processItem(String jsonItem, long threadId) {
 	public int processItem(Map<String,Object> itemData, long threadId) {
 
@@ -229,7 +218,7 @@ public class WebConnector extends Connector implements IConnector {
 			int level = currentUrlItem.getDepth();
 
 			logger.log("[" + String.valueOf(threadId) + "]Processing page " + pageURL.toExternalForm() + "(" + String.valueOf(level) + "/" + queue.getDoneQueueSize() + "/" + queue.getQueueSize() + ")");
-			//            if (currentUrlItem.getDepth()<=memlogMaxDepth) src.memLogAppend("Processing page : " + pageURL.toExternalForm());
+			if (currentUrlItem.getDepth()<=memlogMaxDepth) src.memLogAppend("Processing page : " + pageURL.toExternalForm());
 
 			String urlMode = "a";
 
@@ -259,14 +248,16 @@ public class WebConnector extends Connector implements IConnector {
 				urlLoader = new WebPageLoader(WebPageLoader.CACHE_ONLY, dbCacheType, crawlerController.getDBConnection(false), dbCacheName, "pages_cache", String.valueOf(src.getId()));
 			} else {
 				if (!"0".equals(src.getUrlPerMinute())) {
-					if (lastPageReadTime!=0) {
-						long delay = 60000 / Integer.parseInt(src.getUrlPerMinute());
-						long n = new Date().getTime();
-						if ((n-lastPageReadTime) < delay) {
-							Utils.sleep((int)(delay-(n-lastPageReadTime)));
+					synchronized (monitor) {
+						if (lastPageReadTime!=0) {
+							long delay = 60000 / Integer.parseInt(src.getUrlPerMinute());
+							long n = new Date().getTime();
+							if ((n-lastPageReadTime) < delay) {
+								Utils.sleep((int)(delay-(n-lastPageReadTime)));
+							}
 						}
+						lastPageReadTime = new Date().getTime();
 					}
-					lastPageReadTime = new Date().getTime();
 				}
 				urlLoader = new WebPageLoader();
 			}
@@ -657,6 +648,9 @@ public class WebConnector extends Connector implements IConnector {
 									urlItemToPush.setRedirectionCount(currentUrlItem.getRedirectionCount()+1);
 									queue.push(urlItemToPush.getMap());
 								}
+							} else {
+								logger.log("[" + String.valueOf(threadId) + "] " + strLink + " (redirection: " + String.valueOf(currentUrlItem.getRedirectionCount()+1) + ") ignored (already done)");
+								if (currentUrlItem.getDepth()<=memlogMaxDepth) src.memLogAppend("    redirection => " + strLink + " - ignored (already done)");
 							}
 							urlLoader.close();
 							urlLoader = null;
@@ -716,6 +710,14 @@ public class WebConnector extends Connector implements IConnector {
 			queue.updateDone(currentUrlItem.getMap()); 
 			urlLoader.close();
 			urlLoader = null;
+			
+			if (!HttpUtils.urlBelongSameHost(null, pageURL.toExternalForm(), src.getHostAliases())) {
+				if (!currentUrlItem.isAllowOtherDomain() || currentUrlItem.getDepth()!=0) {	
+					logger.log("[" + String.valueOf(threadId) + "] skip link parsing due to invalid host");
+					if (currentUrlItem.getDepth()<=memlogMaxDepth) src.memLogAppend("        skip link parsing due to invalid host");
+					return 1;		
+				}
+			}
 
 			// If checkfordeletion mode : exit (do not inject new urls)
 			if (queue.isCheckDeletionMode()) {
@@ -1213,7 +1215,7 @@ public class WebConnector extends Connector implements IConnector {
 			}
 			if (push) {
 				logger.log("[" + String.valueOf(threadId) + "] " + strLink + " added to queue");
-				if (currentUrlItem.getDepth()<=memlogMaxDepth) src.memLogAppend("        " + strLink + "added to queue");
+				if (currentUrlItem.getDepth()<=memlogMaxDepth) src.memLogAppend("        " + strLink + " added to queue");
 				queue.push(urlItemToPush.getMap());
 			}
 
@@ -1278,7 +1280,9 @@ public class WebConnector extends Connector implements IConnector {
 				}
 			}
 
-			if (hostAliases!=null && startUrlMode!=null) {
+			//if (hostAliases!=null && startUrlMode!=null) {
+			
+			/*
 				// Filtre l'url par rapport au serveur
 				if ("s".equals(startUrlMode) || allowOtherDomain) {
 					if (!HttpUtils.urlBelongSameHost(pageURL.toExternalForm(), strLink, hostAliases))				
@@ -1288,6 +1292,14 @@ public class WebConnector extends Connector implements IConnector {
 						return false;							
 					}
 				}
+			*/
+			// Filtre l'url par rapport au serveur
+			if (!HttpUtils.urlBelongSameHost(pageURL.toExternalForm(), strLink, hostAliases) && !allowOtherDomain) {
+				logger.log("[" + String.valueOf(threadId) + "] " + strLink + " rejected due to invalid host (" + normalizedStartUrl + ")");
+				if (depth<=memlogMaxDepth) src.memLogAppend("        rejected due to invalid host (" + normalizedStartUrl + ")");
+				return false;							
+			}
+
 
 				// Filtre l'url par à sa filiation
 				if ("s".equals(startUrlMode)) {
@@ -1305,7 +1317,7 @@ public class WebConnector extends Connector implements IConnector {
 						}
 					}
 				}
-			}
+			//}
 
 			// Filtre l'url par rapport aux règles de chemin
 			if (!"".equals(src.getFilteringRules()))

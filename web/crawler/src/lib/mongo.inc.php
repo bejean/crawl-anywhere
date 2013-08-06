@@ -282,10 +282,16 @@ class mg_stmt_update
 	var $query;
 	var $data;
 
-	function mg_stmt_update($mg, $collectionname)
+	function mg_stmt_update($mg, $collectionname, $defaults=NULL)
 	{
 		try {
 			$this->collection = $mg->selectCollection ( $collectionname );
+
+			if (!is_null($defaults) && is_array($defaults)) {
+				foreach ($defaults as $k => $v) {
+					$this->data[$k]=$v;
+				}
+			}
 			return $this->collection;
 		} catch (Exception $e) {
 		}
@@ -310,6 +316,16 @@ class mg_stmt_update
 		$this->query = $query;
 	}
 
+	function checkNotNull ($key)
+	{
+		if (!is_null($key) && is_array($key)) {
+			foreach ($key as $k) {
+				if (!isset($this->data[$k])) return false;
+			}
+		}
+		return true;
+	}
+	
 	function execute()
 	{
 		$this->collection->update($this->query, array ('$set' => $this->data));

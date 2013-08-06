@@ -1162,7 +1162,7 @@ if ($action=="exportsources")
 	$mode = "";
 	$ids = "";
 	if (isset($_POST["mode"])) $mode = $_POST["mode"];
-	if (isset($_POST["ids"])) $ids = $_POST["ids"];
+	if (isset($_POST["ids"])) $ids = array_map('intval',$_POST["ids"]);
 
 	$mg = mg_connect ($config, "", "", "");
 	if ($mg)
@@ -1314,8 +1314,10 @@ if ($action=="importsources")
 					$stmt->addColumnValueDate("crawl_nexttime");
 						
 					$query = array ("id" => intval($id_account_current));
-					mg_get_value($mg, "accounts", "id_target", $query, $id_target);					
-					$stmt->addColumnValue("id_target", intval($id_target));
+					mg_get_value($mg, "accounts", "id_target", $query, $id_target);			
+					if (!empty($id_target))	{	
+						$stmt->addColumnValue("id_target", intval($id_target));
+					}
 
 					$ignore = array();
 					$ignore[]='id';
@@ -1349,7 +1351,7 @@ if ($action=="importsources")
 						}
 					}
 
-					if (!$stmt->checkNotNull ($mg_source_not_null)) {
+					if ($mode == 'insert' && !$stmt->checkNotNull ($mg_source_not_null)) {
 						$arr = array('status' => 'error');
 						echo json_encode($arr);
 						exit();

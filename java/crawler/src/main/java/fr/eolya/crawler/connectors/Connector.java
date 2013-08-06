@@ -48,7 +48,11 @@ public abstract class Connector {
         // Get output class name
         ICrawlerDB db = crawlerController.getCrawlerDB();
         HashMap<String, String> target = db.getTarget(String.valueOf(src.getTargetId()));
-        if (target==null) return false;
+        if (target==null) {
+            if (logger!=null) logger.log("Failed to initiate Web Connector (no target)");
+            src.memLogAppend("Failed to initiate Web Connector (no target)");
+            return false;
+        }
         
         outputType = target.get("output_type");
         targetName = target.get("name");

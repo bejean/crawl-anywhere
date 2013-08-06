@@ -158,8 +158,8 @@ abstract public class Source {
 		if (memLog.length()>32765) memLog.append(message + "...");
 	}
 
-	public StringBuffer memLogGet () {
-		return memLog;
+	public String memLogGet () {
+		return memLog.toString();
 	}
 
 	public void setLogger(Logger logger) {

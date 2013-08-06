@@ -27,7 +27,7 @@ public interface ISource {
 	// !!!!!!!!!!!!!!!!!!!
 	
 	public void memLogAppend (String message) ;
-	public StringBuffer memLogGet () ;
+	public String memLogGet () ;
 	public void setLogger(Logger logger) ;
 	public boolean isFirstCrawlCompleted();
 	public void setFirstCrawlCompleted(boolean firstCrawlCompleted);

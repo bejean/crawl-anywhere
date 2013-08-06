@@ -489,8 +489,8 @@ function addOneUrl(url, mode, allowotherdomain, onlyfirstcrawl, show_error_msg) 
 		}
     }
 
-	if (mode=="s")
-		allowotherdomain = 0;
+	//if (mode=="s")
+	//	allowotherdomain = 0;
 
     var itemJsonStr = '{ "url": "' + url + '", "mode": "' + mode + '", "allowotherdomain": "' + allowotherdomain + '", "onlyfirstcrawl": "' + onlyfirstcrawl + '" }';
 	if (currentUrl==-1) {
@@ -1355,7 +1355,7 @@ foreach ($aSourceTypes as $id => $type) {
 						</td>
 					</tr>
 					<tr>
-						<td><label>Allow other domains (Links page or RSS feed only)</label>
+						<td><label>Allow other domains<br />(crawler won't follow links on other domains)</label>
 						</td>
 						<td><select id="add-url-form-allowsotherdomains">
 								<option value='0' selected>No</option>

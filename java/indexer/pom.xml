@@ -40,6 +40,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-core</artifactId>
+			<version>4.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-solrj</artifactId>
 			<version>4.3.0</version>
 		</dependency>
@@ -92,6 +97,12 @@
 			<groupId>xml-apis</groupId>
 			<artifactId>xml-apis</artifactId>
 			<version>1.4.01</version>
+		</dependency>
+		<dependency>
+			<groupId>tomcat</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>5.5.23</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<build>

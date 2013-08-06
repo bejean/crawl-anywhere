@@ -1,22 +1,32 @@
 package fr.eolya.indexer;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.SolrPingResponse;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.core.CoreContainer;
+import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 
 import fr.eolya.utils.Logger;
 
 public class SolrCore extends EngineAbstract implements IEngine {
     
     private String url = null;
-    private HttpSolrServer server = null;
+    private String baseurl = null;
+    private String home = null;
+    private String coreName = null;
+    private CoreContainer coreContainer = null;
+    private SolrServer server = null;
     private String requestHandler = null;
     private boolean solrUseJavaBin = false;
     
@@ -24,8 +34,23 @@ public class SolrCore extends EngineAbstract implements IEngine {
         return url;
     }
     
-    public SolrCore(String url, int commitWithin, int commitEach, int optimizeEach, Logger logger, String requestHandler, boolean solrUseJavaBin) {
-        this.url = url;
+    public SolrCore(String baseurl, String coreName, int commitWithin, int commitEach, int optimizeEach, Logger logger, String requestHandler, boolean solrUseJavaBin) {
+    	URL u = null;
+    	try {
+			u = new URL(baseurl);
+		} catch (MalformedURLException e) {}
+    	
+    	if (u!=null) {
+    		this.baseurl = baseurl;
+    	}
+    	else {
+    		File f = new File(baseurl);
+    		if (f.exists() && f.isDirectory()) {
+    			home = baseurl;
+    		}
+    	}
+    	this.url = baseurl + "/" + coreName;
+    	this.coreName = coreName;
         if ((optimizeEach>0) && (optimizeEach<commitEach)) optimizeEach=commitEach;
         if (commitWithin>0) commitEach=0;
         
@@ -39,9 +64,32 @@ public class SolrCore extends EngineAbstract implements IEngine {
         
     public boolean connect() {
         try {
-            server = new HttpSolrServer(url);
-            if (!solrUseJavaBin)
-            	server.setParser(new XMLResponseParser());
+        	server = null;
+        	coreContainer = null;
+        	if (baseurl!=null) {
+        		server = new HttpSolrServer(url);
+	            if (!solrUseJavaBin)
+	            	((HttpSolrServer)server).setParser(new XMLResponseParser());
+        	}
+
+           	if (home!=null) {
+           		/*
+           		coreContainer = new CoreContainer(home);
+           		CoreDescriptor discriptor = new CoreDescriptor(coreContainer, this.coreName, new File(home, this.coreName).getAbsolutePath());
+           		org.apache.solr.core.SolrCore solrCore = coreContainer.create(discriptor);
+     		    coreContainer.register(solrCore, false);
+     		    server = new EmbeddedSolrServer(coreContainer, this.coreName);
+     		    */
+           		
+           		File h = new File(home); 
+           	    File f = new File( h, "solr.xml" ); 
+           	    CoreContainer container = new CoreContainer(home); 
+           	    container.load( home, f ); 
+           	    server = new EmbeddedSolrServer( container, this.coreName ); 
+           	}
+           	
+           	if (server==null) return false;
+
             return true;
         } catch (Exception e) {
             log("error connecting to solr (" + url + ") " + e.getMessage());
@@ -50,7 +98,9 @@ public class SolrCore extends EngineAbstract implements IEngine {
         return false;		
     }
     
-    public void close() {}
+    public void close() {
+    	if (coreContainer!=null) coreContainer.shutdown();
+    }
     
     public boolean ping() {
         lastExceptionCauseName = "";

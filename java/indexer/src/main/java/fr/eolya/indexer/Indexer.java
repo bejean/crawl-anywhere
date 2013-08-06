@@ -203,19 +203,28 @@ public class Indexer {
         engines = new Hashtable<String,IEngine> ();
         
         String solrUrl = "";
+        String solrCoreName = null;
         if (solrCoreUrl!=null && !"".equals(solrCoreUrl)) {
             solrUrl = solrCoreUrl;
         } else {
             solrUrl = config.getProperty("/indexer/solr/param[@name='baseurl']");
             if (solrUrl!=null && !"".equals(solrUrl)) {
-                String solrCoreName = config.getProperty("/indexer/solr/param[@name='corename']");
-                if (solrCoreName != null && !"".equals(solrCoreName))
-                    solrUrl = solrUrl + solrCoreName;
+                solrCoreName = config.getProperty("/indexer/solr/param[@name='corename']");
+                //if (solrCoreName != null && !"".equals(solrCoreName))
+                //    solrUrl = solrUrl + solrCoreName;
+            } else {
+	            String solrHome = config.getProperty("/indexer/solr/param[@name='home']");
+	            if (solrHome!=null && !"".equals(solrHome)) {
+	            	solrUrl = solrHome;
+	                solrCoreName = config.getProperty("/indexer/solr/param[@name='corename']");
+	                //if (solrCoreName != null && !"".equals(solrCoreName))
+	                //    solrUrl = solrUrl + solrCoreName;
+	            }
             }
         }
         
         if (solrUrl!=null && !"".equals(solrUrl)) {
-            SolrCore solrCore = createSolrCore(solrUrl, commitWithin, commitEach, optimizeEach, logger, verbose, requestHandler, solrUseJavaBin);
+            SolrCore solrCore = createSolrCore(solrUrl, solrCoreName, commitWithin, commitEach, optimizeEach, logger, verbose, requestHandler, solrUseJavaBin);
             if (solrCore!=null) {
                 //return;
                 
@@ -408,7 +417,7 @@ public class Indexer {
                 if (docTargetUrl!=null && !"".equals(docTargetUrl) && !(!"".equals(targetUrl) && forceUrl)) {
                     engine = engines.get(docTargetUrl);
                     if (engine==null) {
-                        engine = createEngine(docTargetUrl, commitWithin, commitEach, optimizeEach, logger, verbose, requestHandler, solrUseJavaBin);
+                        engine = createEngine(docTargetUrl, null, commitWithin, commitEach, optimizeEach, logger, verbose, requestHandler, solrUseJavaBin);
                         if (engine!=null)
                             engines.put(docTargetUrl, engine);
                     }
@@ -550,14 +559,14 @@ public class Indexer {
     }
     
     
-    private IEngine createEngine(String docTargetUrl, int commitWithin, int commitEach, int optimizeEach, Logger logger, boolean verbose, String requestHandler, boolean solrUseJavaBin) {
-        createSolrCore(docTargetUrl, commitWithin, commitEach, optimizeEach, logger, verbose, requestHandler, solrUseJavaBin);
+    private IEngine createEngine(String docTargetUrl, String corename, int commitWithin, int commitEach, int optimizeEach, Logger logger, boolean verbose, String requestHandler, boolean solrUseJavaBin) {
+        createSolrCore(docTargetUrl, corename, commitWithin, commitEach, optimizeEach, logger, verbose, requestHandler, solrUseJavaBin);
         return null;
     }
     
-    private SolrCore createSolrCore(String solrUrl, int commitWithin, int commitEach, int optimizeEach, Logger logger, boolean verbose, String requestHandler, boolean solrUseJavaBin) {
+    private SolrCore createSolrCore(String solrUrl, String corename, int commitWithin, int commitEach, int optimizeEach, Logger logger, boolean verbose, String requestHandler, boolean solrUseJavaBin) {
         logger.log("Create new Solr core connection : " + solrUrl);
-        SolrCore solrCore = new SolrCore(solrUrl, commitWithin, commitEach, optimizeEach, logger, requestHandler, solrUseJavaBin);        
+        SolrCore solrCore = new SolrCore(solrUrl, corename, commitWithin, commitEach, optimizeEach, logger, requestHandler, solrUseJavaBin);        
         solrCore.setOutputStackTrace(verbose);
         
         if (!solrCore.connect())

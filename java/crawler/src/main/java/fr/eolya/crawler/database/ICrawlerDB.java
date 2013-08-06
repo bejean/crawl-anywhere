@@ -16,4 +16,5 @@ public interface ICrawlerDB {
 	public boolean updateSourceStatusStop(ISource src, long queueSize, long doneQueueSize, boolean crawlerStopRequested, boolean pause, boolean pauseBySchedule, XMLConfig config);
 	public String getSourceCrawlProcessStatus(int id);
 	public boolean updateSourceProcessingInfo(int id, long queueSize, long doneQueueSize, String processingInfo);
+	public boolean updateSourceLog(ISource src, int retention);
 }

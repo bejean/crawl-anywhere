@@ -58,17 +58,13 @@ public class MongoDBCrawlerDB implements ICrawlerDB {
 	}
 
 	public void fixStartupSourcesStatus () {
-
 		// TODO : should work on a specific account or all account of an engine if either engine_id or account_id are specified ???
-
 		MongoDBCollection coll = new MongoDBCollection(db,"sources");
 		String query = String.format("{\"$or\": [{\"crawl_process_status\": \"1\"}, {\"crawl_process_status\": \"5\"}, {\"_poped\": true}]}");	
 
 		BasicDBObject docsearch = MongoDBHelper.JSON2BasicDBObject(query);
-
 		synchronized (sourcesCollMonitor) {
 			DBCursor cur = coll.getColl().find(docsearch);
-
 			if (cur.count()==0) return;
 			while (cur.hasNext()) {
 				BasicDBObject doc = (BasicDBObject) cur.next();
@@ -116,12 +112,10 @@ public class MongoDBCrawlerDB implements ICrawlerDB {
 	}
 
 	public boolean updateSourceProcessingInfo(int id, long queueSize, long doneQueueSize, String processingInfo) {
-
 		MongoDBCollection coll = new MongoDBCollection(db,"sources");
 		String query = String.format("{\"id\": %1$s}", id);	
 
 		BasicDBObject docsearch = MongoDBHelper.JSON2BasicDBObject(query);
-
 		synchronized (sourcesCollMonitor) {
 			DBCursor cur = coll.getColl().find(docsearch);
 			if (cur.count()!=1) return false;
@@ -233,8 +227,25 @@ public class MongoDBCrawlerDB implements ICrawlerDB {
 			else
 				doc2.put("extra", "");
 
-			coll.update(doc, doc2);				
+			coll.update(doc, doc2);		
+			
+			updateSourceLog(src, 0);
 		}
+		return true;
+	}
+	
+	public boolean updateSourceLog(ISource src, int retention) {
+		MongoDBCollection coll = new MongoDBCollection(db,"sources_log");
+		coll.createIndex("id_source", false);
+		coll.createIndex("createtime", false);
+
+		BasicDBObject doc = new BasicDBObject();
+		doc.put("id_source", src.getId());
+		doc.put("createtime", new Date().getTime());
+		doc.put("log",src.memLogGet());
+
+		coll.add(doc);
+		
 		return true;
 	}
 

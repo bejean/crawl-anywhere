@@ -497,7 +497,6 @@ class Solr {
 					} else {
 						array_push($aFacet, '{!ex=' . $ex . '}' .  $val);
 					}
-
 				}
 			}
 			

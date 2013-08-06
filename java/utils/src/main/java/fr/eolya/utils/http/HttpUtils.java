@@ -26,6 +26,7 @@ import net.htmlparser.jericho.PHPTagTypes;
 import net.htmlparser.jericho.Source;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -289,12 +290,11 @@ public class HttpUtils {
 
 	//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 	public static boolean urlBelongSameHost(String urlReferer, String urlHref, List<String> hostAliases) {
-		if (urlBelongSameHost(urlReferer,urlHref)) return true;
+		if (urlReferer!=null && urlBelongSameHost(urlReferer,urlHref)) return true;
 		if (hostAliases!=null)
 			for (int i=0; i<hostAliases.size(); i++)
 				if (urlBelongSameHost(hostAliases.get(i), urlHref)) return true;
 		return false;
-
 	}
 
 	//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -404,7 +404,6 @@ public class HttpUtils {
 					m.put("meta_equiv_" + equiv.toLowerCase().replaceAll("\\-", "_"), content);
 				}
 			}
-
 		}
 
 		// <link ... />
@@ -418,8 +417,29 @@ public class HttpUtils {
 				m.put("meta_link_canonical", href);
 			}            
 		}
-
 		return m;
+	}
+
+	//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+	public static boolean isRelativeURL(String urlHref) {
+		if (urlHref.equals("")) return false;
+		
+		// Case 1 : urlHref starts with "http://"
+		if (urlHref.startsWith("http://") || urlHref.startsWith("https://")) {
+			return false;
+		}
+		
+		// Case 2 : urlHref looks like "?..."
+		if (urlHref.startsWith("?")) {
+			return false;
+		}
+
+		// Case 3 : urlHref looks like "/path/file.html..."
+		if (urlHref.startsWith("/")) {
+			return false;
+		}
+
+		return true;
 	}
 
 	//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -729,7 +749,6 @@ public class HttpUtils {
 		value = value.replaceAll("'","");
 
 		return (value.trim());
-
 	}	
 
 	public static String filtreEncoding(String encoding)
@@ -787,18 +806,18 @@ public class HttpUtils {
 	public static List<String> extractAbsoluteLinks(String rawPage, String urlPage, int depth) throws IOException {
 
 		List<String> links = extractLinks(rawPage, depth);
-		String baseHref = getBaseHref(rawPage);
+		String baseHref = null;
 
 		for (int i=0; i<links.size(); i++) {
 			try {
-				String url1 = urlGetAbsoluteURL(urlPage, links.get(i).trim());
-				if (baseHref!=null) {
-					String url2 = urlGetAbsoluteURL(baseHref, links.get(i).trim());
-					if (url2!=null && !url2.equals(url1)) {
-						links.add(url2);
-					}
+				String url = null;
+				if (baseHref==null && isRelativeURL(links.get(i).trim())) baseHref = getBaseHref(rawPage);
+				if (baseHref!=null && isRelativeURL(links.get(i).trim())) {
+					url = urlGetAbsoluteURL(baseHref, links.get(i).trim());
+				} else {
+					url = urlGetAbsoluteURL(urlPage, links.get(i).trim());
 				}
-				links.set(i, url1);
+				links.set(i, url);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -808,12 +827,14 @@ public class HttpUtils {
 	}
 
 	public static String getBaseHref(String rawPage) throws IOException {
+		if (rawPage==null || !StringUtils.containsIgnoreCase(rawPage, "<base")) return null;
+
 		HtmlCleaner cleaner = new HtmlCleaner();
 		//CleanerProperties props = cleaner.getProperties();		 
 		//props.setXXX(...);
 		TagNode node = cleaner.clean(rawPage);
 		TagNode[] myNodes = node.getElementsByName("base", true);
-		if (myNodes==null || myNodes.length!=1) return null;
+		if (myNodes==null || myNodes.length==0) return null;
 		String href = myNodes[0].getAttributeByName("href");
 		if (href!=null) return href;
 		return null;

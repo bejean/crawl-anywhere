@@ -14,7 +14,7 @@ import fr.eolya.utils.Utils;
  * 
  *	<stage classname="fr.eolya.simplepipeline.stage.MetaExtractor">
  *      <param name="onaction">add</param>
- *      <param name="scriptspath">/opt/crawler/config/scripts</param>
+ *      <param name="scriptspath"config/scripts</param>
  *      <param name="url">item_url</param>
  *      <param name="contenttype">item_contenttype</param>
  *      <param name="contentcharset">item_charset</param>
@@ -65,7 +65,7 @@ public class MetaExtractor extends Stage {
         
         java.util.Date startTime = new java.util.Date();
         
-        if (logger!=null) logger.log("    field copy");
+        if (logger!=null) logger.log("    extract meta");
         
         if (urlElement != null && !"".equals(urlElement)) {
             url = doc.getElementText("//" + urlElement);

@@ -49,7 +49,7 @@ public class ActoniaMeta extends Stage {
 
 		java.util.Date startTime = new java.util.Date();
 		
-		if (logger!=null) logger.log("    field copy");
+		if (logger!=null) logger.log("    extract meta (actonia)");
 
         String contentType = "";
         String contentCharset = "";

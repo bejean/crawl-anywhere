@@ -15,12 +15,13 @@ import fr.eolya.utils.Utils;
  * Configuration snippet sample :
  * 
  *	<stage position="0" classname="fr.eolya.simplepipeline.stage.FieldMapping">
- *		<param name="source">source_element</param>
- *		<param name="sourcecapture">^([a-z\/]*);.*</param>
+ *      <param name="onaction">add</param>
+ *		<param name="source">item_contenttype</param>
+ *		<param name="sourcecapture">^([a-zA-Z_\/\-\.\+]*).*</param>
  *		<param name="groupcapture">1</param>
- *		<param name="target">target_element</param>
+ *		<param name="target">item_contenttyperoot</param>
  *		<param name="overwritetarget">ifempty | always</param>
- *		<param name="mappingdefinitionfile">/.../.../</param>
+ *		<param name="mappingdefinitionfile">config/pipeline/contenttypemapping.txt</param>
  *		<param name="lowercasenormalization">no</param>
  *      <param name="sourcecaptureisdefault">yes</param>
  *	</stage>

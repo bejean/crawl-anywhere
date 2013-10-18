@@ -110,7 +110,8 @@ public class CrawlerWS extends HttpServlet {
         String authLogin = StringUtils.trimToEmpty(req.getParameter("auth_login")).trim();
         String authPasswd = StringUtils.trimToEmpty(req.getParameter("auth_passwd")).trim();
         String authParam = StringUtils.trimToEmpty(req.getParameter("auth_param")).trim();
-        Map<String, String> authCookies;
+        Map<String, String> authCookies = null;
+        Map<String, String> authBasicLogin = null;
         
         try {
         	HttpLoader urlLoader;
@@ -124,13 +125,21 @@ public class CrawlerWS extends HttpServlet {
             String userAgent = ServletUtils.getSetting(this, xmlConfig, "crawler_user_agent", "CaBot");
             urlLoader.setUserAgent(userAgent);
             
-            authCookies = HttpUtils.getAuthCookies(Integer.parseInt(authMode), authLogin, authPasswd, authParam,
-                            ServletUtils.getSetting(this, xmlConfig, "proxy_host", ""), ServletUtils.getSetting(this, xmlConfig, "proxy_port", ""), ServletUtils.getSetting(this, xmlConfig, "proxy_exclude", ""), ServletUtils.getSetting(this, xmlConfig, "proxy_username", ""), ServletUtils.getSetting(this, xmlConfig, "proxy_password", ""));
-            
-            if (authCookies!=null)
-                urlLoader.setCookies(authCookies);
-            else
-                return XmlResponse.buildErrorXml(10, "Failed get authentication cookie");
+            if (!"0".equals(authMode)) {
+                if ("3".equals(authMode)) {
+					authBasicLogin = new HashMap<String, String>();
+					authBasicLogin.put("login",authLogin);
+					authBasicLogin.put("password",authPasswd);		
+                    urlLoader.setBasicLogin(authBasicLogin);
+                } else {
+                    authCookies = HttpUtils.getAuthCookies(Integer.parseInt(authMode), authLogin, authPasswd, authParam,
+                            ServletUtils.getSetting(this, xmlConfig, "proxy_host", ""), ServletUtils.getSetting(this, xmlConfig, "proxy_port", ""), ServletUtils.getSetting(this, xmlConfig, "proxy_exclude", ""), ServletUtils.getSetting(this, xmlConfig, "proxy_username", ""), ServletUtils.getSetting(this, xmlConfig, "proxy_password", ""));                	
+                    if (authCookies!=null)
+                        urlLoader.setCookies(authCookies);
+                    else
+                        return XmlResponse.buildErrorXml(10, "Failed get authentication cookie");
+                }
+            }
             
             if (urlLoader.open(page) == HttpLoader.LOAD_SUCCESS) {
                 String contentType = urlLoader.getContentType();

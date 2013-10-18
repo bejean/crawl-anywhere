@@ -43,6 +43,10 @@ public class WebPageLoader {
 		this(CACHE_NONE, null, null, null, null, null);
 	}
 
+	public void setSimulateHttps(boolean simulate) {
+		if (httpLoader!=null) httpLoader.setSimulateHttps(simulate);
+	}
+	
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
@@ -53,6 +57,10 @@ public class WebPageLoader {
 
 	public void setCookies(Map<String, String> cookies) {
 		if (httpLoader!=null) httpLoader.setCookies(cookies);
+	}
+
+	public void setBasicLogin(Map<String, String> authBasicLogin) {
+		if (httpLoader!=null) httpLoader.setBasicLogin(authBasicLogin);
 	}
 
 	public int getHeadStatusCode(String url) {

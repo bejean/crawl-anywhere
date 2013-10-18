@@ -32,7 +32,6 @@ import crawlercommons.sitemaps.SiteMapIndex;
 import crawlercommons.sitemaps.SiteMapParser;
 import crawlercommons.sitemaps.SiteMapURL;
 import crawlercommons.sitemaps.UnknownFormatException;
-
 import fr.eolya.crawler.ICrawlerController;
 import fr.eolya.crawler.cache.DocumentCacheItem;
 import fr.eolya.crawler.connectors.Connector;
@@ -59,7 +58,8 @@ public class WebConnector extends Connector implements IConnector {
 	private String ignoreUrlFieldsNoSessionId;
 	private List<String> removeDocHttpStatus = null;
 
-	private Map<String, String> authCookies;
+	private Map<String, String> authCookies = null;
+	private Map<String, String> authBasicLogin = null;
 	
 	private long lastPageReadTime = 0;
 
@@ -77,12 +77,21 @@ public class WebConnector extends Connector implements IConnector {
 		this.src = (SourceWeb) src;
 		try {
 			if (!initializeInternal(logger, config, src, queue, controller)) return false;
-			authCookies = HttpUtils.getAuthCookies(this.src.getAuthMode(), this.src.getAuthLogin(), this.src.getAuthPasswd(), this.src.getAuthParam(), 
-					config.getProperty("/crawler/proxy/param[@name='host']", ""),
-					config.getProperty("/crawler/proxy/param[@name='port']", ""),
-					config.getProperty("/crawler/proxy/param[@name='exclude']", ""),
-					config.getProperty("/crawler/proxy/param[@name='username']", ""),
-					config.getProperty("/crawler/proxy/param[@name='password']", ""));
+			
+			if (this.src.getAuthMode()!=0) {
+				if (this.src.getAuthMode()==3) {
+					authBasicLogin = new HashMap<String, String>();
+					authBasicLogin.put("login",this.src.getAuthLogin());
+					authBasicLogin.put("password",this.src.getAuthPasswd());					
+				} else {
+					authCookies = HttpUtils.getAuthCookies(this.src.getAuthMode(), this.src.getAuthLogin(), this.src.getAuthPasswd(), this.src.getAuthParam(), 
+							config.getProperty("/crawler/proxy/param[@name='host']", ""),
+							config.getProperty("/crawler/proxy/param[@name='port']", ""),
+							config.getProperty("/crawler/proxy/param[@name='exclude']", ""),
+							config.getProperty("/crawler/proxy/param[@name='username']", ""),
+							config.getProperty("/crawler/proxy/param[@name='password']", ""));
+				}
+			}
 		} 		
 		catch (Exception e) {
 			logger.logStackTrace(e, true);
@@ -189,6 +198,8 @@ public class WebConnector extends Connector implements IConnector {
 			boolean follow = true;
 			boolean index = true;
 			boolean isFeed = false;
+			
+			boolean simulateHttps = "1".equals(config.getProperty("/crawler/param[@name='simulate_https']", "0"));
 
 			Links links = null;
 
@@ -230,7 +241,7 @@ public class WebConnector extends Connector implements IConnector {
 				String alternateUrl = getAlternateProtocolUrl(pageURL.toExternalForm());
 				if (alternateUrl!=null) {
 					WebPageLoader urlLoader = new WebPageLoader();
-					//HttpLoader urlLoader = new HttpLoader();
+					if (simulateHttps) urlLoader.setSimulateHttps(simulateHttps);
 					int statusCode = urlLoader.getHeadStatusCode(alternateUrl);
 					write = (statusCode!=200);
 					if (!write) {
@@ -260,12 +271,14 @@ public class WebConnector extends Connector implements IConnector {
 					}
 				}
 				urlLoader = new WebPageLoader();
+				if (simulateHttps) urlLoader.setSimulateHttps(simulateHttps);
 			}
 			
 			try {
 				// load page
 				urlLoader.setUserAgent(getUserAgent (config.getProperty("/crawler/param[@name='user_agent']", "CaBot"), this.src.getUserAgent()));
 				if (authCookies!=null) urlLoader.setCookies(authCookies);
+				if (authBasicLogin!=null) urlLoader.setBasicLogin(authBasicLogin);
 
 				int ret = 0;
 				int checkForDeletionStatusCode = 0;
@@ -578,11 +591,12 @@ public class WebConnector extends Connector implements IConnector {
 						// check 
 						String startUrl = currentUrlItem.getUrlStart();
 						WebPageLoader urlLoaderCheck = new WebPageLoader();
-						//HttpLoader urlLoaderCheck = new HttpLoader();   
+						if (simulateHttps) urlLoader.setSimulateHttps(simulateHttps);
 						try {
 							// load page
 							urlLoaderCheck.setUserAgent(getUserAgent (config.getProperty("/crawler/param[@name='user_agent']", "CaBot"), this.src.getUserAgent()));
 							if (authCookies!=null) urlLoaderCheck.setCookies(authCookies);
+							if (authBasicLogin!=null) urlLoader.setBasicLogin(authBasicLogin);
 
 							//if (urlLoaderCheck.openRetry(3) == WebPageLoader.LOAD_SUCCESS) {
 							int statusCode = urlLoaderCheck.getHeadStatusCode(startUrl);
@@ -1125,8 +1139,6 @@ public class WebConnector extends Connector implements IConnector {
 		else
 			return true;
 	}
-
-
 
 	private void processSitemaps(SourceItemWeb currentUrlItem, WebPageLoader pageLoader, String currentNormalizedUrl, URL pageURL, String refererCharSet, long threadId) {
 

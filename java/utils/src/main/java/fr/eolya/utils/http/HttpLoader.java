@@ -92,7 +92,9 @@ public class HttpLoader {
 	private int connectionTimeOut;
 	private int sockeTimeOut;
 	private String userAgent;
+	private Map<String, String> authBasicLogin;
 	private Map<String, String> cookies;
+	private boolean simulateHttps = false;
 
 	private int responseStatusCode;
 	private String responseReasonPhrase;
@@ -124,6 +126,7 @@ public class HttpLoader {
 		connectionTimeOut = 5000;
 		sockeTimeOut = 20000;
 		cookies = null;
+		authBasicLogin = null;
 		followRedirect = false;
 		maxContentLength = 0;
 		responseHeader = null;
@@ -167,6 +170,11 @@ public class HttpLoader {
 	public void setCookies(Map<String, String> cookies) {
 		this.cookies = cookies;
 	}
+	
+	public void setBasicLogin(Map<String, String> authBasicLogin) {
+		this.authBasicLogin = authBasicLogin;
+	}
+
 
 	public void setCondGetLastModified(String condGetLastModified) {
 		this.condGetLastModified = condGetLastModified;
@@ -190,6 +198,10 @@ public class HttpLoader {
 
 	public void setMaxContentLength (long maxContentLength) {
 		this.maxContentLength = maxContentLength;
+	}
+
+	public void setSimulateHttps(boolean simulate) {
+		this.simulateHttps = simulate;
 	}
 
 	public int getResponseStatusCode() {
@@ -230,6 +242,9 @@ public class HttpLoader {
 	}
 
 	public int open(String url) throws IOException {
+		if (simulateHttps) url = url.replace("https://", "http://");
+		if (authBasicLogin!=null) url = HttpUtils.urlAddBasicAuthentication(url, authBasicLogin.get("login"), authBasicLogin.get("password"));
+
 		try {
 			close();
 
@@ -345,6 +360,9 @@ public class HttpLoader {
 	}
 
 	public int getHeadStatusCode(String url) {
+		if (simulateHttps) url = url.replace("https://", "http://");
+		if (authBasicLogin!=null) url = HttpUtils.urlAddBasicAuthentication(url, authBasicLogin.get("login"), authBasicLogin.get("password"));
+
 		try {
 			
 			//this.url = url;
@@ -500,6 +518,7 @@ public class HttpLoader {
 	} 
 
 	private HttpGet getHttpGet(String url) {
+		if (simulateHttps) url = url.replace("https://", "http://");
 		URI uri;
 		try {
 			uri = new URI(url);

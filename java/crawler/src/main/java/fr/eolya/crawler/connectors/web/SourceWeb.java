@@ -14,7 +14,7 @@ import fr.eolya.crawler.connectors.web.StartingUrls;
 
 
 public class SourceWeb extends Source implements ISource {
-
+	
 	protected StartingUrls startingUrls = null;
 
 	public SourceWeb (int id, String className, String crawlMode, Map<String,Object> srcData) throws IOException {

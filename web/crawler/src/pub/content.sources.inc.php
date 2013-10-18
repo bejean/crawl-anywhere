@@ -246,7 +246,7 @@ function resumeSource(id)
 	if (!answer)
 		return;
     $.get(ajax_url, {action: 'resumesource', id: id}, function(data) {
-        alert(data);;
+        alert(data);
     });
 }
 
@@ -692,7 +692,7 @@ function addRuleYes () {
 	//var metap = $("#add-rule-form-meta-propagate").val();
 	var metap = 0;
 	
-    var itemJsonStr = '{ "ope": "' + ope + '", "mode": "' + mode + '", "pat": "' + pat.replace(/\\/g,"\\\\") + '", "meta": "' + meta.replace(/\\/g,"\\\\").replace(/\n/g,'|') + '", "metap": "' + metap + '", "ignoreparam": "' + ignoreparam + '" }';
+	var itemJsonStr = '{ "ope": "' + ope + '", "mode": "' + mode + '", "pat": "' + pat.replace(/\\/g,"\\\\") + '", "meta": "' + meta.replace(/\\/g,"\\\\").replace(/\n/g,'|') + '", "metap": "' + metap + '", "ignoreparam": "' + ignoreparam + '" }';
 	if (currentRule==-1) {
 	    var itemJson =  $.parseJSON(itemJsonStr);
     	objJson.rules.push( itemJson );
@@ -725,8 +725,8 @@ function addRuleShowDialog (ope, mode, pat, meta, metap, ignoreparam, ndx, src_t
 	currentRule = ndx;
 	$("#add-rule-form-ope").val(ope);
 	$("#add-rule-form-mode").val(mode);
-	$("#add-rule-form-pat").val(pat);
-	$("#add-rule-form-meta").val(meta.replace(/\|/g,'\n'));
+	$("#add-rule-form-pat").val(pat.replace(/\\\\/g,"\\"));
+	$("#add-rule-form-meta").val(meta.replace(/\|/g,'\n').replace(/\\\\/g,"\\"));
 	$("#add-rule-form-ignoreparam").val(ignoreparam);
 	//$("#add-rule-form-meta-propagate").val(metap);
 	$.blockUI({ 
@@ -762,7 +762,7 @@ function ruleDisplay() {
 	for ( var i = 0; i < objJson.rules.length ; i++ ) {
 		if (objJson.rules[i].pat != "") {
 			html += "<tr id='rule_" + i + "'><td width='10%'>" + objJson.rules[i].ope + "</td>";
-			html += "<td width='50%'>" + escapeHTML (objJson.rules[i].pat) + "</td>";
+			html += "<td width='50%'>" + escapeHTML (objJson.rules[i].pat.replace(/\\\\/g,"\\")) + "</td>"; // 20130928
 			html += "<td width='27%'>";
 			if (objJson.rules[i].mode=="all")
 				html += "Get page and extract links";

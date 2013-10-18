@@ -291,9 +291,22 @@ public class HttpUtils {
 	//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 	public static boolean urlBelongSameHost(String urlReferer, String urlHref, List<String> hostAliases) {
 		if (urlReferer!=null && urlBelongSameHost(urlReferer,urlHref)) return true;
-		if (hostAliases!=null)
-			for (int i=0; i<hostAliases.size(); i++)
-				if (urlBelongSameHost(hostAliases.get(i), urlHref)) return true;
+		if (hostAliases!=null) {
+			for (int i=0; i<hostAliases.size(); i++) {
+				hostAliases.set(i,hostAliases.get(i).trim());
+				if (hostAliases.get(i).indexOf("*")==-1) {
+					if (urlBelongSameHost(hostAliases.get(i), urlHref)) return true;					
+				} else {
+					String alias = hostAliases.get(i).replace("*", "");
+					if (hostAliases.get(i).indexOf("*")==0) {
+						if (urlHref.endsWith(alias)) return true;
+					}
+					if (hostAliases.get(i).indexOf("*")==hostAliases.get(i).length()-1) {
+						if (urlHref.startsWith(alias)) return true;						
+					}
+				}
+			}
+		}
 		return false;
 	}
 
@@ -1088,6 +1101,12 @@ public class HttpUtils {
         }
         catch (Exception e) {}
         return "";
+    }
+    
+    public static String urlAddBasicAuthentication(String url, String login, String password) {
+		url = url.replace("http://", "http://"+login+":"+password+"@");
+		url = url.replace("https://", "https://"+login+":"+password+"@");
+		return url;
     }
 
 }

@@ -81,7 +81,7 @@ class SourceWeb extends SourceBase implements iSource {
 		$res .= "<tr>";
 		$res .= "<td class='head'>Host aliases</td>";
 		$res .= "<td><input class='editInputText' type='text' name='source_alias' id='source_alias' value='" . $this->getValue('alias_host', '') . "'>";
-		$res .= "<br/><span class='help'>The source's host domain aliases (don't specify protocol). Example : www2.website.com, support.website.com<br/>The crawler will also accept the urls belonging to these domains</span></td>";
+		$res .= "<br/><span class='help'>The source's host domain aliases (don't specify protocol). Example : www2.website.com, support.website.com, *.website.com, www.website.*<br/>The crawler will also accept the urls belonging to these domains</span></td>";
 		$res .= "</tr>";
 
 		$res .= "<tr>";

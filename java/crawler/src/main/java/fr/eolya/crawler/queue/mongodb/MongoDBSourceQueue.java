@@ -108,6 +108,22 @@ public class MongoDBSourceQueue implements ISourceQueue {
 		}
 		return null;	
 	}
+	
+	public void unpop(int id) {
+		DBCursor cur = null;	
+		String query = String.format("{\"id\": %1$s}", id);	
+		BasicDBObject docsearch = MongoDBHelper.JSON2BasicDBObject(query);
+
+		synchronized (collMonitor) {
+			cur = coll.getColl().find(docsearch);
+			if (cur.hasNext()) {
+				BasicDBObject doc = (BasicDBObject) cur.next();
+				BasicDBObject doc2 = (BasicDBObject) doc.copy();
+				doc2.put("_poped", false);
+				coll.update(doc, doc2);	
+			}
+		}
+	}
 
 	private String getQuery(boolean test, boolean interactiveOnly, boolean suspiciousOnly, String accountId, String sourceId, String engineId) {
 		// http://docs.mongodb.org/manual/reference/sql-comparison/

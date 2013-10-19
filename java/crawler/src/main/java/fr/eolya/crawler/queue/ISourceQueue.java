@@ -22,5 +22,6 @@ import java.util.Map;
 public interface ISourceQueue {	
 	public long size();
 	public Map<String,Object> pop();
+	public void unpop(int id);
 	public void close();
 }

@@ -351,12 +351,8 @@ public class Crawler implements ICrawlerController {
 					}
 				}
 
-				//String json = sourceQueue.pop();
 				Map<String,Object> srcData = sourceQueue.pop();
-				//if (json!=null) {
 				if (srcData!=null) {
-					//HashMap<String,String> srcData = JSONHelper.getJSONMapString(json);
-					//String srcId = String.valueOf(JSONHelper.getValueAsId((String)srcData.get("id")));
 					String srcId = String.valueOf(srcData.get("id"));
 
 					if (CrawlerUtils.isAcceptedCountry((String)srcData.get("country"), countryInclude, countryExclude) || !"".equals(sourceId)) {
@@ -370,9 +366,11 @@ public class Crawler implements ICrawlerController {
 							logger.log("        Pushing source : " + String.valueOf(src.getId()));
 							sourceExecutor.submit(new ProcessorSource(src, config, logger, this));
 						} else {
+							sourceQueue.unpop(Integer.valueOf(srcId));
 							logger.log("        Skip source due to schedule : " + String.valueOf(src.getId()));									    
 						}
 					} else {
+						sourceQueue.unpop(Integer.valueOf(srcId));
 						logger.log("        Skip source due to country : " + srcId);                                      							    
 					}
 				}

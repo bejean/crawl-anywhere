@@ -90,7 +90,7 @@ if ($action=="displaytarget") {
 		$res .= "<td>";
 		$res .= "<select id='target_type' name='target_type' style='editInputSelect'>";
 		$res .= "<option value='solr' " . ($rs["target_type"] == 'solr' ? 'selected' : '') . ">Solr</option>";
-		$res .= "<option value='es' " . ($rs["target_type"] == 'es' ? 'selected' : '') . ">elasticsearch</option>";
+		//$res .= "<option value='es' " . ($rs["target_type"] == 'es' ? 'selected' : '') . ">elasticsearch</option>";
 		$res .= "</select>";
 		$res .= "</td></tr>";
 
@@ -99,7 +99,7 @@ if ($action=="displaytarget") {
 		$res .= "<td><input id='target_parameters' name ='target_parameters' class='editInputText' value='" . $rs["target_parameters"] . "'>";
 		$res .= "<span class='help'>Optionnal.<br>";
 		$res .= "<u>Solr:</u><br>provide Solr core url (http://localhost:8080/solr/crawler/).<br>";
-		$res .= "<u>elasticsearch:</u><br>provide cluster url including index name (http://localhost:9200/crawler/).";
+		//$res .= "<u>elasticsearch:</u><br>provide cluster url including index name (http://localhost:9200/crawler/).";
 		$res .= "</span></td>";
 		$res .= "</tr>";
 
@@ -177,7 +177,7 @@ if ($action=="display_add_target")
 	$res .= "<td>";
 	$res .= "<select id='target_type' name='target_type' style='editInputSelect'>";
 	$res .= "<option value='solr'>Solr</option>";
-	$res .= "<option value='es'>elasticsearch</option>";
+	//$res .= "<option value='es'>elasticsearch</option>";
 	$res .= "</select>";
 	$res .= "</td></tr>";
 
@@ -186,7 +186,7 @@ if ($action=="display_add_target")
 	$res .= "<td><input id='target_parameters' name='target_parameters' class='editInputText' value=''>";
 	$res .= "<span class='help'>Optionnal.<br>";
 	$res .= "<u>Solr:</u><br>provide Solr core url (http://localhost:8080/solr/crawler/).<br>";
-	$res .= "<u>elasticsearch:</u><br>provide cluster url including index name (http://localhost:9200/crawler/).";
+	//$res .= "<u>elasticsearch:</u><br>provide cluster url including index name (http://localhost:9200/crawler/).";
 	$res .= "</span></td>";
 	$res .= "</tr>";
 

@@ -40,6 +40,7 @@ class Theme extends ThemeBase implements iTheme {
 		$res .= '<head>' . "\n";
 				
 		$res .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>' . "\n";
+		$res .= '<title>' . $this->config->get("application.title") . '</title>';
 		$res .= '<meta http-equiv="Cache-Control" content="no-cache" />' . "\n";
 		$res .= '<meta http-equiv="Pragma" content="no-cache" />' . "\n";
 		$res .= '<meta http-equiv="Cache" content="no store" />' . "\n";

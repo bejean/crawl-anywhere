@@ -375,27 +375,21 @@ class SourceWeb extends SourceBase implements iSource {
 		$res .= "<option value='40'";
 		if ($this->getValue('crawl_url_per_minute', '')=="40") $res .= " selected";
 		$res .= ">40</option>";
-		$res .= "</select>";
 		$res .= "<option value='44'";
 		if ($this->getValue('crawl_url_per_minute', '')=="44") $res .= " selected";
 		$res .= ">44</option>";
-		$res .= "</select>";
 		$res .= "<option value='48'";
 		if ($this->getValue('crawl_url_per_minute', '')=="48") $res .= " selected";
 		$res .= ">48</option>";
-		$res .= "</select>";
 		$res .= "<option value='52'";
 		if ($this->getValue('crawl_url_per_minute', '')=="52") $res .= " selected";
 		$res .= ">52</option>";
-		$res .= "</select>";
 		$res .= "<option value='56'";
 		if ($this->getValue('crawl_url_per_minute', '')=="56") $res .= " selected";
 		$res .= ">56</option>";
-		$res .= "</select>";
 		$res .= "<option value='60'";
 		if ($this->getValue('crawl_url_per_minute', '')=="60") $res .= " selected";
 		$res .= ">60</option>";
-		$res .= "</select>";
 		$res .= "</select>";		
 		
 		$res .= "</td>";

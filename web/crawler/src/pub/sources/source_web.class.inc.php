@@ -527,7 +527,8 @@ class SourceWeb extends SourceBase implements iSource {
 			$res .= ">4 weeks</option>";
 		}
 		$res .= "</select>";
-		$res .= "<br><span class='help'><strong>Minimal</strong> period between to crawl</span>";
+		$res .= "<br><span class='help'><strong>Minimal</strong> period between to crawl";
+		$res .= "<br>when the source crawl ends, the next crawl date is set based on this parameter</span>";
 		$res .= "</td>";
 		$res .= "</tr>";
 
@@ -554,7 +555,8 @@ class SourceWeb extends SourceBase implements iSource {
 			$res .= "<input type='hidden' name='source_schedule' id='source_schedule' value='" . $scheduleJson . "'>";
 			$res .= "<input type='hidden' name='source_schedule_xml' id='source_schedule_xml' value='" . $schedule . "'>";
 			$res .= "<a href='javascript:addSchedule();'><img src='images/plus_12.png'>&nbsp;Add schedule</a>";
-			$res .= "<br /><span class='help'>This parameter requieres MongoDB to be configured</span>";
+			$res .= "<br /><span class='help'>Define allowed and disallowed crawl time. Source crawl will pause and restart according to these schedules";
+			$res .= "<br />This parameter requires MongoDB to be configured</span>";
 			$res .= "</td>";
 			$res .= "</tr>";
 		}

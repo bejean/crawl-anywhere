@@ -321,7 +321,8 @@ class SourceDropbox extends SourceBase implements iSource {
 			$res .= ">4 weeks</option>";
 		}
 		$res .= "</select>";
-		$res .= "<br><span class='help'><strong>Minimal</strong> period between to crawl</span>";
+		$res .= "<br><span class='help'><strong>Minimal</strong> period between to crawl";
+		$res .= "<br>when the source crawl ends, the next crawl date is set based on this parameter</span>";
 		$res .= "</td>";
 		$res .= "</tr>";
 

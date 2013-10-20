@@ -42,6 +42,7 @@
 <param name="robots_wildcard_allowed">1</param>
 <param name="user_agent">CaBot</param>
 <param name="bypass_robots_file">0</param>
+<param name="bypass_robots_meta">0</param>
 <param name="max_depth">99</param>
 <param name="max_page">0</param>
 <param name="max_page_length">1000000</param>
@@ -55,8 +56,6 @@
 <!--param name="contenttype_exclude">image/jpeg,video/quicktime,application/zip,application/x-zip-compressed</param-->
 <param name="contenttype_exclude"></param>
 
-<param name="bypass_robots_file">0</param>
-<param name="bypass_robots_meta">0</param>
 <param name="rss_extract">0</param>
 
 <param name="max_simultaneous_source">3</param>

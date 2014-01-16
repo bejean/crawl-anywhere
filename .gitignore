@@ -42,6 +42,10 @@ doc/
 # PDT-specific
 .buildpath
 
+deprecated/
+mysolrserver/
+ca.old/
+indexer_with_elastic/
 web/search/src/config/config-demo-taligentia.ini
 web/search/src/config/config-mysolrserver-default.ini
 web/search/src/config/config-mysolrserver-demo-perso-taligentia.ini
@@ -79,3 +83,12 @@ java/simplepipeline/config/pipeline/simplepipeline-dev.xml
 web/crawler/src/config/config-dev.ini
 web/search/src/config/config-dev.ini
 java/solr/config/multilingual.xml
+build.log
+java/crawler/config/crawler/crawler-dev.xml
+java/crawlerws/config/crawlerws/crawlerws-dev.xml
+java/indexer/config/indexer/es_analysis.json
+java/indexer/config/indexer/es_mapping_en.json
+java/indexer/config/indexer/es_mapping_fr.json
+java/simplepipeline/config/pipeline/scripts/pipeline/doctextextractor/www_dokterdokter_nl.xml
+web/crawler/src/pub/ajax/import-convert.class.php
+web/search/src/config/config-amnesty.ini

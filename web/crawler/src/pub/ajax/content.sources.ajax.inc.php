@@ -1247,9 +1247,17 @@ if ($action=="importsources")
 
 	if (file_exists($file_temp)) {
 
-		if (endswith(strtolower($filename), ".xml")) {
-
+		if (file_exists ('import-convert.class.php') && true) {
+			include 'import-convert.class.php';
+			$converter = new ImportConvert($file_temp);
+			$xml = $converter->getXml();
+		} else {
 			$xml = simplexml_load_file($file_temp);
+		}
+
+		
+		//if (endswith(strtolower($filename), ".xml")) {
+		if (!empty($xml)) {
 
 			$mg = mg_connect ($config, "", "", "");
 			if ($mg)
@@ -1360,9 +1368,12 @@ if ($action=="importsources")
 					}
 				}
 			}
+			$arr = array('status' => 'success');
+			echo json_encode($arr);
+		} else {
+			$arr = array('status' => 'error');
+			echo json_encode($arr);
 		}
-		$arr = array('status' => 'success');
-		echo json_encode($arr);
 	} else {
 		$arr = array('status' => 'error');
 		echo json_encode($arr);

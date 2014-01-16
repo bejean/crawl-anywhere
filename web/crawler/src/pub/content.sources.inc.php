@@ -1227,7 +1227,7 @@ function importImport () {
 	}
 
 	if (!filename.match(/[.](xml|csv)$/i)) {
-		alert ("Import file name must have xml extention !");
+		alert ("Import file name must have xml or csv extention !");
 		return false;
 	}
 	

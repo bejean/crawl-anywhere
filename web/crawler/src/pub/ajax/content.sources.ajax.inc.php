@@ -1361,8 +1361,8 @@ if ($action=="importsources")
 
 					if ($mode == 'insert' && !$stmt->checkNotNull ($mg_source_not_null)) {
 						$arr = array('status' => 'error');
-						echo json_encode($arr);
-						exit();
+						//echo json_encode($arr);
+						//exit();
 					} else {
 						$rs = $stmt->execute();
 					}
@@ -1372,10 +1372,16 @@ if ($action=="importsources")
 			echo json_encode($arr);
 		} else {
 			$arr = array('status' => 'error');
+			$arr = array('message' => 'parsing');
 			echo json_encode($arr);
 		}
 	} else {
+		$err = $_FILES['import-dialog-form-file']['error'];
 		$arr = array('status' => 'error');
+		if ($err==2) 
+			$arr = array('message' => 'too big file');
+		else 
+			$arr = array('message' => 'unknow');
 		echo json_encode($arr);
 	}
 	exit();

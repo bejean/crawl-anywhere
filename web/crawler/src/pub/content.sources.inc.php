@@ -1682,7 +1682,7 @@ foreach ($aSourceTypes as $id => $type) {
 	</tr>
 	-->
 					<td><label>Import file</label></td>
-					<td><input type="hidden" name="MAX_FILE_SIZE" value="1000000" /> <input
+					<td><input type="hidden" name="MAX_FILE_SIZE" value="10000000" /> <input
 						id="import-dialog-form-file" name="import-dialog-form-file"
 						type="file" />
 					</td>

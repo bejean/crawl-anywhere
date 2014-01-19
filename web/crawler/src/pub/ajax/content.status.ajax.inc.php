@@ -120,25 +120,26 @@ if ($action=="showstatus")
 		$res .= "</td></tr>";
 		
 		$res .= "<tr><td class='head'>Number of sources</td><td>";
-		$res .= mg_row_count($mg, "sources", array('$and' => array(array("deleted" => 0), array("id_account" => intval($id_account_current)))));
+		$res .= mg_row_count($mg, "sources", array('$and' => array(array("deleted" => "0"), array("id_account" => intval($id_account_current)))));
 		$res .= "</td></tr>";
 			
-		$res .= "<tr><td class='head'>Number of crawled URLs</td><td>";
-		$res .= mg_row_count($mg, "pages", array("id_account" => $id_account_current));
-		$res .= "</td></tr>";
+		// TODO : pages collection do not exists anymore
+		//$res .= "<tr><td class='head'>Number of crawled URLs</td><td>";
+		//$res .= mg_row_count($mg, "pages", array("id_account" => $id_account_current));
+		//$res .= "</td></tr>";
 
 		$res .= "<tr><td class='head'>Number of enabled sources</td><td>";
-		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => 1), array("deleted" => 0), array("id_account" => intval($id_account_current)))));				
+		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => "1"), array("deleted" => "0"), array("id_account" => intval($id_account_current)))));				
 		$res .= "</td></tr>";
 
 		$res .= "<tr><td class='head'>Number of sources to be crawled</td><td>";
 		// TODO: V4 - $stmt->addWhereClause("enabled = 1 and deleted = 0 and (crawl_nexttime is null or crawl_nexttime <= now()) and id_account = " . $id_account_current);
-		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => 1), array("deleted" => 0), array("id_account" => intval($id_account_current)))));				
+		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => "1"), array("deleted" => "0"), array("id_account" => intval($id_account_current)))));				
 		$res .= "</td></tr>";
 
 		$res .= "<tr><td class='head'>Number of sources to be crawled for the first time</td><td>";
 		// TODO: V4 - $stmt->addWhereClause("enabled = 1 and deleted = 0 and crawl_nexttime is null and id_account = " . $id_account_current);
-		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => 1), array("deleted" => 0), array("id_account" => intval($id_account_current)))));				
+		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => "1"), array("deleted" => "0"), array("id_account" => intval($id_account_current)))));				
 		$res .= "</td></tr>";
 	}
 

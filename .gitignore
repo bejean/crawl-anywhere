@@ -29,6 +29,7 @@ local.properties
 target/
 .svn
 doc/
+build/
 
 # External tool builders
 .externalToolBuilders/

@@ -102,24 +102,28 @@ public class IndexerQueueWriter extends Stage {
             reader.setValidation(false);
             String mappings = props.getProperty("solrmappings");
             mappings = Utils.getValidPropertyPath(mappings, null, "HOME");
-            File f = new File(mappings);
-            if (f==null || !f.exists()) {
-                if (logger!=null && mappings!=null) logger.log("    SolrIndexerQueueWriter - Error loading Solr mapping rules. The rules file is missing : " + mappings);
-            } else {
-                if (logger!=null && mappings!=null) logger.log("    SolrIndexerQueueWriter - loading Solr mapping rules : " + mappings);
-                mappingDoc.put("solr", reader.read(f));                
+            if (mappings!=null) {
+	            File f = new File(mappings);
+	            if (f==null || !f.exists()) {
+	                if (logger!=null && mappings!=null) logger.log("    SolrIndexerQueueWriter - Error loading Solr mapping rules. The rules file is missing : " + mappings);
+	            } else {
+	                if (logger!=null && mappings!=null) logger.log("    SolrIndexerQueueWriter - loading Solr mapping rules : " + mappings);
+	                mappingDoc.put("solr", reader.read(f));                
+	            }
             }
             
             reader = new SAXReader();
             reader.setValidation(false);
             mappings = props.getProperty("esmappings");
-            mappings = Utils.getValidPropertyPath(mappings, null, "HOME");
-            f = new File(mappings);
-            if (f==null || !f.exists()) {
-                if (logger!=null && mappings!=null) logger.log("    SolrIndexerQueueWriter - Error loading ES mapping rules. The rules file is missing : " + mappings);
-            } else {
-                if (logger!=null && mappings!=null) logger.log("    SolrIndexerQueueWriter - loading ES mapping rules : " + mappings);
-                mappingDoc.put("es", reader.read(f));                
+            if (mappings!=null) {
+	            mappings = Utils.getValidPropertyPath(mappings, null, "HOME");
+	            File f = new File(mappings);
+	            if (f==null || !f.exists()) {
+	                if (logger!=null && mappings!=null) logger.log("    SolrIndexerQueueWriter - Error loading ES mapping rules. The rules file is missing : " + mappings);
+	            } else {
+	                if (logger!=null && mappings!=null) logger.log("    SolrIndexerQueueWriter - loading ES mapping rules : " + mappings);
+	                mappingDoc.put("es", reader.read(f));                
+	            }
             }
         } catch (DocumentException e) {
             e.printStackTrace();

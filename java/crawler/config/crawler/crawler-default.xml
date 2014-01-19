@@ -10,7 +10,8 @@
 </database>
 
 <cache>
-	<param name="dbtype">mongodb</param>
+	<!-- uncomment in order to enable document cache -->
+	<!--param name="dbtype">mongodb</param-->
 	<param name="dbhost">localhost</param>
 	<param name="dbport">27017</param>
 	<param name="dbname">crawler_cache</param>

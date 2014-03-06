@@ -1247,16 +1247,16 @@ if ($action=="importsources")
 
 	if (file_exists($file_temp)) {
 
-		if (file_exists ('import-convert.class.php') && true) {
-			include 'import-convert.class.php';
+		$import_use_custom = $config->getDefault("sources.import_use_custom", "");
+		
+		if (!empty($import_use_custom) && file_exists ('../../custom/' . $import_use_custom)) {
+			include '../../custom/' . $import_use_custom;
 			$converter = new ImportConvert($file_temp);
 			$xml = $converter->getXml();
 		} else {
 			$xml = simplexml_load_file($file_temp);
 		}
-
 		
-		//if (endswith(strtolower($filename), ".xml")) {
 		if (!empty($xml)) {
 
 			$mg = mg_connect ($config, "", "", "");
@@ -1307,15 +1307,9 @@ if ($action=="importsources")
 
 					if ($reset == "1") {
 						$stmt->addColumnValue("crawl_mode", "2");
-						//$stmt->addColumnValue("crawl_firstcompleted", "0", "");
-						//$stmt->addColumnValue("crawl_priority", "1", "");
-						//$stmt->addColumnValue("crawl_nexttime", "", "NOW");
 					}
 					else {
 						$stmt->addColumnValue("crawl_mode", "0");
-						//$stmt->addColumnValue("crawl_firstcompleted", (string) $item->crawl_firstcompleted, "");
-						//$stmt->addColumnValue("crawl_priority", (string) $item->crawl_priority, "");
-						//$stmt->addColumnValue("crawl_nexttime", (string) $item->crawl_nexttime, "");
 					}
 					$stmt->addColumnValue("crawl_firstcompleted", "0");
 					$stmt->addColumnValue("crawl_priority", "1");

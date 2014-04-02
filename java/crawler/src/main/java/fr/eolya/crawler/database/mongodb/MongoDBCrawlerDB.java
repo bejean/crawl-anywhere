@@ -100,8 +100,8 @@ public class MongoDBCrawlerDB implements ICrawlerDB {
 			} else {
 				doc2.put("running_crawl_item_processed", 0);
 				doc2.put("running_crawl_item_to_process", 0);
-				doc2.put("crawl_lasttime_start", new Date());	        
 			}
+			doc2.put("crawl_lasttime_start", new Date());	        
 			doc2.put("running_crawl_lastupdate", new Date());	 
 			doc2.put("crawl_process_status", ISource.CRAWL_PROCESS_STATUS_CRAWLING);
 			doc2.put("crawl_mode", ISource.CRAWL_PROCESS_MODE_NONE);

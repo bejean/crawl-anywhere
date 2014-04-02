@@ -1235,6 +1235,7 @@ function importImport () {
 	url += '&match=' + $("#import-dialog-form-match").val();
 	url += '&strategy=' + $("#import-dialog-form-strategy").val();
 	url += '&status=' + $("#import-dialog-form-status").val();
+	url += '&priority=' + $("#import-dialog-form-priority").val();
 	//url += '&check=' + $("#import-dialog-form-check").val();
 	
 	var reset = $('#import-dialog-form-reset').attr('checked')?"1":"0";
@@ -1264,6 +1265,7 @@ function importShowDialog () {
 	$("#import-dialog-form-match").val("name");
 	$("#import-dialog-form-strategy").val("skip");
 	$("#import-dialog-form-status").val("disabled");
+	$("#import-dialog-form-priority").val("0");
 	$("#import-dialog-form-check").attr('checked', true);    
 	
 	$.blockUI({ 
@@ -1674,6 +1676,13 @@ foreach ($aSourceTypes as $id => $type) {
 						<td><label>Reset source</label></td>
 						<td><input id="import-dialog-form-reset"
 							name="import-dialog-form-reset" type="checkbox" value="0" /></td>
+					</tr>
+					<tr>
+						<td><label>Priority</label></td>
+						<td><select id="import-dialog-form-priority">
+								<option value='0' selected>Normal</option>
+								<option value='1' selected>High</option>
+						</select></td>
 					</tr>
 					<!--  
 	<tr>

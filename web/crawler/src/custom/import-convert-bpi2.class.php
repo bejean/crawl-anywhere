@@ -12,15 +12,27 @@ class ImportConvert {
 		
 		// lit les tableaux de conversion de code langue
 		$arr639_1 = array();
-		if (($handle = fopen ( "../../custom/639-1.csv", "r" )) !== FALSE) {
+		$handle = fopen ( "custom/639-1.csv", "r" );
+		if ($handle === FALSE) $handle = fopen ( "../../custom/639-1.csv", "r" );
+		if ($handle !== FALSE) {
 			while ( ($data = fgetcsv ( $handle, 10000, "," )) !== FALSE ) {
 				$arr639_1[trim($data[1])]=trim($data[0]);
 			}
 		}
 		$arr639_2 = array();
-		if (($handle = fopen ( "../../custom/639-2.csv", "r" )) !== FALSE) {
-			while ( ($data = fgetcsv ( $handle, 10000, "," )) !== FALSE ) {
+		$handle = fopen ( "custom/639-2.csv", "r" );
+		if ($handle === FALSE) $handle = fopen ( "../../custom/639-2.csv", "r" );
+		if ($handle !== FALSE) {
+					while ( ($data = fgetcsv ( $handle, 10000, "," )) !== FALSE ) {
 				$arr639_2[utf8_decode(trim($data[1]))]=trim($data[0]);
+			}
+		}
+		$arr3166 = array();
+		$handle = fopen ( "custom/3166-alpha-2.csv", "r" );
+		if ($handle === FALSE) $handle = fopen ( "../../custom/3166-alpha-2.csv", "r" );
+		if ($handle !== FALSE) {
+			while ( ($data = fgetcsv ( $handle, 10000, "," )) !== FALSE ) {
+				$arr3166[utf8_decode(trim($data[1]))]=trim($data[0]);
 			}
 		}
 		
@@ -29,7 +41,7 @@ class ImportConvert {
 			$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><crawlanywhere></crawlanywhere>');
 			$version = $xml->addChild('version');
 			$sources = $xml->addChild('sources');
-			while ( ($data = fgetcsv ( $handle, 10000, "%" )) !== FALSE ) {
+			while ( ($data = fgetcsv ( $handle, 10000, "," )) !== FALSE ) {
 				if (empty($header)) {
 					$header = $data;
 				} else {
@@ -37,7 +49,7 @@ class ImportConvert {
 					$data = $this->combine_arr ($header, $data);
 					if ($data) {
 						$source = $sources->addChild('source');
-						$this->processLine($source, $data, $arr639_1, $arr639_2);
+						$this->processLine($source, $data, $arr639_1, $arr639_2, $arr3166);
 						//$src = var_dump($source);
 					} else {
 						$i=0;
@@ -50,18 +62,8 @@ class ImportConvert {
 		}
 		return null;
 	}
-	
-	
-	function getValueOcc($value, $ndx) {
-		if (strpos($value, '@;@')!==false) {
-			$values = explode('@;@', $value);
-			return utf8_encode(trim($values[$ndx]));
-		} else {
-			return utf8_encode(trim($value));
-		}
-	}
-	
-	function processLine($source, $data, $arr639_1, $arr639_2) {
+		
+	function processLine($source, $data, $arr639_1, $arr639_2, $arr3166) {
 		
 		$metas = array('metadata');
 		
@@ -76,23 +78,36 @@ class ImportConvert {
 		$source->addChild('type', '1');
 		$source->addChild('id_target', '1');
 		$source->addChild('name', $name);
-		$source->addChild('country', 'FR');
 		
-		$lan1 = $data['dc_language'];
+		$country = $data['country'];
+		if (!empty($country)) $country = $arr3166[$country];
+		if (empty($country)) $country = 'FR';
+		$source->addChild('country', $country);	
+		
+		$lan1 = $data['language'];
 		if (!empty($lan1)) $lan = $arr639_2[$lan1];
 		if (!empty($lan)) $lan = $arr639_1[$lan];
 		if (empty($lan)) $lan = 'fr';
 		$source->addChild('language', $lan);
 			
+		$collection = strtolower($data['collection']);
+		$collection = str_replace(',', '-', $collection);
+		//$collection = str_replace(';', ',', $collection);
+		$collection = implode(',', array_map('trim', explode(';', $collection)));
+		$collection = htmlspecialchars($collection);
+		$source->addChild('collection', $collection);
+		
 		$host = htmlspecialchars($url['host']);
 		$url_str = htmlspecialchars($url_str);
 		
 		$metadata='';
 		foreach ($metas as $meta) {
-			$metadata .= htmlspecialchars('bpi_' . $meta . ':' . preg_replace( "/\r|\n/", " ",$this->getValueOcc($data[$meta], $ndx)));
+			$metadata .= htmlspecialchars('bpi_' . $meta . ':' . preg_replace( "/\r|\n/", " ",$data[$meta]));
 		}
 		
 		// param
+		//		    	<collection>$collection</collection>
+		
 		$params = <<<EOD
 		 	<params>
 				<language_detection_list></language_detection_list>
@@ -142,7 +157,7 @@ EOD;
 }
 
 
-$converter = new ImportConvert('/Users/bejean/Desktop/BPI/websites.csv');
-$xml = $converter->getXml();
-$i=0;
+//$converter = new ImportConvert('/Users/bejean/CloudStation/Clients/Bpi/2014/04/websites.csv');
+//$xml = $converter->getXml();
+//$i=0;
 ?>

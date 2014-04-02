@@ -5,6 +5,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fr.eolya.crawler.cache.DocumentCacheFactory;
 import fr.eolya.crawler.cache.IDocumentCache;
 import fr.eolya.crawler.connectors.ConnectorFactory;
@@ -15,7 +17,6 @@ import fr.eolya.crawler.utils.CrawlerUtils;
 import fr.eolya.utils.Logger;
 import fr.eolya.utils.Utils;
 import fr.eolya.utils.XMLConfig;
-import fr.eolya.utils.nosql.IDBConnection;
 
 public class ProcessorSource extends Processor implements Callable<Integer>, ISourceControler {
 
@@ -44,9 +45,14 @@ public class ProcessorSource extends Processor implements Callable<Integer>, ISo
 			throw new InstantiationException("Fail too instanciate connetor (type = " + src.getType() + ")");
 		}
 
-		String dbType = config.getProperty("/crawler/database/param[@name='dbtype']", "");
-		String dbName = config.getProperty("/crawler/database/param[@name='dbname']", "");
-		queueItems = ConnectorFactory.getSourceItemsQueueInstance(src, dbType, crawlerController.getDBConnection(false), dbName, "pages" );
+		String dbType = config.getProperty("/crawler/queues/param[@name='dbtype']", "");
+		String dbQueuesName = config.getProperty("/crawler/queues/param[@name='dbname']", "");
+		if (StringUtils.trimToNull(dbType)==null || StringUtils.trimToNull(dbQueuesName)==null) {
+			dbType = config.getProperty("/crawler/database/param[@name='dbtype']", "");
+			dbQueuesName = config.getProperty("/crawler/database/param[@name='dbname']", "");
+		}
+
+		queueItems = ConnectorFactory.getSourceItemsQueueInstance(src, dbType, crawlerController.getDBConnection(false), dbQueuesName, "pages" );
 		if (queueItems==null) {
 			// TODO: V4 - updateSourceStatusDueToStartupError();
 			throw new InstantiationException("Fail too initalize connetor (type = " + src.getType() + ")");

@@ -254,15 +254,16 @@ public class Crawler implements ICrawlerController {
 		int limit = Integer.parseInt(config.getProperty("/crawler/param[@name='max_simultaneous_source']", "4"));
 		if (!"".equals(sourceId)) limit = 1;
 
-		String dbType = config.getProperty("/crawler/database/param[@name='dbtype']", "");
-		String dbName = config.getProperty("/crawler/database/param[@name='dbname']", "");
-
 		dbConnection = getDBConnection(true);
 		if (dbConnection==null) {
 			logger.log("Failed to connect do database !");
 			System.out.println("Failed to connect do database !");
 			return;
 		}
+		
+		String dbType = config.getProperty("/crawler/database/param[@name='dbtype']", "");
+		String dbName = config.getProperty("/crawler/database/param[@name='dbname']", "");
+
 		ISourceQueue sourceQueue = QueueFactory.getSourceQueueInstance(dbType, dbConnection, dbName, "sources", test, interactiveOnly, suspiciousOnly, accountId, sourceId, engineId);
 		crawlerDB = CrawlerDBFactory.getCrawlerDBInstance(dbType, dbConnection, dbName);
 

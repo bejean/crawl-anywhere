@@ -83,7 +83,7 @@ abstract class SourceBase {
 	protected function getValue($name, $default) {
 		if ($this->data==null) return '';
 		$ret = $this->data[strtolower($name)];
-		if($ret instanceof MongoDate) return date('Y-m-d h:i:s', $ret->sec);
+		if($ret instanceof MongoDate) return date('Y-m-d H:i:s', $ret->sec);
 		if (empty($ret) && !empty($default)) $ret = $default;
 		return $ret;
 	}

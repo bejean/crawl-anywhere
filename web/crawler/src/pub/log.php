@@ -33,7 +33,7 @@ if ($mg)
 			$rs = $cursor->getNext();
 
 			$t = $rs["createtime"]/1000;
-			$created = date('Y-m-d h:i:s', $t);
+			$created = date('Y-m-d H:i:s', $t);
 			//1.37271406957E+12
 
 

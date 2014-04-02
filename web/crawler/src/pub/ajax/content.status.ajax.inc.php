@@ -77,27 +77,31 @@ if ($action=="showstatus")
 		if ($crawler_witness_files_path!="")
 		{
 			// Crawler state
-			$res .= "<tr><td class='head'>Crawler state</td><td>";
-			//$filecount = count(glob($crawler_witness_files_path . "/crawler*.pid"));
-			if (file_exists ($crawler_witness_files_path . "/crawler.pid"))
-				//if ($filecount>0)
-				$res .= "Crawler is running";
-			else
-				$res .= "Crawler is not running";
-			$res .= "</td></tr>";
+// 			$res .= "<tr><td class='head'>Crawler state</td><td>";
+// 			//$filecount = count(glob($crawler_witness_files_path . "/crawler*.pid"));
+// 			if (file_exists ($crawler_witness_files_path . "/crawler.pid"))
+// 				//if ($filecount>0)
+// 				$res .= "Crawler is running";
+// 			else
+// 				$res .= "Crawler is not running";
+// 			$res .= "</td></tr>";
 
-			$ndx = 1;
+			$ndx = 0;
 			$monitor = trim($config->get("monitor.process_".$ndx));
 			while ($monitor!="" &&  $monitor!="undefined") {
 				$aItems = explode("|", $monitor);
-				if (count($aItems)==3) {
-					$res .= "<tr><td class='head'>" . $aItems[0] . " state</td><td>";
-					$filecount = count(glob($aItems[2] . "/j*.xml"));
+				if (count($aItems)==2 || count($aItems)==3) {
+					$res .= "<tr><td class='head'>" . $aItems[0] . " state</td>";
+					$msg = "";
+					if (count($aItems)==3) {
+						$filecount = count(glob($aItems[2] . "/j*.xml"));
+						$msg = " - queue size = " . $filecount . " item(s)";
+					}
 					if (file_exists ($crawler_witness_files_path . "/" . $aItems[1]))
-						$res .= $aItems[0] . " is running - queue size = " . $filecount . " item(s)";
+						$res .= "<td class='ok'>" . $aItems[0] . " is running";
 					else
-						$res .= $aItems[0] . " is not running - queue size = " . $filecount . " item(s)";
-					$res .= "</td></tr>";
+						$res .= "<td class='warning'>" . $aItems[0] . " is not running";
+					$res .= $msg . "</td></tr>";
 				}
 				$ndx++;
 				$monitor = trim($config->get("monitor.process_".$ndx));
@@ -182,8 +186,6 @@ if ($action=="showrunning")
 		 	)
 		 ");
 		 
-
-		 
 		 $ts = new MongoDate(strtotime("now") - (5*60));
 		 query_running_crawl_lastupdate = array("running_crawl_lastupdate" => array('$gt' => $ts));
 		 
@@ -265,7 +267,7 @@ if ($action=="showrunning")
 				
 			$res .= "<td>";
 			$t = $rs["crawl_lasttime_start"]->sec;
-			$res .= date('Y-m-d h:i:s', $t);
+			$res .= date('Y-m-d H:i:s', $t);
 			if (!empty($processing_info)) {
 				$res .= "<br><br>Effective elapsed<br/>time : " . round($elapsedtime, 2) . " " . $elapsedtime_unit;
 			}
@@ -410,6 +412,7 @@ if ($action=="shownext" or $action=="showenqueued")
 				
 		$stmt->setQuery($query);
 		$stmt->setSort(array( "crawl_priority" => -1, "crawl_nexttime" => 1 ));
+		//$stmt->setSort(array( "crawl_nexttime" => 1 ));
 		
 		if ($limit!="0")
 			$stmt->setLimit($limit);
@@ -446,7 +449,13 @@ if ($action=="shownext" or $action=="showenqueued")
 			$res .= "</td>";
 
 			$res .= "<td>";
-			$res .= date('Y-m-d h:i:s', $rs["crawl_nexttime"]->sec) ;
+			
+			$timestamp = $rs["crawl_nexttime"]->sec;
+			$now = time();
+			if ($now>$timestamp) 
+				$res .= "As soon as possible<br />(originally scheduled at " . date('Y-m-d H:i:s', $rs["crawl_nexttime"]->sec) . ")";
+			else
+				$res .= date('Y-m-d H:i:s', $rs["crawl_nexttime"]->sec) ;
 			$res .= "</td>";
 
 			$res .= "</tr>";

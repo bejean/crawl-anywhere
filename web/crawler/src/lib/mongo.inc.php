@@ -145,7 +145,7 @@ class mg_stmt_distinct
 	function mg_stmt_distinct($mg, $collectionname)
 	{
 		$this->mg = $mg;
-		$this->collection = $collectionname;
+		$this->collectionname = $collectionname;
 	}
 
 	function setQuery ($query)

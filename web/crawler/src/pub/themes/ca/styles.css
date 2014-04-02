@@ -104,6 +104,26 @@ td.head
     font-weight: bold ;
 }
 
+td.warning
+{
+	background: orange  ;
+    border: solid #808080;
+    border-width: 1px 1px 1px 1px; 
+    padding: 4px;
+    text-align: left ;
+    vertical-align: top;    
+}
+
+td.ok
+{
+	background: lightgreen ;
+    border: solid #808080;
+    border-width: 1px 1px 1px 1px; 
+    padding: 4px;
+    text-align: left ;
+    vertical-align: top;    
+}
+
 td.head_light 
 {
     border: solid #E5E5E5;

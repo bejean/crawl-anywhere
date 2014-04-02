@@ -169,12 +169,13 @@ if ($action=="loadsources")
 		if ($filter_collection!="") {
 			$q1 = array("collection" => $filter_collection);
 			$re = new MongoRegex("/^" . $filter_collection . ",/");
-			$q2 = array("collection" => $re);
+			$q2 = array("collection" => array('$regex' => $re));
 			$re = new MongoRegex("/," . $filter_collection . "$/");
-			$q3 = array("collection" => $re);
+			$q3 = array("collection" => array('$regex' => $re));
 			$re = new MongoRegex("/," . $filter_collection . ",/");
-			$q4 = array("collection" => $re);
+			$q4 = array("collection" => array('$regex' => $re));
 			$query_collection = array ('$or' => array($q1, $q2, $q3, $q4));
+			//$query_collection = $q1;
 		}
 		
  		if ($filter_tag!="") {
@@ -892,7 +893,11 @@ if ($action=="resetsource" || $action=="resetcachesource" || $action=="rescansou
 		if ($action=="cleansource") {
 			$stmt->addColumnValue("crawl_mode", "6");
 		}
-		$stmt->addColumnValue("crawl_priority", "1");
+		//if ($action=="indexnow") {
+		//	$stmt->addColumnValue("crawl_priority", "2");
+		//} else {
+			$stmt->addColumnValue("crawl_priority", "1");
+		//}
 		$stmt->addColumnValueDate("crawl_nexttime");
 
 		$stmt->addColumnValue("crawl_process_status", "0");
@@ -1201,7 +1206,7 @@ if ($action=="exportsources")
 			foreach ($rs as $key => $value) {
 				if ($key[0]=='_') continue;
 				if ($key=='params') $value = base64_encode($value);
-				if($value instanceof MongoDate) $value = date('Y-m-d h:i:s', $value->sec);
+				if($value instanceof MongoDate) $value = date('Y-m-d H:i:s', $value->sec);
 				$source->addChild($key, $value);
 			}
 		}
@@ -1234,13 +1239,15 @@ if ($action=="importsources")
 	$status = "";
 	$check = "";
 	$reset = "";
+	$priority = "0";
 
 	if (isset($_GET["match"])) $match = $_GET["match"];
 	if (isset($_GET["strategy"])) $strategy = $_GET["strategy"];
 	if (isset($_GET["status"])) $status = $_GET["status"];
 	if (isset($_GET["check"])) $check = $_GET["check"];
 	if (isset($_GET["reset"])) $reset = $_GET["reset"];
-
+	if (isset($_GET["priority"])) $priority = $_GET["priority"];
+	
 	$filename = $_FILES['import-dialog-form-file']['name'];
 	$filename = basename($filename);
 	$file_temp = $_FILES['import-dialog-form-file']['tmp_name'];
@@ -1312,7 +1319,7 @@ if ($action=="importsources")
 						$stmt->addColumnValue("crawl_mode", "0");
 					}
 					$stmt->addColumnValue("crawl_firstcompleted", "0");
-					$stmt->addColumnValue("crawl_priority", "1");
+					$stmt->addColumnValue("crawl_priority", $priority);
 					$stmt->addColumnValueDate("crawl_nexttime");
 						
 					$query = array ("id" => intval($id_account_current));

@@ -313,6 +313,7 @@ if ($action=="loadsources")
  		$aCountry = $stmt->command(); 			
  			
  		if (count($aCountry)>1) {
+ 			sort($aCountry);
  			$res2 .= "<tr><td>";
  			$res2 .= "Show only sources from this country</td><td><select id='filter_country' name='filter_country' style='editInputSelect' onChange='loadSources(\"" . $start . "\", 1);'>";
  		 	$res2 .= "<option value=''>any</option>";
@@ -334,6 +335,7 @@ if ($action=="loadsources")
  		$aLanguage = $stmt->command();
  		
  		if (count($aLanguage)>1) {
+ 			sort($aLanguage);
  			$res2 .= "<tr><td>";
  			$res2 .= "Show only sources within this language</td><td><select id='filter_language' name='filter_language' style='editInputSelect' onChange='loadSources(\"" . $start . "\", 1);'>";
  			$res2 .= "<option value=''>any</option>";
@@ -1321,6 +1323,8 @@ if ($action=="importsources")
 					$stmt->addColumnValue("crawl_firstcompleted", "0");
 					$stmt->addColumnValue("crawl_priority", $priority);
 					$stmt->addColumnValueDate("crawl_nexttime");
+					
+					$stmt->addColumnValue("crawl_process_status", "0");
 						
 					$query = array ("id" => intval($id_account_current));
 					mg_get_value($mg, "accounts", "id_target", $query, $id_target);			

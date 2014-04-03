@@ -13,7 +13,7 @@
 <script type="text/javascript">
 <!--
 
-var default_list_length = 10;
+var default_list_length = 20;
 //var ajax_url = '<?php echo $ajax_alias . "/content.status.ajax.inc.php" ?>';
 var ajax_url = '<?php echo "ajax/content.status.ajax.inc.php" ?>';
 

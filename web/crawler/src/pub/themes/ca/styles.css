@@ -177,6 +177,11 @@ th.action
     width: 100px; 
 }
 
+th.priority 
+{
+    width: 50px; 
+}
+
 td.action
 {
     width: 100px; 
@@ -200,6 +205,11 @@ td.name
 td.url 
 {
     width: 300px; 
+}
+
+td.priority 
+{
+    width: 50px; 
 }
 
 .editInputText {

@@ -138,12 +138,12 @@ if ($action=="showstatus")
 
 		$res .= "<tr><td class='head'>Number of sources to be crawled</td><td>";
 		// TODO: V4 - $stmt->addWhereClause("enabled = 1 and deleted = 0 and (crawl_nexttime is null or crawl_nexttime <= now()) and id_account = " . $id_account_current);
-		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => "1"), array("deleted" => "0"), array("id_account" => intval($id_account_current)))));				
+		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => "1"), array("deleted" => "0"), array("crawl_nexttime" => array('$lte' => new MongoDate())), array("id_account" => intval($id_account_current)))));				
 		$res .= "</td></tr>";
 
 		$res .= "<tr><td class='head'>Number of sources to be crawled for the first time</td><td>";
 		// TODO: V4 - $stmt->addWhereClause("enabled = 1 and deleted = 0 and crawl_nexttime is null and id_account = " . $id_account_current);
-		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => "1"), array("deleted" => "0"), array("id_account" => intval($id_account_current)))));				
+		$res .= mg_row_count($mg, "sources", array('$and' => array(array("enabled" => "1"), array("deleted" => "0"), array("crawl_firstcompleted" => "0"), array("id_account" => intval($id_account_current)))));				
 		$res .= "</td></tr>";
 	}
 
@@ -392,23 +392,16 @@ if ($action=="showinterrupted")
 	}
 }
 
-if ($action=="shownext" or $action=="showenqueued")
+if ($action=="showenqueued")
 {
 	$mg = mg_connect ($config, "", "", "");
 	if ($mg)
 	{
 		$stmt = new mg_stmt_select($mg, "sources");
 
-		if ($action=="shownext") {
-			//TODO: V4
-			//$stmt->setWhereClause("enabled = 1 and deleted = 0 and crawl_nexttime > now() and id_account = " . $id_account_current);
-			$query = array('$and' => array(array(enabled => "1"), array(deleted => "0"), array(id_account => intval($id_account_current))));
-		} else {
-			//TODO: V4
-			//$stmt->setWhereClause("enabled = 1 and deleted = 0 and (crawl_process_status='' or crawl_process_status='0') and id_account = " . $id_account_current);
-			$query = array('$and' => array(array(enabled => "1"), array(deleted => "0"), array(id_account => intval($id_account_current))));
-			//$query = array('$and' => array(array(enabled => "1"), array(deleted => "0")));
-		}
+		//$stmt->setWhereClause("enabled = 1 and deleted = 0 and (crawl_process_status='' or crawl_process_status='0') and id_account = " . $id_account_current);
+		$query = array('$and' => array(array(enabled => "1"), array(deleted => "0"), array(id_account => intval($id_account_current)), array('$or' => array(array(crawl_process_status => null), array(crawl_process_status => "0")))));
+		//$query = array('$and' => array(array(enabled => "1"), array(deleted => "0")));
 				
 		$stmt->setQuery($query);
 		$stmt->setSort(array( "crawl_priority" => -1, "crawl_nexttime" => 1 ));
@@ -426,7 +419,7 @@ if ($action=="shownext" or $action=="showenqueued")
 		$cursor = $stmt->getCursor();
 
 		$res .= "<center><table>";
-		$res .= "<tr><th>Title</th><th>Starting URL</th><th>Next crawl date</th></tr><tbody>";
+		$res .= "<tr><th>Title</th><th>Starting URL</th><th>Next crawl date</th><th class='priority'>Priority</th></tr><tbody>";
 
 		while ($cursor->hasNext())
 		{
@@ -456,8 +449,13 @@ if ($action=="shownext" or $action=="showenqueued")
 				$res .= "As soon as possible<br />(originally scheduled at " . date('Y-m-d H:i:s', $rs["crawl_nexttime"]->sec) . ")";
 			else
 				$res .= date('Y-m-d H:i:s', $rs["crawl_nexttime"]->sec) ;
+			
 			$res .= "</td>";
-
+			
+			$res .= "<td class='priority'>";
+			$res .= $rs["crawl_priority"];
+			$res .= "</td>";
+				
 			$res .= "</tr>";
 		}
 

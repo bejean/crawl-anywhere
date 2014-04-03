@@ -237,7 +237,7 @@ class mg_stmt_insert
 	function addColumnValue ($field, $value)
 	{
 		if (!isset($this->data) || empty($this->data)) $this->data = array();
-		if (!isset($value) || empty($value)) return;
+		if (!isset($value) || (empty($value) && !is_numeric($value))) return;
 		$this->data[$field]=$value;
 	}
 

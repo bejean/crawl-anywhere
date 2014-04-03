@@ -9,6 +9,15 @@
 	<param name="dbpassword"></param>
 </database>
 
+<queues>
+	<param name="dbtype">mongodb</param>
+	<param name="dbhost">localhost</param>
+	<param name="dbport">27017</param>
+	<param name="dbname">crawler_queues</param>
+	<param name="dbuser"></param>
+	<param name="dbpassword"></param>
+</queues>
+
 <cache>
 	<!-- uncomment in order to enable document cache -->
 	<!--param name="dbtype">mongodb</param-->

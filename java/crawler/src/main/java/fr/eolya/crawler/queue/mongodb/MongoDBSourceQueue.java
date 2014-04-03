@@ -95,7 +95,9 @@ public class MongoDBSourceQueue implements ISourceQueue {
 		BasicDBObject docsearch = MongoDBHelper.JSON2BasicDBObject(query);
 
 		synchronized (collMonitor) {
-			cur = coll.getColl().find(docsearch);
+			// TODO : sort by priority and next crawl date
+			cur = coll.getColl().find(docsearch).sort(new BasicDBObject("crawl_priority", -1).append("crawl_nexttime",1));
+
 			if (cur.hasNext()) {
 				BasicDBObject doc = (BasicDBObject) cur.next();
 				BasicDBObject doc2 = (BasicDBObject) doc.copy();

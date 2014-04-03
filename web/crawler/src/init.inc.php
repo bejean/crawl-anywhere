@@ -312,7 +312,7 @@ function getAvailableTagsCollections($config, $includeDisabled, $id_account, $fi
 		if (count($ar)>0) {
 			foreach ($ar as $tags) {
 				$tags = strtolower(trim($tags));
-				$tags = str_replace(" ", "", $tags);
+				//$tags = str_replace(" ", "", $tags);
 				if ($tags!="") {
 					if ($aTagsFinal == null) {
 						$aTagsFinal = explode(",", $tags);

@@ -8,11 +8,19 @@ class ImportConvert {
 		$this->_filename = $filename;
 	}
 	
+	function stripAccents($stripAccents){
+		return strtr($stripAccents,'àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ','aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
+	}
+	
+// 	function stripAccents($str) {
+// 		return strtr(utf8_decode($str), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
+// 	}
+	
 	function getXml() {
 		
 		// lit les tableaux de conversion de code langue
 		$arr639_1 = array();
-		$handle = fopen ( "custom/639-1.csv", "r" );
+		$handle = fopen ( "639-1.csv", "r" );
 		if ($handle === FALSE) $handle = fopen ( "../../custom/639-1.csv", "r" );
 		if ($handle !== FALSE) {
 			while ( ($data = fgetcsv ( $handle, 10000, "," )) !== FALSE ) {
@@ -20,19 +28,19 @@ class ImportConvert {
 			}
 		}
 		$arr639_2 = array();
-		$handle = fopen ( "custom/639-2.csv", "r" );
+		$handle = fopen ( "639-2.csv", "r" );
 		if ($handle === FALSE) $handle = fopen ( "../../custom/639-2.csv", "r" );
 		if ($handle !== FALSE) {
-					while ( ($data = fgetcsv ( $handle, 10000, "," )) !== FALSE ) {
-				$arr639_2[utf8_decode(trim($data[1]))]=trim($data[0]);
+			while ( ($data = fgetcsv ( $handle, 10000, "," )) !== FALSE ) {
+				$arr639_2[utf8_decode($this->stripAccents(trim($data[1])))]=trim($data[0]);
 			}
 		}
 		$arr3166 = array();
-		$handle = fopen ( "custom/3166-alpha-2.csv", "r" );
+		$handle = fopen ( "3166-alpha-2.csv", "r" );
 		if ($handle === FALSE) $handle = fopen ( "../../custom/3166-alpha-2.csv", "r" );
 		if ($handle !== FALSE) {
 			while ( ($data = fgetcsv ( $handle, 10000, "," )) !== FALSE ) {
-				$arr3166[utf8_decode(trim($data[1]))]=trim($data[0]);
+				$arr3166[utf8_decode($this->stripAccents(trim($data[1])))]=trim($data[0]);
 			}
 		}
 		
@@ -80,20 +88,27 @@ class ImportConvert {
 		$source->addChild('name', $name);
 		
 		$country = $data['country'];
-		if (!empty($country)) $country = $arr3166[$country];
-		if (empty($country)) $country = 'FR';
-		$source->addChild('country', $country);	
+// 		if (strtolower($country)=='ukrainien') {
+// 			$country = $country;
+// 		}
+		if (!empty($country)) $country = $arr3166[$this->stripAccents($country)];
+		if (empty($country)) $country = 'fr';
+		$source->addChild('country', strtoupper($country));	
 		
-		$lan1 = $data['language'];
-		if (!empty($lan1)) $lan = $arr639_2[$lan1];
-		if (!empty($lan)) $lan = $arr639_1[$lan];
-		if (empty($lan)) $lan = 'fr';
-		$source->addChild('language', $lan);
+		$lan = $data['language'];
+		if (strpos($lan, ';')===false) {
+			if (!empty($lan)) $lan = $arr639_2[$this->stripAccents($lan)];
+			if (!empty($lan)) $lan = $arr639_1[$lan];
+			if (empty($lan)) $lan = 'fr';
+		} else {
+			$lan='xx';
+		}
+		$source->addChild('language', strtolower($lan));
 			
 		$collection = strtolower($data['collection']);
 		$collection = str_replace(',', '-', $collection);
 		//$collection = str_replace(';', ',', $collection);
-		$collection = implode(',', array_map('trim', explode(';', $collection)));
+		$collection = implode(',', array_unique(array_map('trim', explode(';', $collection))));
 		$collection = htmlspecialchars($collection);
 		$source->addChild('collection', $collection);
 		

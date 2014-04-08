@@ -71,6 +71,7 @@
  			<param name="url">item_url</param>
  			<param name="contenttype">item_contenttype</param>
  			<param name="contentcharset">item_charset</param>
+ 			<param name="lowercasenormalization">yes</param>
  			<param name="source_html">content</param>
  			<param name="source_text">text</param>
 		</stage>

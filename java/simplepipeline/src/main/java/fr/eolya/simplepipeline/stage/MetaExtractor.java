@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import fr.eolya.extraction.ScriptsWrapper;
+import fr.eolya.simplepipeline.config.PipelineConfig;
 import fr.eolya.simplepipeline.document.Doc;
 import fr.eolya.utils.Utils;
 
@@ -18,6 +19,7 @@ import fr.eolya.utils.Utils;
  *      <param name="url">item_url</param>
  *      <param name="contenttype">item_contenttype</param>
  *      <param name="contentcharset">item_charset</param>
+ *      <param name="lowercasenormalization">yes</param>
  *      <param name="source_html">content</param>
  *      <param name="source_text">text</param>
  *	</stage>
@@ -31,6 +33,7 @@ public class MetaExtractor extends Stage {
     private String contentCharsetElement = null;
     private String sourceHtmlElement = null;
     private String sourceTextElement = null;
+	private String lowerCaseNormalization = null;
     
     /**
      * Perform initialization.
@@ -45,6 +48,8 @@ public class MetaExtractor extends Stage {
         contentCharsetElement = props.getProperty("contentcharset");
         sourceHtmlElement = props.getProperty("source_html");
         sourceTextElement = props.getProperty("source_text");
+		lowerCaseNormalization = props.getProperty("lowercasenormalization");
+		if (lowerCaseNormalization==null) lowerCaseNormalization = "";
     }
     
     @Override
@@ -104,7 +109,7 @@ public class MetaExtractor extends Stage {
                     logger.log("    url          = " + url);
                     logger.log("    scripts name = " + scriptName);
                 }
-                HashMap<String, String> m = ScriptsWrapper.extractMeta(url, rawData, contentType, contentCharset, scriptName, scriptName);
+                HashMap<String, String> m = ScriptsWrapper.extractMeta(url, rawData, contentType, contentCharset, scriptName, scriptName, PipelineConfig.isEnabled(lowerCaseNormalization));
                 if (m!=null && m.size()>0) {
                     for (Map.Entry<String, String> entry : m.entrySet()) {
                         doc.addElement("/job", "meta_extracted_" + entry.getKey(), entry.getValue());

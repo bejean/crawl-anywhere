@@ -186,7 +186,7 @@ public class ScriptsWrapper {
         return null;
     }
     
-    static public HashMap<String, String> extractMeta(String url, String rawPage, String contentType, String contentCharset, String scriptsPath, String scriptName) {
+    static public HashMap<String, String> extractMeta(String url, String rawPage, String contentType, String contentCharset, String scriptsPath, String scriptName, boolean lowercase) {
         
         if (scriptName==null || "".equals(scriptName))
             scriptName = getScriptName(scriptsPath, url);
@@ -221,9 +221,11 @@ public class ScriptsWrapper {
                     if (am!=null) {
                         am = am.trim();
                         if (!"".equals(am)) {
-                            String[] aItems = am.split(":");
+                            String[] aItems = am.split(":", 2);
                             if (aItems.length==2) {
-                                m.put(aItems[0].trim().toLowerCase(), aItems[1].trim().toLowerCase());
+                            	if (lowercase) aItems[1] = aItems[1].toLowerCase();
+                                //m.put(aItems[0].trim().toLowerCase(), aItems[1].trim().toLowerCase());
+                            	m.put(aItems[0].trim().toLowerCase(), aItems[1].trim());
                             }
                         }
                     }
@@ -406,7 +408,7 @@ public class ScriptsWrapper {
             
             if ("meta".equals(action)) {
                 printVerbose(url, scriptsPath, action, verbose);
-                HashMap<String, String> m = extractMeta(url, rawPage, contentType, charSet, scriptsPath, null);
+                HashMap<String, String> m = extractMeta(url, rawPage, contentType, charSet, scriptsPath, null, false);
                 if (m!=null && m.size()>0) {
                     for (Map.Entry<String, String> entry : m.entrySet()) {
                         System.out.println("meta_extracted_" + entry.getKey() + " = " + entry.getValue());

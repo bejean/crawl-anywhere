@@ -48,7 +48,7 @@ class Theme extends ThemeBase implements iTheme {
 		$res .= '<meta name="robots" content="index, nofollow" />' . "\n";
 
 		$res .= '<script type="text/javascript" src="' . $this->getJsPath() . 'jquery-1.9.1.min.js"></script>' . "\n";
-		$res .= '<script type="text/javascript" src="https://www.google.com/jsapi"></script>' . "\n";
+		//$res .= '<script type="text/javascript" src="https://www.google.com/jsapi"></script>' . "\n";
 		$res .= '<script type="text/javascript" src="js/jquery.ae.image.resize.min.js"></script>';
 				
 		/*

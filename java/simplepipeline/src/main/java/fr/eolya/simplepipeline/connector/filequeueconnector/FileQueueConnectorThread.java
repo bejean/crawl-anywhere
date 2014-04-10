@@ -39,22 +39,22 @@ public class FileQueueConnectorThread extends ControllableThread {
 				if (stageList.getStagesStatus() == StageList.STATUS_ERROR) {
 					//Utils.sleep(10+(id*3));
 					//if (false) {
-					fileDone(f, d, false, props);
+					SimplePipelineUtils.fileDone(f, d, false, props, sc.getLogger(), String.valueOf(id));
 				}
 				else {
-					fileDone(f, d, true, props);								
+					SimplePipelineUtils.fileDone(f, d, true, props, sc.getLogger(), String.valueOf(id));								
 				}
 				processing = false;
 			}
 		} catch (IOException e) {
-			fileDone(f, null, false, props);
+			SimplePipelineUtils.fileDone(f, null, false, props, sc.getLogger(), String.valueOf(id));
 			e.printStackTrace();
 		} catch (Exception e) {
-			fileDone(f, null, false, props);
+			SimplePipelineUtils.fileDone(f, null, false, props, sc.getLogger(), String.valueOf(id));
 			e.printStackTrace();
 			//throw new RuntimeException("pipeline failed (" + e.getMessage() + ")");
 		} catch (OutOfMemoryError e) {
-			fileDone(f, null, false, props);
+			SimplePipelineUtils.fileDone(f, null, false, props, sc.getLogger(), String.valueOf(id));
 			e.printStackTrace();
 		}
 		mr.incrProcessedItemsCount();
@@ -94,7 +94,7 @@ public class FileQueueConnectorThread extends ControllableThread {
 		tc.finished(id);
 	}
 
-	private void fileDone(File f, Doc d, boolean success, Properties props) {
+	private void xxfileDone(File f, Doc d, boolean success, Properties props) {
 		String tgtPath;
 		if (success) {
 			tgtPath = props.getProperty("onsuccessmoveto");

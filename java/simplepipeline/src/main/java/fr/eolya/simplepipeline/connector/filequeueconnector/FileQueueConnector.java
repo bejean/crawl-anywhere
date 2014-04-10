@@ -1,11 +1,11 @@
 package fr.eolya.simplepipeline.connector.filequeueconnector;
 
 import java.io.File;
-
 import java.util.ArrayList;
 import java.util.Properties;
 
 import fr.eolya.simplepipeline.IStateController;
+import fr.eolya.simplepipeline.SimplePipelineUtils;
 import fr.eolya.simplepipeline.connector.Connector;
 import fr.eolya.simplepipeline.connector.threads.IMessageReceiver;
 import fr.eolya.simplepipeline.document.Doc;
@@ -79,7 +79,12 @@ public class FileQueueConnector implements Connector, IMessageReceiver {
 						for (int i=0; i<Math.min(files.length, 1000); i++) {
 							if (files[i].isFile() && files[i].getName().matches(props.getProperty("filepattern"))) {
 								if (previousQueued==null || !previousQueued.contains(files[i].getName())) {
-									Doc d = new Doc(files[i]);
+									Doc d = null;
+									try {
+										d = new Doc(files[i]);
+									} catch (Exception e) {
+										SimplePipelineUtils.fileDone(files[i], null, false, props, sc.getLogger(), null);
+									}
 									if (d != null) {
 										pq.push(new FileQueueConnectorQueueItem(rootDir + "/" + files[i].getName()));
 									}

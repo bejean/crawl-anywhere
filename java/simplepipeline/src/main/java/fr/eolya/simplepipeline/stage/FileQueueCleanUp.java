@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.apache.commons.io.FileUtils;
 
+import fr.eolya.simplepipeline.SimplePipelineUtils;
 import fr.eolya.simplepipeline.document.Doc;
 import fr.eolya.utils.Utils;
 
@@ -47,13 +48,13 @@ public class FileQueueCleanUp extends Stage {
 				source_file = doc.getElementText("//" + sourceFileElement);
 				if (source_file != null || !"".equals(source_file)) {
 					if (logger!=null) logger.log("    cleaning file : " + source_file);
-					fileDone(new File (source_file), success);
+					SimplePipelineUtils.fileDone(new File (source_file), doc, success, props, logger, null);
 				}
 			}
 		}
 	}
 
-	private void fileDone(File f, boolean success) {
+	private void xxfileDone(File f, boolean success) {
 		String tgtPath;
 		if (success) {
 			tgtPath = props.getProperty("onsuccessmoveto");

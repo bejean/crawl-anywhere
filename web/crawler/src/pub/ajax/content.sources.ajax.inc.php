@@ -281,8 +281,10 @@ if ($action=="loadsources")
  			for ($j=0; $j<=count($aCollections); $j++) {
  				
  				if ($aCollections[$j]!="") {
- 					$res2 .= "<option value='" . $aCollections[$j] . "'";
- 					if ($filter_collection==$aCollections[$j]) $res2 .= " selected";
+ 					//$s1 = $aCollections[$j];
+ 					//$s2 = htmlspecialchars($aCollections[$j], ENT_QUOTES);
+ 					$res2 .= "<option value='" . htmlspecialchars($aCollections[$j], ENT_QUOTES) . "'";
+ 					if (stripslashes($filter_collection)==$aCollections[$j]) $res2 .= " selected";
  					$res2 .= ">" . str_replace("_", " ", $aCollections[$j]) . "</option>";
  				}
  			}
@@ -298,8 +300,8 @@ if ($action=="loadsources")
  			for ($j=0; $j<=count($aTags); $j++) {
  				
  				if ($aTags[$j]!="") {
- 					$res2 .= "<option value='" . $aTags[$j] . "'";
- 					if ($filter_tag==$aTags[$j]) $res2 .= " selected";
+ 					$res2 .= "<option value='" . htmlspecialchars($aTags[$j], ENT_QUOTES) . "'";
+ 					if (stripslashes($filter_tag)==$aTags[$j]) $res2 .= " selected";
  					$res2 .= ">" . str_replace("_", " ", $aTags[$j]) . "</option>";
  				}
  			}

@@ -4,6 +4,8 @@ import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 
@@ -20,12 +22,17 @@ public class MongoDBCrawlerDB implements ICrawlerDB {
 
 	private MongoDBConnection con;
 	private MongoDBDatabase db;
+	private MongoDBDatabase dbQueues;
 
 	private final Object sourcesCollMonitor = new Object();
 
-	public MongoDBCrawlerDB(MongoDBConnection con, String dbName) throws UnknownHostException {
+	public MongoDBCrawlerDB(MongoDBConnection con, String dbName, String dbNameQueues) throws UnknownHostException {
 		this.con = con;
 		this.db = new MongoDBDatabase(this.con, dbName);
+		if (StringUtils.isNotBlank(dbNameQueues)) 
+			this.dbQueues = new MongoDBDatabase(this.con, dbNameQueues);
+		else 
+			this.dbQueues = this.db;
 	}
 
 	public String getVersion() {
@@ -131,18 +138,18 @@ public class MongoDBCrawlerDB implements ICrawlerDB {
 	}
 
 	private long getSourcePageCount(int id) {
-		MongoDBCollection coll = new MongoDBCollection(db,"pages_" + String.valueOf(id));
+		MongoDBCollection coll = new MongoDBCollection(dbQueues,"pages_" + String.valueOf(id));
 		return coll.count("");
 	}
 
 	private long getSourcePageCountSuccess(int id) {
-		MongoDBCollection coll = new MongoDBCollection(db,"pages_" + String.valueOf(id));
+		MongoDBCollection coll = new MongoDBCollection(dbQueues,"pages_" + String.valueOf(id));
 		String query = "{\"crawl_status\": 200}";	
 		return coll.count(query);
 	}
 
 	private long getSourcePageCountPushed(int id) {
-		MongoDBCollection coll = new MongoDBCollection(db,"pages_" + String.valueOf(id));
+		MongoDBCollection coll = new MongoDBCollection(dbQueues,"pages_" + String.valueOf(id));
 		String query = "{\"crawl_status\": 200, \"crawl_mode\": \"a\"}";	
 		return coll.count(query);
 	}

@@ -16,7 +16,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import gnu.getopt.Getopt;
-
 import fr.eolya.crawler.connectors.ConnectorFactory;
 import fr.eolya.crawler.connectors.ISource;
 import fr.eolya.crawler.database.CrawlerDBFactory;
@@ -264,8 +263,10 @@ public class Crawler implements ICrawlerController {
 		String dbType = config.getProperty("/crawler/database/param[@name='dbtype']", "");
 		String dbName = config.getProperty("/crawler/database/param[@name='dbname']", "");
 
+		String dbNameQueues = config.getProperty("/crawler/queues/param[@name='dbname']", "");
+		
 		ISourceQueue sourceQueue = QueueFactory.getSourceQueueInstance(dbType, dbConnection, dbName, "sources", test, interactiveOnly, suspiciousOnly, accountId, sourceId, engineId);
-		crawlerDB = CrawlerDBFactory.getCrawlerDBInstance(dbType, dbConnection, dbName);
+		crawlerDB = CrawlerDBFactory.getCrawlerDBInstance(dbType, dbConnection, dbName, dbNameQueues);
 
 		logger.log("=================================");
 		logger.log("Crawler starting (version: " + StringUtils.trimToEmpty(crawlerDB.getVersion()) + ")");

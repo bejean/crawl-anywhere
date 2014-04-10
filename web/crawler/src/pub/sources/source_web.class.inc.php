@@ -280,7 +280,7 @@ class SourceWeb extends SourceBase implements iSource {
 
 		$param = $this->config->getDefault("source.max_simultaneous_item_per_source", "");
 		if (($param != "" && !empty($param)) || $param=="0") {
-			$res .= "<input type='hidden' id='source_crawl_url_concurrency' name='source_crawl_url_concurrency' value='" . $this->config->get("source.max_depth") . "'> Default";
+			$res .= "<input type='hidden' id='source_crawl_url_concurrency' name='source_crawl_url_concurrency' value='" . $this->config->get("source.max_simultaneous_item_per_source") . "'> Default";
 		} else {
 			$res .= "<select id='source_crawl_url_concurrency' name='source_crawl_url_concurrency' style='editInputSelect'>";
 			$res .= "<option value='0'";

@@ -461,12 +461,8 @@ if ($action=="loadsources")
 		$limit = $sources_page_size;
 		
 		$stmt->execute($skip, $limit);
-		//if ($stmt->execute()>0) {
 		$cursor = $stmt->getCursor();
-		//while ($cursor->hasNext()) {
-		//$rs = $cursor->getNext();
 
-		// TODO: V4 - $rs->Move(($page-1)*$sources_page_size);
 		$count=0;		
 		while (($count<$sources_page_size || $onepage=="1") && $cursor->hasNext())
 		{

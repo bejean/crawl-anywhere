@@ -266,7 +266,7 @@ public class Crawler implements ICrawlerController {
 		String dbNameQueues = config.getProperty("/crawler/queues/param[@name='dbname']", "");
 		
 		ISourceQueue sourceQueue = QueueFactory.getSourceQueueInstance(dbType, dbConnection, dbName, "sources", test, interactiveOnly, suspiciousOnly, accountId, sourceId, engineId);
-		crawlerDB = CrawlerDBFactory.getCrawlerDBInstance(dbType, dbConnection, dbName, dbNameQueues);
+		crawlerDB = CrawlerDBFactory.getCrawlerDBInstance(dbType, dbConnection, dbName, dbNameQueues, logger);
 
 		logger.log("=================================");
 		logger.log("Crawler starting (version: " + StringUtils.trimToEmpty(crawlerDB.getVersion()) + ")");

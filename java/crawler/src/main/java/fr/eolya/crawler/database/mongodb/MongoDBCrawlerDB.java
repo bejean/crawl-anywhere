@@ -11,6 +11,7 @@ import com.mongodb.DBCursor;
 
 import fr.eolya.crawler.connectors.ISource;
 import fr.eolya.crawler.database.ICrawlerDB;
+import fr.eolya.utils.Logger;
 import fr.eolya.utils.XMLConfig;
 import fr.eolya.utils.json.JSONHelper;
 import fr.eolya.utils.nosql.mongodb.MongoDBCollection;
@@ -23,16 +24,18 @@ public class MongoDBCrawlerDB implements ICrawlerDB {
 	private MongoDBConnection con;
 	private MongoDBDatabase db;
 	private MongoDBDatabase dbQueues;
+	private Logger logger;
 
 	private final Object sourcesCollMonitor = new Object();
 
-	public MongoDBCrawlerDB(MongoDBConnection con, String dbName, String dbNameQueues) throws UnknownHostException {
+	public MongoDBCrawlerDB(MongoDBConnection con, String dbName, String dbNameQueues, Logger logger) throws UnknownHostException {
 		this.con = con;
 		this.db = new MongoDBDatabase(this.con, dbName);
 		if (StringUtils.isNotBlank(dbNameQueues)) 
 			this.dbQueues = new MongoDBDatabase(this.con, dbNameQueues);
 		else 
 			this.dbQueues = this.db;
+		this.logger = logger;
 	}
 
 	public String getVersion() {
@@ -87,6 +90,9 @@ public class MongoDBCrawlerDB implements ICrawlerDB {
 	}
 
 	public boolean updateSourceStatusStartup(int id, long queueSize, long doneQueueSize) {
+		
+		logger.log("        Source " + String.valueOf(id) + " starting : update status");
+		
 		MongoDBCollection coll = new MongoDBCollection(db,"sources");
 		String query = String.format("{\"id\": %1$s}", id);	
 
@@ -155,6 +161,8 @@ public class MongoDBCrawlerDB implements ICrawlerDB {
 	}
 
 	public boolean updateSourceStatusStop(ISource src, long queueSize, long doneQueueSize, boolean crawlerStopRequested, boolean pause, boolean pauseBySchedule, XMLConfig config) {
+
+		logger.log("        Source " + String.valueOf(src.getId()) + " ending : update status and counters");
 
 		MongoDBCollection coll = new MongoDBCollection(db,"sources");
 		String query = String.format("{\"id\": %1$s}", src.getId());	

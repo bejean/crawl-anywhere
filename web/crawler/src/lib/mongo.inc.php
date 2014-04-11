@@ -109,13 +109,19 @@ class mg_stmt_select
 		$this->limit = $limit;
 	}
 	
-	function execute()
+	function execute($skip='', $limit='')
 	{
 		if (isset($this->query)) {
 			if (isset($this->fieds)) {
-				$this->cursor = $this->collection->find( $this->query, $this->fieds);
+				if (!empty($skip) && !empty($limit))
+					$this->cursor = $this->collection->find( $this->query, $this->fieds)->limit($limit)->skip($skip);
+				else
+					$this->cursor = $this->collection->find( $this->query, $this->fieds);
 			} else {
-				$this->cursor = $this->collection->find( $this->query );
+				if (!empty($skip) && !empty($limit))
+					$this->cursor = $this->collection->find( $this->query)->limit($limit)->skip($skip);
+				else
+					$this->cursor = $this->collection->find( $this->query);
 			}
 		} else {
 			$this->cursor = $this->collection->find();

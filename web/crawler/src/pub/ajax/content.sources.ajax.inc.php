@@ -456,14 +456,18 @@ if ($action=="loadsources")
 		$stmt = new mg_stmt_select($mg, "sources");
 		$stmt->setQuery($query);
 		$stmt->setSort(array( "name" => 1 ));
-		$stmt->execute();
+		
+		$skip = (int)(($page-1)*$sources_page_size);
+		$limit = $sources_page_size;
+		
+		$stmt->execute($skip, $limit);
 		//if ($stmt->execute()>0) {
 		$cursor = $stmt->getCursor();
 		//while ($cursor->hasNext()) {
 		//$rs = $cursor->getNext();
 
 		// TODO: V4 - $rs->Move(($page-1)*$sources_page_size);
-		$count=0;
+		$count=0;		
 		while (($count<$sources_page_size || $onepage=="1") && $cursor->hasNext())
 		{
 			$rs = $cursor->getNext();

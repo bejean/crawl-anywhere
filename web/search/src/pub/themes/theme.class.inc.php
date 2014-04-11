@@ -126,7 +126,12 @@ abstract class ThemeBase {
 			//$res2 .= '<dt><a href="getdropbox.php?idsrc=' . $doc->sourceid . '&id=' . $id .'"  target="_blank">' . $title;
 			//$res2 .= '<dt><a href="' . $doc->id . '"  target="_blank">' . $title;
 		} else {
-			$res2 .= "<dt><a href='$doc->id' target='_blank'>" . $doc->title_dis;
+			$title = "";
+			if (isset($doc->title_dis))
+				$title = $doc->title_dis;
+			if (empty($title)) 
+				$title = $doc->id;
+			$res2 .= "<dt><a href='$doc->id' target='_blank'>" . $title;
 		}
 		$t = $doc->contenttyperoot;
 		$img = $this->getImageNameForContentType($aContentTypeImage, $t);

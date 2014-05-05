@@ -105,12 +105,19 @@ class ImportConvert {
 		}
 		$source->addChild('language', strtolower($lan));
 			
-		$collection = strtolower($data['collection']);
+		$collection = strtolower(trim($data['collection']));
 		$collection = str_replace(',', '-', $collection);
+		$collection = preg_replace ('/\s+/', '_', $collection);
+				
 		//$collection = str_replace(';', ',', $collection);
 		$collection = implode(',', array_unique(array_map('trim', explode(';', $collection))));
 		$collection = htmlspecialchars($collection);
 		$source->addChild('collection', $collection);
+		
+		//if (strpos($collection, "tiers'")!== false){
+		//	$collection = $collection;
+		//}
+		
 		
 		$host = htmlspecialchars($url['host']);
 		$url_str = htmlspecialchars($url_str);

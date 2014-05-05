@@ -89,6 +89,7 @@ abstract class SourceBase {
 	}
 	
 	protected function normalizeTagsCollections($value) {
+		$value = str_replace("\\'", "'", $value);
 		$value = strtolower(trim($value));
 		$value = preg_replace ('/\s*,\s*/', ',', $value);
 		$value = preg_replace ('/\s+/', '_', $value);

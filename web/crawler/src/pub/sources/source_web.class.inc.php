@@ -128,7 +128,7 @@ class SourceWeb extends SourceBase implements iSource {
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Collections</td>";
-		$res .= "<td><input class='editInputText' type='text' name='source_collection' id='source_collection' value='" . str_replace("_", " ", $this->getValue('collection', '')) . "'>";
+		$res .= "<td><input class='editInputText' type='text' name='source_collection' id='source_collection' value='" . encodeForInput(str_replace("_", " ", $this->getValue('collection', '')), ENT_QUOTES) . "'>";
 
 		$aCollections = getAvailableTagsCollections($this->config, false, $this->id_account_current, "collection");
 		if ($aCollections!=null) {

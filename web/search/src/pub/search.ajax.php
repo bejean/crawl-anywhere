@@ -39,7 +39,7 @@ if ($action=="autocomplete" || $action=="fiedvalues" || $action=="gettext" || $a
 			$values = $solr->getFiedvalues($field);
 
 			$res='';
-			if (!empty($value)) {
+			if (!empty($values)) {
 				foreach ($values[$field] as $key => $value) {
 					if ($res!="") $res .= "|";
 					$res .= $key . ":" . $value;

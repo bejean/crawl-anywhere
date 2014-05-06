@@ -16,4 +16,5 @@ public interface IConnector {
     public int getMaxThreads(int suggestedMaxThreads);
     public void close(boolean crawlerStopRequested, boolean pause, boolean pauseBySchedule);
     public void incrProcessedItemCount(long processedItemCount);
+	public int status();
 }

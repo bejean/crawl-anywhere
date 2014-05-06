@@ -3,6 +3,7 @@ package fr.eolya.crawler;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import fr.eolya.crawler.connectors.Connector;
 import fr.eolya.crawler.connectors.IConnector;
 import fr.eolya.crawler.queue.ISourceItemsQueue;
 import fr.eolya.utils.Logger;
@@ -32,6 +33,17 @@ public class ProcessorSourceItems extends Processor implements Callable<Integer>
 		for (itemData = queueItems.pop(); itemData != null && !sourceController.stopRun(); itemData = queueItems.pop()) {
 			// Process the item
 			process(itemData);
+			
+			if (connector.status()==Connector.STATUS_PAUSE_REQUIRED) {
+				logger.log("[" + String.valueOf(id) + "] starting pause (output queue full)");
+				do { 
+					Utils.sleep(15000);	
+					//setLastActivityTimeStamp();
+				} while (connector.status()==Connector.STATUS_PAUSE_REQUIRED && !sourceController.stopRun());
+				Utils.sleep(30000);	
+				logger.log("[" + String.valueOf(id) + "] ending pause");
+			}
+
 		}
 		Utils.sleep(10000);
 		if (queueItems.setCheckDeletionMode()) {

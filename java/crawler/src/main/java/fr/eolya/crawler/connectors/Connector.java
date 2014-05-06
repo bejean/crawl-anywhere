@@ -6,6 +6,7 @@ import java.util.HashMap;
 import fr.eolya.crawler.ICrawlerController;
 import fr.eolya.crawler.cache.IDocumentCache;
 import fr.eolya.crawler.database.ICrawlerDB;
+import fr.eolya.crawler.documenthandler.BaseHandler;
 import fr.eolya.crawler.documenthandler.IDocumentHandler;
 import fr.eolya.crawler.queue.ISourceItemsQueue;
 import fr.eolya.utils.CrawlerUtilsCommon;
@@ -33,6 +34,9 @@ public abstract class Connector {
     protected boolean debug = false;
 
     protected long updateProcessingInfoLastTime;
+
+    public static int STATUS_OK = 0;
+    public static int STATUS_PAUSE_REQUIRED = 1;
 
     public boolean initializeInternal(Logger logger, XMLConfig config, ISource src, ISourceItemsQueue queue, ICrawlerController controller) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 
@@ -84,6 +88,12 @@ public abstract class Connector {
         
         return true;
     }
+    
+    public int status() {
+        if (dh!=null && dh.status()==BaseHandler.STATUS_PAUSE_REQUIRED) return STATUS_PAUSE_REQUIRED;
+        return STATUS_OK;
+    }
+
 	
 	public void setQueue(ISourceItemsQueue queue) {
 		this.queue = queue;
@@ -93,7 +103,6 @@ public abstract class Connector {
 		this.docCache = docCache;
 	}
 	
-
 	public static boolean isAcceptedUrl(String url, String filteringRules) {
 
 		String mode = CrawlerUtilsCommon.getUrlMode(url, filteringRules, "a");

@@ -105,6 +105,9 @@ else
 
 $cache_enabled = ($config->getDefault("crawler.cache.type", "") != "");
 
+
+ini_set('mongo.native_long', 0);
+
 //$isEnterprise = ($config->get("application.enterprise") == '1');
 $db_version = getDBVersion($config);
 

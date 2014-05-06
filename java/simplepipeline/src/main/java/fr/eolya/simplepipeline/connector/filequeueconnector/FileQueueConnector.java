@@ -96,6 +96,7 @@ public class FileQueueConnector implements Connector, IMessageReceiver {
 						
 						if (firstLoop) {
 						    ptc.setMaxThreads(maxThreads);
+						    ptc.startThreads();
 						    firstLoop = false;
 						}
 					}

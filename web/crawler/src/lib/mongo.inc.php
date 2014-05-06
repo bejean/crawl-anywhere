@@ -61,6 +61,7 @@ function mg_connect ($config, $username, $password, $dbname) {
 	$url .= "/$loc_dbname";
 	try {
 		$connection = new MongoClient($url);
+		//$info = var_export ($connection, true);
 		$db = $connection->selectDB ( $loc_dbname );
 		return $db;
 	} catch (Exception $e) {
@@ -383,5 +384,14 @@ function mg_get_value($mg, $collectionname, $field, $query, &$value) {
 	$rs = $cursor->getNext();
 	$value = $rs[$field];
 	return 1;
+}
+
+//============================================================================
+function mg_create_index($mg, $collectionname, $field, $ascending = true) {
+	$collection = $mg->selectCollection ( $collectionname );
+	$order = 1;
+	if (!$ascending) $order = 0;
+	return $collection->ensureIndex(array($field => $order));   // deprecated MongoDB PHP driver >= 1.5 !!!
+	//return $collection->createIndex(array($field => $order)); // starting MongoDB PHP driver >= 1.5 !!!
 }
 ?>

@@ -86,6 +86,7 @@ class ImportConvert {
 		$source->addChild('type', '1');
 		$source->addChild('id_target', '1');
 		$source->addChild('name', $name);
+		$source->addChild('name_sort', strtolower($this->remove_accents($name)));
 		
 		$country = $data['country'];
 // 		if (strtolower($country)=='ukrainien') {
@@ -176,6 +177,14 @@ EOD;
 		return array_combine($a, $b);
 	}
 	//$combined = combine_arr($abbreviations, $states);
+	
+	function remove_accents($str, $charset='utf-8') {
+		$str = htmlentities($str, ENT_NOQUOTES, $charset);
+		$str = preg_replace('#&([A-za-z])(?:acute|cedil|caron|circ|grave|orn|ring|slash|th|tilde|uml);#', '\1', $str);
+		$str = preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $str); // pour les ligatures e.g. '&oelig;'
+		$str = preg_replace('#&[^;]+;#', '', $str); // supprime les autres caractères
+		return $str;
+	}
 }
 
 

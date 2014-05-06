@@ -143,6 +143,7 @@ abstract class SourceBase {
 		$stmt->addColumnValue("id_target", intval($values["id_target"]));
 		$stmt->addColumnValue("enabled", $values["source_enabled"]);
 		$stmt->addColumnValue("name", $values["source_name"]);
+		$stmt->addColumnValue("name_sort", strtolower(remove_accents($values["source_name"])));
 		$stmt->addColumnValue("country", $values["source_country"]);
 		$stmt->addColumnValue("language", $values["source_language"]);
 		$stmt->addColumnValueDate("updatetime");

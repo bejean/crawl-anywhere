@@ -455,7 +455,7 @@ if ($action=="loadsources")
 
 		$stmt = new mg_stmt_select($mg, "sources");
 		$stmt->setQuery($query);
-		$stmt->setSort(array( "name" => 1 ));
+		$stmt->setSort(array("name_sort" => 1,  "name" => 1 ));
 		
 		$skip = (int)(($page-1)*$sources_page_size);
 		$limit = $sources_page_size;
@@ -780,6 +780,7 @@ if ($action=="createsource")
 			$res = "Error&nbsp;&nbsp;&nbsp;" . createsource;
 			$cLog->log("Content.sources.ajax.inc.php - action = " . $action . " - missing data");
 		} else {			
+			mg_create_index('name_sort');
 			$stmt->execute();		
 			$res = "Success&nbsp;&nbsp;&nbsp;";
 		}
@@ -805,6 +806,7 @@ if ($action=="updatesource")
 		$stmt->setQuery ($query);
 		
 		$source->buildSQL($stmt, $_POST, false);
+		mg_create_index($mg, 'sources', 'name_sort');
 		$stmt->execute();
 		/*
 		$s = $stmt->getStatement();

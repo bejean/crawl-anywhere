@@ -55,7 +55,7 @@ Installation
 
 Pre-requisites : 
 
-* Oracle Java 6 or >
+* Oracle Java 7 or >
 * Tomcat 5.5 or >
 * Apache 2.0 or >
 * PHP 5.2.x or 5.3.x or 5.4.x

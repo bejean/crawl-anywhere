@@ -34,34 +34,19 @@
 		<mapping source="parser_title"                      target="title_dis" />
 	
 		<mapping source="item_language,parser_title,text" target="content_%1$s"     format="%2$s\n%3$s">
-			<condition source="item_language" type="in">en,fr,ar,ru,da,nl,fi,de,hu,it,no,ro,es,pt,sv,tr</condition>
+			<condition source="item_language" type="in">en,fr,ar,bg,ca,cjk,cz,da,de,el,es,eu,fa,fi,ga,gl,hi,hy,hu,id,it,ja,lv,nl,no,pt,ru,ro,sv,th,tr</condition>
 		</mapping>
 		<mapping source="item_language,parser_title,text" target="content_en"                 format="%2$s\n%3$s">
-			<condition source="item_language" type="not_in">en,fr,ar,ru,da,nl,fi,de,hu,it,no,ro,es,pt,sv,tr</condition>
+			<condition source="item_language" type="not_in">en,fr,ar,bg,ca,cjk,cz,da,de,el,es,eu,fa,fi,ga,gl,hi,hy,hu,id,it,ja,lv,nl,no,pt,ru,ro,sv,th,tr</condition>
 		</mapping>
 
 		<mapping source="item_language,parser_title"      target="title_%1$s"         format="%2$s" >
-			<condition source="item_language" type="in">en,fr,ar,ru,da,nl,fi,de,hu,it,no,ro,es,pt,sv,tr</condition>
+			<condition source="item_language" type="in">en,fr,ar,bg,ca,cjk,cz,da,de,el,es,eu,fa,fi,ga,gl,hi,hy,hu,id,it,ja,lv,nl,no,pt,ru,ro,sv,th,tr</condition>
 		</mapping>
 		<mapping source="item_language,parser_title"      target="title_en"                   format="%2$s" >
-			<condition source="item_language" type="not_in">en,fr,ar,ru,da,nl,fi,de,hu,it,no,ro,es,pt,sv,tr</condition>
+			<condition source="item_language" type="not_in">en,fr,ar,bg,ca,cjk,cz,da,de,el,es,eu,fa,fi,ga,gl,hi,hy,hu,id,it,ja,lv,nl,no,pt,ru,ro,sv,th,tr</condition>
 		</mapping>
 
-	<!--
-		<mapping source="item_language,parser_title,text" target="content_ml,content_mls"     format="[%1$s]%2$s\n%3$s">
-			<condition source="item_language" type="in">en,fr,ar,ru,da,nl,fi,de,hu,it,no,ro,es,pt,sv,tr</condition>
-		</mapping>
-		<mapping source="item_language,parser_title,text" target="content_ml"                 format="[%1$s]%2$s\n%3$s">
-			<condition source="item_language" type="not_in">en,fr,ar,ru,da,nl,fi,de,hu,it,no,ro,es,pt,sv,tr</condition>
-		</mapping>
-
-		<mapping source="item_language,parser_title"      target="title_ml,title_mls"         format="[%1$s]%2$s" >
-			<condition source="item_language" type="in">en,fr,ar,ru,da,nl,fi,de,hu,it,no,ro,es,pt,sv,tr</condition>
-		</mapping>
-		<mapping source="item_language,parser_title"      target="title_ml"                   format="[%1$s]%2$s" >
-			<condition source="item_language" type="not_in">en,fr,ar,ru,da,nl,fi,de,hu,it,no,ro,es,pt,sv,tr</condition>
-		</mapping>
-	-->
 	</target>
 	
 </solrmappings>

@@ -113,6 +113,7 @@
    <dynamicField name="*_ga"  type="text_ga"  indexed="true" stored="true"/>
    <dynamicField name="*_gl"  type="text_gl"  indexed="true" stored="true"/>
    <dynamicField name="*_hi"  type="text_hi"  indexed="true" stored="true"/>
+   <dynamicField name="*_hy"  type="text_hy"  indexed="true" stored="true"/>
    <dynamicField name="*_hu"  type="text_hu"  indexed="true" stored="true"/>
    <dynamicField name="*_id"  type="text_id"  indexed="true" stored="true"/>
    <dynamicField name="*_it"  type="text_it"  indexed="true" stored="true"/>
@@ -122,10 +123,11 @@
    <dynamicField name="*_no"  type="text_no"  indexed="true" stored="true"/>
    <dynamicField name="*_pt"  type="text_pt"  indexed="true" stored="true"/>
    <dynamicField name="*_ru"  type="text_ru"  indexed="true" stored="true"/>
+   <dynamicField name="*_ro"  type="text_ro"  indexed="true" stored="true"/>
    <dynamicField name="*_sv"  type="text_sv"  indexed="true" stored="true"/>
    <dynamicField name="*_th"  type="text_th"  indexed="true" stored="true"/>
    <dynamicField name="*_tr"  type="text_tr"  indexed="true" stored="true"/>
-
+   
  </fields>
 
    <uniqueKey>id</uniqueKey>

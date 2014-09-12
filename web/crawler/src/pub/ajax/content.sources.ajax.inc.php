@@ -584,6 +584,10 @@ if ($action=="loadsources")
 						$res .= "</td>";
 					}
 				}
+			} else {
+				if ($user->getLevel()>0 && $crawl_status == "5") {
+					$res .= "&nbsp;<a href='#' onClick='resetSource(" . $rs["id"] . ");return false;' title='Reset'><img src='images/reset.png'></a>";
+				}
 			}
 			$res .= "</td>";
 			$res .= "</tr>";
@@ -780,7 +784,7 @@ if ($action=="createsource")
 			$res = "Error&nbsp;&nbsp;&nbsp;" . createsource;
 			$cLog->log("Content.sources.ajax.inc.php - action = " . $action . " - missing data");
 		} else {			
-			mg_create_index('name_sort');
+			mg_create_index($mg, 'sources', 'name_sort');
 			$stmt->execute();		
 			$res = "Success&nbsp;&nbsp;&nbsp;";
 		}

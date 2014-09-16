@@ -13,6 +13,7 @@ set_time_limit (300);
 require_once("lib/config.class.inc.php");
 require_once("lib/mongo.inc.php");
 require_once("lib/string.inc.php");
+require_once("lib/xml.inc.php");
 require_once("lib/user.inc.php");
 require_once("lib/log.class.inc.php");
 

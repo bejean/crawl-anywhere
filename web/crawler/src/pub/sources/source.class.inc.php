@@ -143,7 +143,7 @@ abstract class SourceBase {
 		$stmt->addColumnValue("id_target", intval($values["id_target"]));
 		$stmt->addColumnValue("enabled", $values["source_enabled"]);
 		$stmt->addColumnValue("name", $values["source_name"]);
-		$stmt->addColumnValue("name_sort", strtolower(remove_accents($values["source_name"])));
+		$stmt->addColumnValue("name_sort", strtolower(remove_leading_empty_words(remove_accents($values["source_name"]))));
 		$stmt->addColumnValue("country", $values["source_country"]);
 		$stmt->addColumnValue("language", $values["source_language"]);
 		$stmt->addColumnValueDate("updatetime");
@@ -151,44 +151,64 @@ abstract class SourceBase {
 		$stmt->addColumnValue("tag",$this->normalizeTagsCollections($values["source_tag"]));
 		$stmt->addColumnValue("crawl_minimal_period", $values["crawl_minimal_period"]);
 		if ($create) $stmt->addColumnValue("crawl_priority", "2");
-
+		
+		// Remove Param element
+		$stmt->addColumnValue('language_detection_list',$values["source_language_detection_list"]);
+		$stmt->addColumnValue('crawl_maxdepth',$values["source_crawl_max_depth"]);
+		$stmt->addColumnValue('crawl_url_concurrency',$values["source_crawl_url_concurrency"]);
+		$stmt->addColumnValue('crawl_url_per_minute',$values["source_crawl_url_per_minute"]);
+		$stmt->addColumnValue('automatic_cleaning',$values["source_automatic_cleaning"]);
+		
+		// crawl_schedule
+		$schedules = new SimpleXMLElement($values["source_schedule_xml"]);
+		$stmt->addColumnValue('crawl_schedule',$schedules->asXML());
+				
+		// crawl_filtering_rules
+		$rules = new SimpleXMLElement($values["source_crawl_filtering_rules_xml"]);
+		$stmt->addColumnValue('crawl_filtering_rules',$rules->asXML());
+		
+		$stmt->addColumnValue('metadata',$values["source_metadata"]);
+		$stmt->addColumnValue('contact',$values["source_contact"]);
+		$stmt->addColumnValue('comment',$values["source_comment"]);
+		
 		return $stmt;
 	}
 
 	protected function initSQLParams($values) {
 			
 		$xml = new SimpleXMLElement('<params/>');
-		$xml->addChild('language_detection_list',$values["source_language_detection_list"]);
-
-		$xml->addChild('crawl_maxdepth',$values["source_crawl_max_depth"]);
-		$xml->addChild('crawl_url_concurrency',$values["source_crawl_url_concurrency"]);
-		$xml->addChild('crawl_url_per_minute',$values["source_crawl_url_per_minute"]);
-		$xml->addChild('automatic_cleaning',$values["source_automatic_cleaning"]);
-
-		// crawl_schedule
-		$xml->addChild('crawl_schedule');
-		if (!empty($values["source_schedule_xml"])) {
-			$schedules = new SimpleXMLElement($values["source_schedule_xml"]);
-			$domschedule = dom_import_simplexml($xml->crawl_schedule);
-			$domschedules  = dom_import_simplexml($schedules);
-			$domschedules  = $domschedule->ownerDocument->importNode($domschedules, TRUE);
-			$domschedule->appendChild($domschedules);
-		}
-
-		// crawl_filtering_rules
-		$xml->addChild('crawl_filtering_rules');
-		if (!empty($values["source_crawl_filtering_rules_xml"])) {
-			$rules = new SimpleXMLElement($values["source_crawl_filtering_rules_xml"]);
-			$domsrule = dom_import_simplexml($xml->crawl_filtering_rules);
-			$domrules  = dom_import_simplexml($rules);
-			$domrules  = $domsrule->ownerDocument->importNode($domrules, TRUE);
-			$domsrule->appendChild($domrules);
-		}
-		$xml->addChild('metadata',$values["source_metadata"]);
-		$xml->addChild('contact',$values["source_contact"]);
-		$xml->addChild('comment',$values["source_comment"]);
-
 		return $xml;
+		
+// 		$xml->addChild('language_detection_list',$values["source_language_detection_list"]);
+// 		$xml->addChild('crawl_maxdepth',$values["source_crawl_max_depth"]);
+// 		$xml->addChild('crawl_url_concurrency',$values["source_crawl_url_concurrency"]);
+// 		$xml->addChild('crawl_url_per_minute',$values["source_crawl_url_per_minute"]);
+// 		$xml->addChild('automatic_cleaning',$values["source_automatic_cleaning"]);
+
+// 		// crawl_schedule
+// 		$xml->addChild('crawl_schedule');
+// 		if (!empty($values["source_schedule_xml"])) {
+// 			$schedules = new SimpleXMLElement($values["source_schedule_xml"]);
+// 			$domschedule = dom_import_simplexml($xml->crawl_schedule);
+// 			$domschedules  = dom_import_simplexml($schedules);
+// 			$domschedules  = $domschedule->ownerDocument->importNode($domschedules, TRUE);
+// 			$domschedule->appendChild($domschedules);
+// 		}
+
+// 		// crawl_filtering_rules
+// 		$xml->addChild('crawl_filtering_rules');
+// 		if (!empty($values["source_crawl_filtering_rules_xml"])) {
+// 			$rules = new SimpleXMLElement($values["source_crawl_filtering_rules_xml"]);
+// 			$domsrule = dom_import_simplexml($xml->crawl_filtering_rules);
+// 			$domrules  = dom_import_simplexml($rules);
+// 			$domrules  = $domsrule->ownerDocument->importNode($domrules, TRUE);
+// 			$domsrule->appendChild($domrules);
+// 		}
+// 		$xml->addChild('metadata',$values["source_metadata"]);
+// 		$xml->addChild('contact',$values["source_contact"]);
+// 		$xml->addChild('comment',$values["source_comment"]);
+
+// 		return $xml;
 	}
 }
 

@@ -261,7 +261,7 @@ abstract public class Source {
 		return dateStringToDate(getSrcDataString("crawl_lasttime_end"));
 	}
 
-	public Date getCrawlLastTimeCheckForDeteletion(){
+	public Date getCrawlLastTimeCheckForDeletion(){
 		return dateStringToDate(getSrcDataString("crawl_lasttime_checkfordeletion"));
 	}
 

@@ -457,15 +457,17 @@ class SourceFS extends SourceBase implements iSource {
 		$stmt = parent::initSQL($stmt, $values);
 		
 		// Common dynamic fields
-		$xml = parent::initSQLParams($values);
+		//$xml = parent::initSQLParams($values);
 		
 		// Specific dynamic fields
-		$xml->addChild('source_root_dir',$values["source_root_dir"]);
+		//$xml->addChild('source_root_dir',$values["source_root_dir"]);
+		$stmt->addColumnValue("source_root_dir",$values["source_root_dir"]);
 // 		$xml->addChild('auth_mode',$values["auth_mode"]);
 // 		$xml->addChild('auth_login',$values["auth_login"]);
 // 		$xml->addChild('auth_passwd',$values["auth_passwd"]);
 // 		$xml->addChild('auth_param',$values["auth_param"]);
-		$stmt->addColumnValue("params", $xml->asXML(), "");		
+		//$stmt->addColumnValue("params", $xml->asXML(), "");		
+		$stmt->addColumnValue("params", '');
 		
 		return $stmt;
 	}

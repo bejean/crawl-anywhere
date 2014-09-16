@@ -464,19 +464,24 @@ class SourceDropbox extends SourceBase implements iSource {
 		$stmt = parent::initSQL($stmt, $values);
 		
 		// Common dynamic fields
-		$xml = parent::initSQLParams($values);
+		//$xml = parent::initSQLParams($values);
 		
 		// Specific dynamic fields
-		$xml->addChild('source_root_dir',$values["source_root_dir"]);
+		//$xml->addChild('source_root_dir',$values["source_root_dir"]);
+		$stmt->addColumnValue("source_root_dir", $values["source_root_dir"]);
 		
-		$xml->addChild('token_key',$values["token_key"]);
-		$xml->addChild('token_secret',$values["token_secret"]);
+		//$xml->addChild('token_key',$values["token_key"]);
+		$stmt->addColumnValue('token_key',$values["token_key"]);
+		//$xml->addChild('token_secret',$values["token_secret"]);
+		$stmt->addColumnValue('token_secret',$values["token_secret"]);
 		
 		$mt = "";
 		if (isset($values["mimetype"])) $mt = implode ( "," , $values["mimetype"] );
-		$xml->addChild('mimetype', $mt);
+		//$xml->addChild('mimetype', $mt);
+		$stmt->addColumnValue('mimetype', $mt);
 		
-		$stmt->addColumnValue("params", $xml->asXML(), "");		
+		//$stmt->addColumnValue("params", $xml->asXML(), "");		
+		$stmt->addColumnValue("params", '');
 		
 		return $stmt;
 	}

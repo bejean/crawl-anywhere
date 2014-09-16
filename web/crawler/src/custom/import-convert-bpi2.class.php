@@ -1,4 +1,5 @@
 <?php
+
 class ImportConvert {
 	var $_filename;
 	//var $_header = null;
@@ -53,7 +54,6 @@ class ImportConvert {
 				if (empty($header)) {
 					$header = $data;
 				} else {
-					//$data = array_combine ($header, $data);
 					$data = $this->combine_arr ($header, $data);
 					if ($data) {
 						$source = $sources->addChild('source');
@@ -86,12 +86,8 @@ class ImportConvert {
 		$source->addChild('type', '1');
 		$source->addChild('id_target', '1');
 		$source->addChild('name', $name);
-		$source->addChild('name_sort', strtolower($this->remove_accents($name)));
 		
 		$country = $data['country'];
-// 		if (strtolower($country)=='ukrainien') {
-// 			$country = $country;
-// 		}
 		if (!empty($country)) $country = $arr3166[$this->stripAccents($country)];
 		if (empty($country)) $country = 'fr';
 		$source->addChild('country', strtoupper($country));	
@@ -114,12 +110,7 @@ class ImportConvert {
 		$collection = implode(',', array_unique(array_map('trim', explode(';', $collection))));
 		$collection = htmlspecialchars($collection);
 		$source->addChild('collection', $collection);
-		
-		//if (strpos($collection, "tiers'")!== false){
-		//	$collection = $collection;
-		//}
-		
-		
+				
 		$host = htmlspecialchars($url['host']);
 		$url_str = htmlspecialchars($url_str);
 		
@@ -128,43 +119,61 @@ class ImportConvert {
 			$metadata .= htmlspecialchars('bpi_' . $meta . ':' . preg_replace( "/\r|\n/", " ",$data[$meta]));
 		}
 		
-		// param
-		//		    	<collection>$collection</collection>
+		$source->addChild('crawl_maxdepth', '2');
+		$source->addChild('crawl_url_concurrency', '0');
+		$source->addChild('crawl_url_per_minute', '0');
+		$source->addChild('automatic_cleaning', '4');
+		$source->addChild('metadata', $metadata);
+		$source->addChild('url_host', $host);
+
+		$source->addChild('protocol_strategy', '1');
+		$source->addChild('checkdeleted_strategy', '0');
 		
-		$params = <<<EOD
-		 	<params>
-				<language_detection_list></language_detection_list>
-		 		<crawl_maxdepth>2</crawl_maxdepth>
-		    	<crawl_url_concurrency>0</crawl_url_concurrency>
-		   		<crawl_url_per_minute>0</crawl_url_per_minute>
-		    	<automatic_cleaning>4</automatic_cleaning>
-		    	<crawl_schedule><schedules/></crawl_schedule>
-		    	<crawl_filtering_rules><rules/></crawl_filtering_rules>
-		    	<metadata>$metadata</metadata>
-		    	<contact></contact>
-		    	<comment></comment>
-		    	<url_host>$host</url_host>
-		    	<alias_host></alias_host>
-		    	<protocol_strategy>1</protocol_strategy>
-		    	<checkdeleted_strategy>0</checkdeleted_strategy>
-		    	<url>
-		    		<urls>
-		    			<url>
-		    				<url>$url_str</url>
-		    				<mode>s</mode>
-		    				<allowotherdomain>0</allowotherdomain>
-		    				<onlyfirstcrawl>0</onlyfirstcrawl>
-		    			</url>
-		   			</urls>
-		   		</url>
-		   		<user_agent></user_agent>
-		   		<url_ignore_fields></url_ignore_fields>
-		   		<url_ignore_fields_no_session_id></url_ignore_fields_no_session_id>
-		   		<crawl_childonly>2</crawl_childonly>
-		   		<auth_mode>0</auth_mode><auth_login></auth_login><auth_passwd></auth_passwd><auth_param></auth_param>
-		   	</params>
-EOD;
-		$source->addChild('params', base64_encode($params));
+
+		$url = "<urls><url><url>$url_str</url><mode>s</mode><allowotherdomain>0</allowotherdomain><onlyfirstcrawl>0</onlyfirstcrawl></url></urls>";
+		
+		//$url = trim(preg_replace('/\t+/', '', $url));
+		//$url = trim(preg_replace('/\n+/', '', $url));
+		
+		$source->addChild('url', $url);
+		$source->addChild('crawl_childonly', '2');
+		$source->addChild('auth_mode', '0');
+		
+		
+// 		$params = <<<EOD
+// 		 	<params>
+// 				<language_detection_list></language_detection_list>
+// 		 		<crawl_maxdepth>2</crawl_maxdepth>
+// 		    	<crawl_url_concurrency>0</crawl_url_concurrency>
+// 		   		<crawl_url_per_minute>0</crawl_url_per_minute>
+// 		    	<automatic_cleaning>4</automatic_cleaning>
+// 		    	<crawl_schedule><schedules/></crawl_schedule>
+// 		    	<crawl_filtering_rules><rules/></crawl_filtering_rules>
+// 		    	<metadata>$metadata</metadata>
+// 		    	<contact></contact>
+// 		    	<comment></comment>
+// 		    	<url_host>$host</url_host>
+// 		    	<alias_host></alias_host>
+// 		    	<protocol_strategy>1</protocol_strategy>
+// 		    	<checkdeleted_strategy>0</checkdeleted_strategy>
+// 		    	<url>
+// 		    		<urls>
+// 		    			<url>
+// 		    				<url>$url_str</url>
+// 		    				<mode>s</mode>
+// 		    				<allowotherdomain>0</allowotherdomain>
+// 		    				<onlyfirstcrawl>0</onlyfirstcrawl>
+// 		    			</url>
+// 		   			</urls>
+// 		   		</url>
+// 		   		<user_agent></user_agent>
+// 		   		<url_ignore_fields></url_ignore_fields>
+// 		   		<url_ignore_fields_no_session_id></url_ignore_fields_no_session_id>
+// 		   		<crawl_childonly>2</crawl_childonly>
+// 		   		<auth_mode>0</auth_mode><auth_login></auth_login><auth_passwd></auth_passwd><auth_param></auth_param>
+// 		   	</params>
+// EOD;
+// 		$source->addChild('params', base64_encode($params));
 		return null;
 	}
 	
@@ -175,15 +184,6 @@ EOD;
 		$a = array_slice($a, 0, $size);
 		$b = array_slice($b, 0, $size);
 		return array_combine($a, $b);
-	}
-	//$combined = combine_arr($abbreviations, $states);
-	
-	function remove_accents($str, $charset='utf-8') {
-		$str = htmlentities($str, ENT_NOQUOTES, $charset);
-		$str = preg_replace('#&([A-za-z])(?:acute|cedil|caron|circ|grave|orn|ring|slash|th|tilde|uml);#', '\1', $str);
-		$str = preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $str); // pour les ligatures e.g. '&oelig;'
-		$str = preg_replace('#&[^;]+;#', '', $str); // supprime les autres caractères
-		return $str;
 	}
 }
 

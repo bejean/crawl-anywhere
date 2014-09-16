@@ -21,4 +21,25 @@ function remove_accents($str, $charset='utf-8') {
 	$str = preg_replace('#&[^;]+;#', '', $str); // supprime les autres caractères
 	return $str;
 }
+
+function remove_leading_empty_words($str) {
+	$words = file(dirname(__FILE__) . '/../pub/ressources/empty_words.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	if ($words==FALSE) return $str;
+	foreach ($words as $word) {
+		$word = trim($word);
+		if (substr($word, -1)!="'") $word = $word . ' ';
+		if (strtolower(substr($str, 0, strlen($word))) == strtolower($word)) {
+		    $str = trim(substr($str, strlen($word)));
+		}	
+	}
+	return $str;
+}
+
+function is_blank($value) {
+	return empty($value) && !is_numeric($value);
+}
+
+function fjsp($value) {
+	return htmlspecialchars($value, ENT_QUOTES);
+}
 ?>

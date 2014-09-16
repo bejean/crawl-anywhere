@@ -1651,9 +1651,16 @@ foreach ($aSourceTypes as $id => $type) {
 					<tr>
 						<td><label>Check existing web site by</label></td>
 						<td><select id="import-dialog-form-match">
+<?php 
+$import_use_custom = $config->getDefault("sources.import_use_custom", "");
+if (empty($import_use_custom) || !file_exists ('../custom/' . $import_use_custom)) {
+?>
 								<option value='id' selected>Id</option>
+<?php 
+}
+?>
 								<option value='name' selected>Name</option>
-								<option value='host' selected>Host</option>
+								<!--option value='host' selected>Host</option-->
 								<option value='none' selected>No check</option>
 						</select></td>
 					</tr>

@@ -712,41 +712,62 @@ class SourceWeb extends SourceBase implements iSource {
 		$stmt = parent::initSQL($stmt, $values, $create);
 
 		// Common dynamic fields
-		$xml = parent::initSQLParams($values);
+		//$xml = parent::initSQLParams($values);
 		
 		// Specific dynamic fields
 		$source_host = $values["source_host"];
 		if (!preg_match("/^(http|https|ftp):\/\//i", $source_host))
 		$source_host = "http://" . $source_host;
-		$url_parts = parse_url($source_host);
-		$xml->addChild('url_host',$url_parts["host"]);
-
+		$url_parts = parse_url($source_host);	
+		//$xml->addChild('url_host',$url_parts["host"]);
+		$stmt->addColumnValue('url_host',$url_parts["host"]);
+	
 		$source_alias = str_replace(" ", "", $values["source_alias"]);
 		$source_alias = str_replace(";", ",", $source_alias);
-		$xml->addChild('alias_host',$source_alias);
-
-		$xml->addChild('protocol_strategy',$values["source_crawl_protocol_strategy"]);
+		//$xml->addChild('alias_host',$source_alias);
+		$stmt->addColumnValue('alias_host',$source_alias);
 		
-		$xml->addChild('checkdeleted_strategy',$values["source_crawl_checkdelete_strategy"]);
+		//$xml->addChild('protocol_strategy',$values["source_crawl_protocol_strategy"]);
+		$stmt->addColumnValue('protocol_strategy',$values["source_crawl_protocol_strategy"]);
+		
+		//$xml->addChild('checkdeleted_strategy',$values["source_crawl_checkdelete_strategy"]);
+		$stmt->addColumnValue('checkdeleted_strategy',$values["source_crawl_checkdelete_strategy"]);
 		
 		// url
-		$xml->addChild('url');
+		//$xml->addChild('url');
 		$urls = new SimpleXMLElement($values["source_url_xml"]);
-		$domurl = dom_import_simplexml($xml->url);
-		$domurls  = dom_import_simplexml($urls);
-		$domurls  = $domurl->ownerDocument->importNode($domurls, TRUE);
-		$domurl->appendChild($domurls);
-
-		$xml->addChild('user_agent',$values["source_user_agent"]);
-		$xml->addChild('url_ignore_fields',$values["source_url_ignore_fields"]);
-		$xml->addChild('url_ignore_fields_no_session_id',$values["source_url_ignore_fields_no_session_id"]);
-		$xml->addChild('crawl_childonly',$values["source_crawl_child_only"]);
-
-		$xml->addChild('auth_mode',$values["auth_mode"]);
-		$xml->addChild('auth_login',$values["auth_login"]);
-		$xml->addChild('auth_passwd',$values["auth_passwd"]);
-		$xml->addChild('auth_param',$values["auth_param"]);
-		$stmt->addColumnValue("params", $xml->asXML());
+		//$domurl = dom_import_simplexml($xml->url);
+		//$domurls  = dom_import_simplexml($urls);
+		//$domurls  = $domurl->ownerDocument->importNode($domurls, TRUE);
+		//$domurl->appendChild($domurls);
+		$stmt->addColumnValue('url',$urls->asXML());
+		
+		//$xml->addChild('user_agent',$values["source_user_agent"]);
+		$stmt->addColumnValue('user_agent',$values["source_user_agent"]);
+		
+		//$xml->addChild('url_ignore_fields',$values["source_url_ignore_fields"]);
+		$stmt->addColumnValue('url_ignore_fields',$values["source_url_ignore_fields"]);
+		
+		//$xml->addChild('url_ignore_fields_no_session_id',$values["source_url_ignore_fields_no_session_id"]);
+		$stmt->addColumnValue('url_ignore_fields_no_session_id',$values["source_url_ignore_fields_no_session_id"]);
+	
+		//$xml->addChild('crawl_childonly',$values["source_crawl_child_only"]);
+		$stmt->addColumnValue('crawl_childonly',$values["source_crawl_child_only"]);
+		
+		//$xml->addChild('auth_mode',$values["auth_mode"]);
+		$stmt->addColumnValue('auth_mode',$values["auth_mode"]);
+		
+		//$xml->addChild('auth_login',$values["auth_login"]);
+		$stmt->addColumnValue('auth_login',$values["auth_login"]);
+				
+		//$xml->addChild('auth_passwd',$values["auth_passwd"]);
+		$stmt->addColumnValue('auth_passwd',$values["auth_passwd"]);
+				
+		//$xml->addChild('auth_param',$values["auth_param"]);
+		$stmt->addColumnValue('auth_param',$values["auth_param"]);
+		
+		//$stmt->addColumnValue("params", $xml->asXML());
+		$stmt->addColumnValue("params", '');
 
 		return $stmt;
 	}

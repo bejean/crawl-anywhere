@@ -1215,9 +1215,82 @@ if ($action=="exportsources")
 			$source = $sources->addChild('source');
 			foreach ($rs as $key => $value) {
 				if ($key[0]=='_') continue;
-				if ($key=='params') $value = base64_encode($value);
-				if($value instanceof MongoDate) $value = date('Y-m-d H:i:s', $value->sec);
-				$source->addChild($key, $value);
+				if ($key=='name_sort') continue;
+				
+				if ($key=='params') {
+					if (strlen($value)>0) {
+
+						$params = new SimpleXMLElement($value);
+						
+						foreach ($params->children() as $item) {
+
+							$n=(String)$item->getName();
+							$v=(String)$item;
+							$x=$item->asXml();
+
+							//$r = print_r($item, true);
+								
+							if (!is_blank($v)) {
+								$el2 = new SimpleXMLElement($x);
+								$c2=$item->children();
+								if ($c2) {
+									$source = $c2[0]->asXml();
+									$source = trim(preg_replace('/\t+/', '', $source));
+									$source = trim(preg_replace('/\n+/', '', $source));
+									$source = trim(preg_replace('/\s+/', '', $source));
+									$source = xmlAppendChild($source, $n, $source);
+									
+// 									$v = $c2[0]->asXml();
+// 									//$v = base64_encode($v);
+// 									$el = $source->addChild($n, $v);
+// 									//$el->addAttribute('base64', '1');
+								}
+								else {
+									$el = $source->addChild($n, $v);
+								}
+							}
+							else {
+								$c=$item->children();
+								if ($c) {
+									$source = $c[0]->asXml();
+									$source = trim(preg_replace('/\t+/', '', $source));
+									$source = trim(preg_replace('/\n+/', '', $source));
+									$source = trim(preg_replace('/\s+/', '', $source));
+									$source = xmlAppendChild($source, $n, $source);
+									
+// 									$v = $c[0]->asXml();
+// 									//$v = base64_encode($v);
+// 									$el = $source->addChild($n, $v);
+// 									//$el->addAttribute('base64', '1');
+								}
+							}
+						}
+					}
+				} else {
+					//if ($key=='params') $value = base64_encode($value);
+					
+					if($value instanceof MongoDate) $value = date('Y-m-d H:i:s', $value->sec);
+					
+// 					if (startswith($value, '<?xml'))  $value = base64_encode($value);
+// 					$el = $source->addChild($key, $value);
+// 					if (startswith($value, '<?xml')) $el->addAttribute('base64', '1');
+
+					if (!is_blank($value)) {
+						if (startswith($value, '<?xml')) {
+							$source = xmlAppendChild($source, $key, $value);
+						} else {
+							$el = $source->addChild($key, $value);
+						}
+// 						$el = new SimpleXMLElement($value);
+// 						$c=$item->children();
+// 						if ($c) {
+// 							$source = xmlAppendChild($source, $n, $value);	
+// 						}
+// 						else {
+// 							$el = $source->addChild($key, $value);
+// 						}
+					} 
+				}
 			}
 		}
 
@@ -1240,6 +1313,12 @@ if ($action=="exportsources")
 		echo json_encode($arr);
 	}
 	exit();
+}
+
+function update_field($field_name, $field_list) {
+	if (count($field_list)==0) return true;
+	if (!in_array($field_name, $field_list)) return false;
+	return true;
 }
 
 if ($action=="importsources")
@@ -1299,28 +1378,30 @@ if ($action=="importsources")
 						if ($count == 1) $mode = "update";
 					}
 
-					if ($match=='host') {
-						$query = array ('$and' => array($query, array ("url_host" => (string) $item->url_host)));
-						$count = mg_row_count($mg, "sources", $query);
-						if ($count > 1) continue;
-						if ($count == 1) $mode = "update";
-					}
+// 					if ($match=='host') {
+// 						$query = array ('$and' => array($query, array ("url_host" => (string) $item->url_host)));
+// 						$count = mg_row_count($mg, "sources", $query);
+// 						if ($count > 1) continue;
+// 						if ($count == 1) $mode = "update";
+// 					}
 
 					if ($mode == 'insert') {
 						$stmt = new mg_stmt_insert($mg, "sources", $mg_source_defaults);
 						$stmt->addColumnValue("id_account", intval($id_account_current));
 						$stmt->addColumnValueDate("createtime");
 						$enabled = $status;
+						$import_update_fields = Array();
 					}
 					else {
 						if ($strategy=='skip') continue;
 						$stmt = new mg_stmt_update($mg, "sources");
 						$stmt->setQuery($query);
 						$enabled = (string) $item->enabled;
+						$import_update_fields = array_map('trim', explode(',', $config->getDefault("sources.import_update_fields", "")));;
 					}
 
-					$stmt->addColumnValue("deleted", "0");
-					$stmt->addColumnValue("enabled", $enabled);
+					if (update_field("deleted", $import_update_fields)) $stmt->addColumnValue("deleted", "0");
+					if (update_field("enabled", $import_update_fields)) $stmt->addColumnValue("enabled", $enabled);
 
 					if ($reset == "1") {
 						$stmt->addColumnValue("crawl_mode", "2");
@@ -1328,16 +1409,16 @@ if ($action=="importsources")
 					else {
 						$stmt->addColumnValue("crawl_mode", "0");
 					}
-					$stmt->addColumnValue("crawl_firstcompleted", "0");
-					$stmt->addColumnValue("crawl_priority", $priority);
-					$stmt->addColumnValueDate("crawl_nexttime");
+					if (update_field("crawl_firstcompleted", $import_update_fields)) $stmt->addColumnValue("crawl_firstcompleted", "0");
+					if (update_field("crawl_priority", $import_update_fields)) $stmt->addColumnValue("crawl_priority", $priority);
+					if (update_field("crawl_nexttime", $import_update_fields)) $stmt->addColumnValueDate("crawl_nexttime");
 					
-					$stmt->addColumnValue("crawl_process_status", "0");
+					if (update_field("crawl_process_status", $import_update_fields)) $stmt->addColumnValue("crawl_process_status", "0");
 						
 					$query = array ("id" => intval($id_account_current));
 					mg_get_value($mg, "accounts", "id_target", $query, $id_target);			
 					if (!empty($id_target))	{	
-						$stmt->addColumnValue("id_target", intval($id_target));
+						if (update_field("id_target", $import_update_fields)) $stmt->addColumnValue("id_target", intval($id_target));
 					}
 
 					$ignore = array();
@@ -1361,12 +1442,16 @@ if ($action=="importsources")
 					$c = $item->children();
 					
 					foreach($item->children() as $name => $data) {
+						if (!update_field($name, $import_update_fields)) continue;
+						
 						if (!in_array($name,$ignore)) {
 							$d = (String)$data;
 							if ($name=='params') {
 								$stmt->addColumnValue($name, base64_decode($d));
-							}
-							else {
+							} else {									
+								if ($name=='name') {
+									$stmt->addColumnValue('name_sort', strtolower(remove_leading_empty_words(remove_accents($d))));
+								}
 								$stmt->addColumnValue($name, $d);
 							}
 						}

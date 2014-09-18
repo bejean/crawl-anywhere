@@ -40,6 +40,16 @@ function is_blank($value) {
 }
 
 function fjsp($value) {
-	return htmlspecialchars($value, ENT_QUOTES);
+	return htmlspecialchars(addslashes($value), ENT_QUOTES, "UTF-8", false);
+}
+
+//////////////////////////////////////////////////////////
+// function encodeForInput($value) {
+// 	return htmlentities($value, ENT_QUOTES, "UTF-8", false);
+// }
+
+
+function fi($value) {
+	return htmlspecialchars($value, ENT_QUOTES, "UTF-8", false);
 }
 ?>

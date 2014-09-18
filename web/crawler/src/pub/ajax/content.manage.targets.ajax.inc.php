@@ -96,7 +96,7 @@ if ($action=="displaytarget") {
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Target paramater</td>";
-		$res .= "<td><input id='target_parameters' name ='target_parameters' class='editInputText' value='" . $rs["target_parameters"] . "'>";
+		$res .= "<td><input id='target_parameters' name ='target_parameters' class='editInputText' value='" . fi($rs["target_parameters"]) . "'>";
 		$res .= "<span class='help'>Optionnal.<br>";
 		$res .= "<u>Solr:</u><br>provide Solr core url (http://localhost:8080/solr/crawler/).<br>";
 		//$res .= "<u>elasticsearch:</u><br>provide cluster url including index name (http://localhost:9200/crawler/).";
@@ -105,7 +105,7 @@ if ($action=="displaytarget") {
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Ouput queue directory</td>";
-		$res .= "<td><input id='queue_dir' name ='queue_dir' class='editInputText' value='" . $rs["queue_dir"] . "'>";
+		$res .= "<td><input id='queue_dir' name ='queue_dir' class='editInputText' value='" . fi($rs["queue_dir"]) . "'>";
 		$res .= "<span class='help'>Optional. Use absolute or relative path. Relative path is relative to crawler installation directory.</span>";
 		$res .= "</td>";
 		$res .= "</tr>";

@@ -75,7 +75,7 @@ if ($action=="displayaccount") {
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Name</td>";
-		$res .= "<td><input class='editInputText' type='text' name='account_name' id='account_name' value='" . $rs["name"] . "'></td>";
+		$res .= "<td><input class='editInputText' type='text' name='account_name' id='account_name' value='" . fi($rs["name"]) . "'></td>";
 		$res .= "</tr>";
 
 		$engine = $rs["id_engine"];

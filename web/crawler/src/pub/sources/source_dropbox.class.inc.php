@@ -36,8 +36,8 @@ class SourceDropbox extends SourceBase implements iSource {
 		
 		$res .= "<input class='editInputText' type='hidden' name='dropboxurl' id='dropboxurl' value=''>";
 		$res .= "<input class='editInputText' type='hidden' name='dropboxtimestamp' id='dropboxtimestamp' value=''>";
-		$res .= "<input class='editInputText' type='hidden' name='token_key' id='token_key' value='" . encodeForInput($this->getValue('token_key', '')) . "'>";
-		$res .= "<input class='editInputText' type='hidden' name='token_secret' id='token_secret' value='" . encodeForInput($this->getValue('token_secret', '')) . "'>";
+		$res .= "<input class='editInputText' type='hidden' name='token_key' id='token_key' value='" . fi($this->getValue('token_key', '')) . "'>";
+		$res .= "<input class='editInputText' type='hidden' name='token_secret' id='token_secret' value='" . fi($this->getValue('token_secret', '')) . "'>";
 		$res .= "<input class='editInputText' type='hidden' name='token_uid' id='token_uid' value=''>";
 		
 		$res .= "</td>";
@@ -60,7 +60,7 @@ class SourceDropbox extends SourceBase implements iSource {
 		else {
 			$res .= "<span id='status_source_name_error' style='display: none'><img src='images/error_12.png'>&nbsp;Provide source name is mandatory !<br></span><span id='status_source_name_ok'><img src='images/ok_12.png'>&nbsp;</span>";
 		}
-		$res .= "<input class='editInputText' type='text' name='source_name' id='source_name' value='" . encodeForInput($this->getValue('name', '')) . "'  onBlur='checkParameter(\"source_name\");'></td>";
+		$res .= "<input class='editInputText' type='text' name='source_name' id='source_name' value='" . fi($this->getValue('name', '')) . "'  onBlur='checkParameter(\"source_name\");'></td>";
 		$res .= "</tr>";
 
 		/*
@@ -83,8 +83,8 @@ class SourceDropbox extends SourceBase implements iSource {
 	
 		$res .= "<input class='editInputText' type='hidden' name='dropboxurl' id='dropboxurl' value=''>";
 		$res .= "<input class='editInputText' type='hidden' name='dropboxtimestamp' id='dropboxtimestamp' value=''>";
-		$res .= "<input class='editInputText' type='hidden' name='token_key' id='token_key' value='" . encodeForInput($this->getValue('token_key', '')) . "'>";
-		$res .= "<input class='editInputText' type='hidden' name='token_secret' id='token_secret' value='" . encodeForInput($this->getValue('token_secret', '')) . "'>";
+		$res .= "<input class='editInputText' type='hidden' name='token_key' id='token_key' value='" . fi($this->getValue('token_key', '')) . "'>";
+		$res .= "<input class='editInputText' type='hidden' name='token_secret' id='token_secret' value='" . fi($this->getValue('token_secret', '')) . "'>";
 		$res .= "</td></tr>";
 */		
 		$res .= "<tr>";
@@ -166,7 +166,7 @@ class SourceDropbox extends SourceBase implements iSource {
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Tags</td>";
-		$res .= "<td><input class='editInputText' type='text' name='source_tag' id='source_tag' value='" . encodeForInput(str_replace("_", " ", $this->getValue('tag', ''))) . "'>";
+		$res .= "<td><input class='editInputText' type='text' name='source_tag' id='source_tag' value='" . fi(str_replace("_", " ", $this->getValue('tag', ''))) . "'>";
 		$aTags = getAvailableTagsCollections($this->config, false, $this->id_account_current, "tag");
 		if ($aTags!=null) {
 			$res .= "<br />";
@@ -400,12 +400,12 @@ class SourceDropbox extends SourceBase implements iSource {
 		
 		$res .= "<tr>";
 		$res .= "<td class='head'>Comment</td>";
-		$res .= "<td><textarea name='source_comment' id='source_comment' rows='6' cols='70' class='editInputTextarea'>" . encodeForInput($this->getValue('comment', '')) . "</textarea></td>";
+		$res .= "<td><textarea name='source_comment' id='source_comment' rows='6' cols='70' class='editInputTextarea'>" . fi($this->getValue('comment', '')) . "</textarea></td>";
 		$res .= "</tr>";
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Source contact</td>";
-		$res .= "<td><textarea name='source_contact' id='source_contact' rows='6' cols='70' class='editInputTextarea'>" . encodeForInput($this->getValue('contact', '')) . "</textarea></td>";
+		$res .= "<td><textarea name='source_contact' id='source_contact' rows='6' cols='70' class='editInputTextarea'>" . fi($this->getValue('contact', '')) . "</textarea></td>";
 		$res .= "</tr>";
 
 		return $res;

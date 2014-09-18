@@ -467,12 +467,6 @@ function getUserLevelLabel($level) {
 }
 
 //////////////////////////////////////////////////////////
-function encodeForInput($value) {
-	return htmlentities($value, ENT_QUOTES, "UTF-8", false);
-}
-
-
-//////////////////////////////////////////////////////////
 function require_once_all($files) {
 	foreach (glob($files) as $filename) {
 		require_once $filename;

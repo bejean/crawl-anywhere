@@ -78,7 +78,7 @@ if ($action=="displayengine") {
 		if ($id=="1")
 		$res .= "<td>" . $rs["name"] . "</td>";
 		else
-		$res .= "<td><input class='editInputText' type='text' name='engine_name' id='engine_name' value='" . $rs["name"] . "'></td>";
+		$res .= "<td><input class='editInputText' type='text' name='engine_name' id='engine_name' value='" . fi($rs["name"]) . "'></td>";
 		$res .= "</tr>";
 
 		$res .= "</table></center>";

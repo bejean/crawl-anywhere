@@ -77,7 +77,7 @@ if ($action=="displayuser") {
 		$res .= "<td class='head'>Name</td>";
 		$res .= "<td>" . $rs["user_name"];
 		if ($user->getId()=="1") {
-			$res .= "&nbsp;<a href='#' onClick='logonAs(\"" . $rs["user_name"] . "\")';return false;'><img src='images/login.png' title='Logon as'></a>";
+			$res .= "&nbsp;<a href='#' onClick='logonAs(\"" . fjsp($rs["user_name"]) . "\"); return false;'><img src='images/login.png' title='Logon as'></a>";
 		}
 		$res .= "</td>";
 		$res .= "</tr>";
@@ -135,8 +135,7 @@ if ($action=="displayuser") {
 			if ($rs["user_level"]=="2") {
 				$res .= " style='display: block'";
 			}
-			else
-			{
+			else {
 				$res .= " style='display: none'";
 			}
 			$res .= ">All</div>";
@@ -145,8 +144,7 @@ if ($action=="displayuser") {
 			if ($rs["user_level"]=="2") {
 				$res .= " style='display: none'";
 			}
-			else
-			{
+			else {
 				$res .= " style='display: block'";
 			}
 			$res .= ">";
@@ -155,8 +153,7 @@ if ($action=="displayuser") {
 			$aAccounts = getAvailableAccounts($config);
 			if ($aAccounts!=null) {
 				$res .= "<select id='id_account' name='id_account' style='editInputSelect'>";
-				foreach ($aAccounts as $key => $value)
-				{
+				foreach ($aAccounts as $key => $value) {
 					$res .= "<option value='" . $key . "'";
 					if (($account==strtolower(trim($key))) || ($account=="0" && $key=="1")) $res .= " selected";
 					$res .= ">" . $value . "</option>";

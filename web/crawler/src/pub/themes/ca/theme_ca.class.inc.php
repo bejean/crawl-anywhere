@@ -22,7 +22,8 @@ class Theme extends ThemeBase implements iTheme {
 		$res .= "            <script type='text/javascript' src='js/jquery-ui-1.8.10.custom.min.js'></script>";
 		$res .= "            <script type='text/javascript' src='js/jquery.upload-1.0.2.min.js'></script>";
 		$res .= "            <script type='text/javascript' src='js/util.js'></script>";
-
+		$res .= "            <script type='text/javascript' src='js/php-js.js'></script>";
+		
 		$res .= "            <script type='text/javascript' src='sources/loadjs.js'></script>";
 		$res .= "            <script type='text/javascript' src='sources/empty.js'></script>";
 		return $res;

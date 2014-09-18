@@ -28,7 +28,7 @@ class SourceWeb extends SourceBase implements iSource {
 		else {
 			$res .= "<span id='status_source_name_error' style='display: none'><img src='images/error_12.png'>&nbsp;Provide source name is mandatory !<br></span><span id='status_source_name_ok'><img src='images/ok_12.png'>&nbsp;</span>";
 		}
-		$res .= "<input class='editInputText' type='text' name='source_name' id='source_name' value='" . encodeForInput($this->getValue('name', '')) . "'  onBlur='checkParameter(\"source_name\");'></td>";
+		$res .= "<input class='editInputText' type='text' name='source_name' id='source_name' value='" . fi($this->getValue('name', '')) . "'  onBlur='checkParameter(\"source_name\");'></td>";
 		$res .= "</tr>";
 
 		$res .= "<tr>";
@@ -42,7 +42,7 @@ class SourceWeb extends SourceBase implements iSource {
 		else {
 			$res .= "<span id='status_source_host_error' style='display: none'><img src='images/error_12.png'>&nbsp;Provide source host is mandatory !<br></span><span id='status_source_host_ok'><img src='images/ok_12.png'>&nbsp;</span>";
 		}
-		$res .= "<input class='editInputText' type='text' name='source_host' id='source_host' value='" . $this->getValue('url_host', '') . "' onBlur='checkParameter(\"source_host\");'>";
+		$res .= "<input class='editInputText' type='text' name='source_host' id='source_host' value='" . fi($this->getValue('url_host', '')) . "' onBlur='checkParameter(\"source_host\");'>";
 		$res .= "<br/><span class='help'>The source's host domain (don't specify protocol). Example : www.website.com<br/>The crawler will retrieve only the urls belonging to this domain.<br>You must specify one or more starting url below !</span></td>";
 		$res .= "</tr>";
 			
@@ -67,12 +67,12 @@ class SourceWeb extends SourceBase implements iSource {
 			}
 		}
 		$urlJson .= '] }';
-
+		
 		$res .= "<td><span id='status_source_url_error'><img src='images/error_12.png'>&nbsp;Provide one or more starting url is mandatory !<br></span><span id='status_source_url_ok' style='display: none'><img src='images/ok_12.png'>&nbsp;</span>";
 		$res .= "<div id='url'>";
 		$res .= "</div>";
-		$res .= "<input type='hidden' name='source_url' id='source_url' value='" . $urlJson . "'>";
-		$res .= "<input type='hidden' name='source_url_xml' id='source_url_xml' value='" . $url . "'>";
+		$res .= "<input type='hidden' name='source_url' id='source_url' value='" . fi($urlJson) . "'>";
+		$res .= "<input type='hidden' name='source_url_xml' id='source_url_xml' value='" . fi($url) . "'>";
 		$res .= "<a href='javascript:addUrl();'><img src='images/plus_12.png'>&nbsp;Add url</a>";
 		$res .= "&nbsp;&nbsp;<a href='javascript:scanRSS();'><img src='images/plus_12.png'>&nbsp;Scan RSS</a>";
 		$res .= "<br/><span class='help'>All the urls used by the crawler in order to start the crawl process</span></td>";
@@ -80,7 +80,7 @@ class SourceWeb extends SourceBase implements iSource {
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Host aliases</td>";
-		$res .= "<td><input class='editInputText' type='text' name='source_alias' id='source_alias' value='" . $this->getValue('alias_host', '') . "'>";
+		$res .= "<td><input class='editInputText' type='text' name='source_alias' id='source_alias' value='" . fi($this->getValue('alias_host', '')) . "'>";
 		$res .= "<br/><span class='help'>The source's host domain aliases (don't specify protocol). Example : www2.website.com, support.website.com, *.website.com, www.website.*<br/>The crawler will also accept the urls belonging to these domains</span></td>";
 		$res .= "</tr>";
 
@@ -128,7 +128,7 @@ class SourceWeb extends SourceBase implements iSource {
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Collections</td>";
-		$res .= "<td><input class='editInputText' type='text' name='source_collection' id='source_collection' value='" . encodeForInput(str_replace("_", " ", $this->getValue('collection', '')), ENT_QUOTES) . "'>";
+		$res .= "<td><input class='editInputText' type='text' name='source_collection' id='source_collection' value='" . fi(str_replace("_", " ", $this->getValue('collection', ''))) . "'>";
 
 		$aCollections = getAvailableTagsCollections($this->config, false, $this->id_account_current, "collection");
 		if ($aCollections!=null) {
@@ -145,7 +145,7 @@ class SourceWeb extends SourceBase implements iSource {
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Tags</td>";
-		$res .= "<td><input class='editInputText' type='text' name='source_tag' id='source_tag' value='" . encodeForInput(str_replace("_", " ", $this->getValue('tag', ''))) . "'>";
+		$res .= "<td><input class='editInputText' type='text' name='source_tag' id='source_tag' value='" . fi(str_replace("_", " ", $this->getValue('tag', ''))) . "'>";
 		$aTags = getAvailableTagsCollections($this->config, false, $this->id_account_current, "tag");
 		if ($aTags!=null) {
 			$res .= "<br />";
@@ -397,17 +397,17 @@ class SourceWeb extends SourceBase implements iSource {
 		
 		$res .= "<tr>";
 		$res .= "<td class='head'>User agent (optional)</td>";
-		$res .= "<td><input class='editInputText' type='text' name='source_user_agent' id='source_user_agent' value='" . $this->getValue('user_agent', '') . "'></td>";
+		$res .= "<td><input class='editInputText' type='text' name='source_user_agent' id='source_user_agent' value='" . fi($this->getValue('user_agent', '')) . "'></td>";
 		$res .= "</tr>";
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Ignored session id fields in url</td>";
-		$res .= "<td><input class='editInputText' type='text' name='source_url_ignore_fields' id='source_url_ignore_fields' value='" . $this->getValue('url_ignore_fields', '') . "'></td>";
+		$res .= "<td><input class='editInputText' type='text' name='source_url_ignore_fields' id='source_url_ignore_fields' value='" . fi($this->getValue('url_ignore_fields', '')) . "'></td>";
 		$res .= "</tr>";
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Ignored fields in url (others than session id)</td>";
-		$res .= "<td><input class='editInputText' type='text' name='source_url_ignore_fields_no_session_id' id='source_url_ignore_fields_no_session_id' value='" . $this->getValue('url_ignore_fields_no_session_id', '') . "'>";
+		$res .= "<td><input class='editInputText' type='text' name='source_url_ignore_fields_no_session_id' id='source_url_ignore_fields_no_session_id' value='" . fi($this->getValue('url_ignore_fields_no_session_id', '')) . "'>";
 		$res .= "<br><span class='help'>Use <strong>*</strong> in order to remove all parameters in urls. Regular expressions are allowed (for instance \"<strong>utm_.*</strong>\")</span>";
 		$res .= "</td>";
 		$res .= "</tr>";
@@ -600,7 +600,7 @@ class SourceWeb extends SourceBase implements iSource {
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Metadata</td>";
-		$res .= "<td><textarea name='source_metadata' id='source_metadata' rows='6' cols='70' class='editInputTextarea'>" . encodeForInput($this->getValue('metadata', '')) . "</textarea>";
+		$res .= "<td><textarea name='source_metadata' id='source_metadata' rows='6' cols='70' class='editInputTextarea'>" . fi($this->getValue('metadata', '')) . "</textarea>";
 		$res .= "<br><span class='help'>These metadatas will be added into the output xml files</span>";
 		$res .= "<br><span class='help'>Syntax:</span>";
 		$res .= "<br><span class='help'>meta_name1:value1</span>";
@@ -631,29 +631,29 @@ class SourceWeb extends SourceBase implements iSource {
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Authentication login</td>";
-		$res .= "<td><input class='editInputTextMedium' type='text' name='auth_login' id='auth_login' value='" . $this->getValue('auth_login', '') . "'>";
+		$res .= "<td><input class='editInputTextMedium' type='text' name='auth_login' id='auth_login' value='" . fi($this->getValue('auth_login', '')) . "'>";
 		$res .= "<input type='button' value='Test' onClick='testAuthentication();'>";
 		$res .= "</td></tr>";
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Authentication password</td>";
-		$res .= "<td><input class='editInputTextMedium' type='text' name='auth_passwd' id='auth_passwd' value='" . $this->getValue('auth_passwd', '') . "'></td>";
+		$res .= "<td><input class='editInputTextMedium' type='text' name='auth_passwd' id='auth_passwd' value='" . fi($this->getValue('auth_passwd', '')) . "'></td>";
 		$res .= "</tr>";
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Authentication param</td>";
-		$res .= "<td><input class='editInputText' type='text' name='auth_param' id='auth_param' value='" . $this->getValue('auth_param', '') . "'>";
+		$res .= "<td><input class='editInputText' type='text' name='auth_param' id='auth_param' value='" . fi($this->getValue('auth_param', '')) . "'>";
 		$res .= "<br><span class='help'>Example : http://www.server.com/login.asp|login=&#36;&#36;auth_login&#36;&#36;|password=&#36;&#36;auth_passwd&#36;&#36;</span></td>";
 		$res .= "</tr>";
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Comment</td>";
-		$res .= "<td><textarea name='source_comment' id='source_comment' rows='6' cols='70' class='editInputTextarea'>" . encodeForInput($this->getValue('comment', '')) . "</textarea></td>";
+		$res .= "<td><textarea name='source_comment' id='source_comment' rows='6' cols='70' class='editInputTextarea'>" . fi($this->getValue('comment', '')) . "</textarea></td>";
 		$res .= "</tr>";
 
 		$res .= "<tr>";
 		$res .= "<td class='head'>Source contact</td>";
-		$res .= "<td><textarea name='source_contact' id='source_contact' rows='6' cols='70' class='editInputTextarea'>" . encodeForInput($this->getValue('contact', '')) . "</textarea></td>";
+		$res .= "<td><textarea name='source_contact' id='source_contact' rows='6' cols='70' class='editInputTextarea'>" . fi($this->getValue('contact', '')) . "</textarea></td>";
 		$res .= "</tr>";
 
 		return $res;

@@ -93,3 +93,4 @@ java/indexer/config/indexer/es_mapping_fr.json
 java/simplepipeline/config/pipeline/scripts/pipeline/doctextextractor/www_dokterdokter_nl.xml
 web/crawler/src/pub/ajax/import-convert.class.php
 web/search/src/config/config-amnesty.ini
+java/simple-http-client

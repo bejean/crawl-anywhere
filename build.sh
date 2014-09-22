@@ -160,6 +160,7 @@ cd $DEV/java
 mvn install:install-file -DgroupId=fr.eolya -DartifactId=utils -Dversion=0.0.1-SNAPSHOT -Dpackaging=jar -Dfile=utils/target/utils-0.0.1-SNAPSHOT.jar
 mvn dependency:copy-dependencies
 
+rm $DISTRIB/lib/*
 cp -r $DEV/java/crawler/target/dependency/* $DISTRIB/lib/.
 cp -r $DEV/java/simplepipeline/target/dependency/* $DISTRIB/lib/.
 cp -r $DEV/java/indexer/target/dependency/* $DISTRIB/lib/.

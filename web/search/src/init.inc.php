@@ -182,6 +182,9 @@ $solr_version = getSolrVersion($theme->getSolrHost(), $theme->getSolrPort(), $th
 //
 $usecollections = $config->get("search.use_collections");
 $usetags = $config->get("search.use_tags");
+$usecollections = false;
+$usetags = false;
+
 $usetagcloud = $config->get("search.use_tagcloud");
 //if (!empty($solr_version) && $solr_version{0}!='4') $usetagcloud = 0;
 if (!empty($solr_version) && solrVersionAsANumber($solr_version) < 430) $usetagcloud = 0;
@@ -194,7 +197,7 @@ $usesourcename = $config->get("search.use_sourcename");
 $uselocation = $config->get("search.use_location");
 
 $facet_union = ($config->getDefault("facet.mode_union", "0", false)=="1");
-$facet_union = false;
+//$facet_union = false;
 $facetuse = $theme->getFacet($config->get("facet.use"));
 $facetlimit = $config->get("facet.limit", "10");
 
@@ -327,7 +330,7 @@ function getMappingArray($name, $file_name, $ucw, $aLexicons, $field, $col_numbe
 			if ($line!="") {
 				$parts = explode(';', $line);
 				$key = trim(strtolower($parts[0]));
-				if (empty($aLexicons) || empty($field) || array_key_exists ( strtoupper($key) , $aLexicons[$field] )  || array_key_exists ( strtolower($key) , $aLexicons[$field] )) {
+				if (true || empty($aLexicons) || empty($field) || array_key_exists ( strtoupper($key) , $aLexicons[$field] )  || array_key_exists ( strtolower($key) , $aLexicons[$field] )) {
 					$aMapping[trim(strtolower($parts[0]))] = strtolower($parts[$col_number]);
 					if ($ucw) $aMapping[trim(strtolower($parts[0]))] = ucwords($aMapping[trim(strtolower($parts[0]))]);
 				} else {

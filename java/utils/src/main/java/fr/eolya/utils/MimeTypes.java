@@ -1,7 +1,6 @@
 package fr.eolya.utils;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Map file extensions to MIME types. Based on the Apache mime.types file.

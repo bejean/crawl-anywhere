@@ -15,14 +15,14 @@ public class LanguageDetect {
     private String languageDetectionList = "";
     private String langList = "";
     private String debug = "";
-    private int poolSize = 0;
+    //private int poolSize = 0;
     private double score = 0.0;
     
     private LanguageRecognizerLanguageDetection lrLD;
     
-    public LanguageDetect (int poolSize) {
-        this.poolSize = poolSize;
-    }
+    //public LanguageDetect (int poolSize) {
+    //    this.poolSize = poolSize;
+    //}
     
     public long getProcessingTime() {
         return processingTime;
@@ -267,7 +267,6 @@ public class LanguageDetect {
                 case 'f':
                     file = g.getOptarg();
                     break;
-                    
             }
         }
         

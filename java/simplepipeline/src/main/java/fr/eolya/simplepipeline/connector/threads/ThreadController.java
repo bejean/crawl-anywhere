@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import fr.eolya.simplepipeline.IStateController;
-import fr.eolya.utils.Logger;
 
 /**
  * A simple controller class for a multithreaded environment, where threads may

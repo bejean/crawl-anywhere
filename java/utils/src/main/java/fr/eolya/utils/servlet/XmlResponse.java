@@ -7,9 +7,6 @@ import java.util.GregorianCalendar;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.*;
 
-import fr.eolya.utils.*;
-
-
 public class XmlResponse {
 
 	private static Document buildErrorXmlDocument(int errno, String errmsg)

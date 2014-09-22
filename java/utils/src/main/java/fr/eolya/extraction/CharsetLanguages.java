@@ -359,7 +359,6 @@ public class CharsetLanguages {
             
             String s = csu.getUnicodeBlockDistribution ("Cet épisode se caractérise aussi par la violence et une ambiance angoissante");
             languages = csu.getUnicodeBlockLanguages(s);
-            int i = 0;
             
         } catch (IOException e) {
             e.printStackTrace();

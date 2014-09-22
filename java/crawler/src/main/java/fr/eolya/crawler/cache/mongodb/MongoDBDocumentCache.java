@@ -16,12 +16,10 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
 
 import fr.eolya.crawler.cache.DocumentCacheItem;
 import fr.eolya.crawler.cache.IDocumentCache;
 import fr.eolya.utils.Base64;
-import fr.eolya.utils.Logger;
 import fr.eolya.utils.XMLConfig;
 import fr.eolya.utils.nosql.mongodb.MongoDBCollection;
 import fr.eolya.utils.nosql.mongodb.MongoDBConnection;

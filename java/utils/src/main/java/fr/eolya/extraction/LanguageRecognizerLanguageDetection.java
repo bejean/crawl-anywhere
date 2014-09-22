@@ -93,8 +93,8 @@ public class LanguageRecognizerLanguageDetection {
                     for (int i = 0; i < res.size(); i++) {
                         for (int j = 0; j < langList.size(); j++) {
                             //if ( langList.get(j).equals( (res.get(i).lang) ) ) {
-                            String s1 = res.get(i).lang;
-                            String s2 = langList.get(j);
+                            //String s1 = res.get(i).lang;
+                            //String s2 = langList.get(j);
                             if ( res.get(i).lang.startsWith(langList.get(j)) ) {
                                 if (minScore==0 || (res.get(i).prob >= minScore)) {
                                     score = res.get(i).prob;

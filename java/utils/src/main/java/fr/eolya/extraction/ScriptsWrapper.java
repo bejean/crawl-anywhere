@@ -1,6 +1,5 @@
 package fr.eolya.extraction;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -338,7 +337,7 @@ public class ScriptsWrapper {
                 WebStream ws = new WebStream(urlLoader.getStream(), "", contentType, contentEncoding);
                 rawPage = ws.getString();
                 charSet = ws.getCharSet();
-                String declaredLanguage = ws.getDeclaredLanguage();
+                //String declaredLanguage = ws.getDeclaredLanguage();
                 ws.clear();
             }		
             

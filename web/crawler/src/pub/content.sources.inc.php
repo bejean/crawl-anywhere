@@ -776,6 +776,8 @@ function ruleDisplay() {
 				html += "Get page and extract links";
 			if (objJson.rules[i].mode=="links")
 				html += "Extract links only";
+			if (objJson.rules[i].mode=="get")
+				html += "Get page only";
 			if (objJson.rules[i].mode=="skip")
 				html += "Ignore";
 			html += "</td>";

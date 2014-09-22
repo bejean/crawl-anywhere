@@ -1040,6 +1040,7 @@ if ($action == "testfilteringrules")
 			if ((string)$node->mode=="skip") $mode = "s";
 			if ((string)$node->mode=="links") $mode = "l";
 			if ((string)$node->mode=="once") $mode = "o";
+			if ((string)$node->mode=="get") $mode = "g";
 			$flatrules .= $sep . (string)$node->ope . ':' .$mode . ':' . (string)$node->pat;
 			$sep = "\n";
 		}
@@ -1061,6 +1062,7 @@ if ($action == "testfilteringrules")
 	if ($content=="l") $content = "Extract links only";
 	if ($content=="s") $content = "Ignore";
 	if ($content=="o") $content = "Get page and extract links (once)";
+	if ($content=="g") $content = "Get page only";
 
 	print ($content);
 	exit();

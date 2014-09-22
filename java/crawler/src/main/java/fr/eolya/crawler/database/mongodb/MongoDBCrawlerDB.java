@@ -211,7 +211,7 @@ public class MongoDBCrawlerDB implements ICrawlerDB {
 				if (pauseBySchedule) {
 					doc2.put("crawl_process_status", ISource.CRAWL_PROCESS_STATUS_PAUSE_BY_SCHEDULE);
 				}
-				doc2.put("crawl_priority", 4);
+				doc2.put("crawl_priority", "4");
 			} else {
 				doc2.put("running_crawl_item_processed", 0);
 				doc2.put("running_crawl_item_to_process", 0);
@@ -220,7 +220,7 @@ public class MongoDBCrawlerDB implements ICrawlerDB {
 				//	doc2.put("crawl_priority", 2);
 				//}
 				//else {
-				doc2.put("crawl_priority", 0);
+				doc2.put("crawl_priority", "0");
 
 				int crawlPeriod;
 				if (src.isOptimized())            

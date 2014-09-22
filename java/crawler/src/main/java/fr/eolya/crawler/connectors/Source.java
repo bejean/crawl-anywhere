@@ -114,7 +114,6 @@ abstract public class Source {
 	protected int getSrcDataInt(String name) {
 		if (srcData.containsKey(name)) {
 			Object o = srcData.get(name);
-			//String v = null;
 			try {
 				if (o instanceof String) {  
 					return Integer.parseInt((String) o);
@@ -122,9 +121,10 @@ abstract public class Source {
 				if (o instanceof Integer) {  
 					return ((Integer) o).intValue();
 				}
+				if (o instanceof Long) {  
+					return ((Long) o).intValue();
+				}
 				return 0;
-				//srcData.get(name)
-				//v = (String) srcData.get(name);
 			} 
 			catch (Exception e) {
 				e.printStackTrace();

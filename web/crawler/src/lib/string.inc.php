@@ -27,9 +27,13 @@ function remove_leading_empty_words($str) {
 	if ($words==FALSE) return $str;
 	foreach ($words as $word) {
 		$word = trim($word);
-		if (substr($word, -1)!="'") $word = $word . ' ';
-		if (strtolower(substr($str, 0, strlen($word))) == strtolower($word)) {
-		    $str = trim(substr($str, strlen($word)));
+		$pattern = $word . ' ';
+		if (strtolower(substr($str, 0, strlen($pattern))) == strtolower($pattern)) {
+		    $str = trim(substr($str, strlen($pattern)));
+		}	
+		$pattern = $word . "'";
+		if (strtolower(substr($str, 0, strlen($pattern))) == strtolower($pattern)) {
+		    $str = trim(substr($str, strlen($pattern)));
 		}	
 	}
 	return $str;

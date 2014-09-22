@@ -94,13 +94,13 @@ abstract public class Source {
 		this.processingLastProcessedPageCount = processingLastProcessedPageCount;
 	}
 
-	public void setParam(String name, String value) {
-		params.setProperty("/params", name, value);
-	}
+//	public void setParam(String name, String value) {
+//		params.setProperty("/params", name, value);
+//	}
 
-	public String getParamsAsXml() {
-		return params.asXml();
-	}
+//	public String getParamsAsXml() {
+//		return params.asXml();
+//	}
 
 	public int getDepth() {
 		return depth;
@@ -112,9 +112,28 @@ abstract public class Source {
 	}
 
 	protected int getSrcDataInt(String name) {
-		if (srcData.containsKey(name)) return ((Integer)srcData.get(name)).intValue();
-		String value = getSrcDataString(name); //.replace(".0", "");
-		return Integer.parseInt(value);
+		if (srcData.containsKey(name)) {
+			Object o = srcData.get(name);
+			//String v = null;
+			try {
+				if (o instanceof String) {  
+					return Integer.parseInt((String) o);
+				} 
+				if (o instanceof Integer) {  
+					return ((Integer) o).intValue();
+				}
+				return 0;
+				//srcData.get(name)
+				//v = (String) srcData.get(name);
+			} 
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+			//return ((Integer)srcData.get(name)).intValue();
+		}
+		return 0;
+		//String value = getSrcDataString(name); //.replace(".0", "");
+		//return Integer.parseInt(value);
 	}
 
 	protected int getSrcDataInt(String name, int defaultValue) {

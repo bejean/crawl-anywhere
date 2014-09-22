@@ -158,7 +158,6 @@ public class MongoDBSourceQueue implements ISourceQueue {
 	        //sqlStatement = "(enabled = 1 and deleted = 0 and ((not crawl_process_status = 1 and not crawl_process_status = 2) or (crawl_mode = 2 or crawl_mode = 5 or crawl_mode = 6))) and ";
 		}
 
-
 		if (!"".equals(accountId)) {
 			String qAccountId = String.format("{\"id_account\": %1$s}",
 					accountId);	
@@ -204,8 +203,11 @@ public class MongoDBSourceQueue implements ISourceQueue {
 	    Date endDate = new Date();
 	    DBObject qTime2 = new BasicDBObject();
 	    qTime2.put("crawl_nexttime", new BasicDBObject("$gt", startDate).append("$lte", endDate));
-		
-		String qTime = String.format("{\"$or\": [%1$s, %2$s]}",
+
+//	    DBObject qqq = QueryBuilder.start().put("crawl_nexttime").greaterThan(startDate).lessThanEquals(endDate).get();
+//	    String sss4 = qqq.toString();
+	    
+	    String qTime = String.format("{\"$or\": [%1$s, %2$s]}",
 				qTime1, qTime2.toString());	
 		query = String.format("{\"$and\": [%1$s, %2$s]}",
 				qTime, query);				    

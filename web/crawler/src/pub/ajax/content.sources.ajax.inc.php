@@ -1439,7 +1439,7 @@ if ($action=="importsources")
 					$ignore[]='running_crawl_item_processed';
 					$ignore[]='running_crawl_item_to_process';
 																	
-					$c = $item->children();
+					//$c = $item->children();
 					
 					foreach($item->children() as $name => $data) {
 						if (!update_field($name, $import_update_fields)) continue;

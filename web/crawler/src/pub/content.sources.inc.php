@@ -489,10 +489,8 @@ function addOneUrl(url, mode, allowotherdomain, onlyfirstcrawl, show_error_msg) 
 		}
     }
 
-	//if (mode=="s")
-	//	allowotherdomain = 0;
-
-    var itemJsonStr = '{ "url": "' + url + '", "mode": "' + mode + '", "allowotherdomain": "' + allowotherdomain + '", "onlyfirstcrawl": "' + onlyfirstcrawl + '" }';
+    //var itemJsonStr = '{ "url": "' + url + '", "mode": "' + mode + '", "allowotherdomain": "' + allowotherdomain + '", "onlyfirstcrawl": "' + onlyfirstcrawl + '" }';
+    var itemJsonStr = '{ "url": "' + url.replace(/"/g, '\\"') + '", "mode": "' + mode + '", "allowotherdomain": "' + allowotherdomain + '", "onlyfirstcrawl": "' + onlyfirstcrawl + '" }';
 	if (currentUrl==-1) {
 	    var itemJson =  $.parseJSON(itemJsonStr);
     	objJson.urls.push( itemJson );
@@ -579,12 +577,11 @@ function urlDisplay() {
 		$("#status_source_url_ok").show();
 	}
 
-	
 	var objJson = $.parseJSON(source_url);
 	var html = '<table>';
 	for ( var i = 0; i < objJson.urls.length ; i++ ) {
 		if (objJson.urls[i].url != "") {
-			html += "<tr id='url_" + i + "'><td><table class='nob'><tr class='nob'><td colspan='4' class='nob'><a href='" + objJson.urls[i].url + "' target='_blank'>" + objJson.urls[i].url + "</a></td></tr><tr class='nob'>";
+			html += "<tr id='url_" + i + "'><td><table class='nob'><tr class='nob'><td colspan='4' class='nob'><a href='" + objJson.urls[i].url + "' target='_blank'>" + htmlspecialchars(objJson.urls[i].url, 'ENT_QUOTES', "UTF-8", false) + "</a></td></tr><tr class='nob'>";
 			html += "<td width='32%'>Mode : ";
 			if ( objJson.urls[i].mode == "s")
 				html += "Web site";
@@ -691,21 +688,26 @@ function addRuleYes () {
 	var ignoreparam = $("#add-rule-form-ignoreparam").val();
 	//var metap = $("#add-rule-form-meta-propagate").val();
 	var metap = 0;
+//alert(pat);
 	
-	var itemJsonStr = '{ "ope": "' + ope + '", "mode": "' + mode + '", "pat": "' + pat.replace(/\\/g,"\\\\") + '", "meta": "' + meta.replace(/\\/g,"\\\\").replace(/\n/g,'|') + '", "metap": "' + metap + '", "ignoreparam": "' + ignoreparam + '" }';
+	var itemJsonStr = '{ "ope": "' + ope + '", "mode": "' + mode + '", "pat": "' + pat.replace(/\\/g,"\\\\").replace(/"/g, '\\"') + '", "meta": "' + meta.replace(/\\/g,"\\\\").replace(/"/g, '\\"').replace(/\n/g,'|') + '", "metap": "' + metap + '", "ignoreparam": "' + ignoreparam.replace(/\\/g,"\\\\").replace(/"/g, '\\"') + '" }';
+//alert(itemJsonStr);
 	if (currentRule==-1) {
 	    var itemJson =  $.parseJSON(itemJsonStr);
     	objJson.rules.push( itemJson );
-        $("#source_crawl_filtering_rules").val(JSON.stringify(objJson, null, 2));
+    	itemJsonStr2 = JSON.stringify(objJson, null, 2);
+//alert(itemJsonStr2);
+		$("#source_crawl_filtering_rules").val(JSON.stringify(objJson, null, 2));
 	} else {
 		var ruleJson = '{ "rules": [';
 		var sep = "";	
 		for ( var i = 0; i < objJson.rules.length ; i++ ) {
 			if (currentRule==i) {
-				ruleJson += sep + itemJsonStr;
+			ruleJson += sep + itemJsonStr;
 			}
 			else {
-				ruleJson += sep + '{ "ope": "' + objJson.rules[i].ope + '", "mode": "' + objJson.rules[i].mode + '", "pat": "' + objJson.rules[i].pat.replace(/\\/g,"\\\\") + '", "meta": "' + objJson.rules[i].meta.replace(/\\/g,"\\\\") + '", "metap": "' + objJson.rules[i].metap + '", "ignoreparam": "' + ignoreparam + '" }';
+//alert(objJson.rules[i].pat);
+				ruleJson += sep + '{ "ope": "' + objJson.rules[i].ope + '", "mode": "' + objJson.rules[i].mode + '", "pat": "' + objJson.rules[i].pat.replace(/\\/g,"\\\\").replace(/"/g, '\\"') + '", "meta": "' + objJson.rules[i].meta.replace(/\\/g,"\\\\").replace(/"/g, '\\"').replace(/\n/g,'|') + '", "metap": "' + objJson.rules[i].metap + '", "ignoreparam": "' + ignoreparam.replace(/\\/g,"\\\\").replace(/"/g, '\\"') + '" }';
 			}
 			sep = ",";
 		}
@@ -750,6 +752,7 @@ function ruleDisplay() {
 	if (source_crawl_filtering_rules == "") {
 		source_crawl_filtering_rules = '{ "rules": [] }';
 	}
+//alert(source_crawl_filtering_rules);
 	
 	try {
 		var objJson = $.parseJSON(source_crawl_filtering_rules);
@@ -758,11 +761,16 @@ function ruleDisplay() {
 		alert (err);
 		return
 	}
+
 	var html = '<table id="add-rule-form-table"><tbody>';
 	for ( var i = 0; i < objJson.rules.length ; i++ ) {
 		if (objJson.rules[i].pat != "") {
 			html += "<tr id='rule_" + i + "'><td width='10%'>" + objJson.rules[i].ope + "</td>";
-			html += "<td width='50%'>" + escapeHTML (objJson.rules[i].pat.replace(/\\\\/g,"\\")) + "</td>"; // 20130928
+			//html += "<td width='50%'>" + escapeHTML (objJson.rules[i].pat.replace(/\\\\/g,"\\")) + "</td>"; // 20130928
+//alert(i);
+//alert(objJson.rules[i].pat);
+			html += "<td width='50%'>" + htmlspecialchars(objJson.rules[i].pat, 'ENT_QUOTES', "UTF-8", false) + "</td>"; // 20130928
+            
 			html += "<td width='27%'>";
 			if (objJson.rules[i].mode=="all")
 				html += "Get page and extract links";
@@ -805,7 +813,7 @@ function delRule(ndx) {
 	var sep = "";	
 	for ( var i = 0; i < objJson.rules.length ; i++ ) {
 		if (ndx!=i) {
-			ruleJson += sep + '{ "ope": "' + objJson.rules[i].ope + '", "mode": "' + objJson.rules[i].mode + '", "pat": "' + objJson.rules[i].pat.replace(/\\/g,"\\\\") + '", "meta": "' + objJson.rules[i].meta.replace(/\\/g,"\\\\") + '", "metap": "' + objJson.rules[i].metap + '", "ignoreparam": "' + objJson.rules[i].ignoreparam + '" }';
+			ruleJson += sep + '{ "ope": "' + objJson.rules[i].ope + '", "mode": "' + objJson.rules[i].mode + '", "pat": "' + objJson.rules[i].pat.replace(/\\/g,"\\\\").replace(/"/g, '\\"') + '", "meta": "' + objJson.rules[i].meta.replace(/\\/g,"\\\\").replace(/"/g, '\\"').replace(/\n/g,'|') + '", "metap": "' + objJson.rules[i].metap + '", "ignoreparam": "' + objJson.rules[i].ignoreparam.replace(/\\/g,"\\\\").replace(/"/g, '\\"') + '" }';
 			sep = ",";
 		}
 	}
@@ -842,13 +850,13 @@ function moveRule(ndx, offset) {
 	var sep = "";	
 	for ( var i = 0; i < objJson.rules.length ; i++ ) {
 		if ((i==ndx && offset==1) || (i==ndx-1 && offset==-1)) {
-			ruleJson += sep + '{ "ope": "' + objJson.rules[i+1].ope + '", "mode": "' + objJson.rules[i+1].mode + '", "pat": "' + objJson.rules[i+1].pat.replace(/\\/g,"\\\\") + '", "meta": "' + objJson.rules[i+1].meta.replace(/\\/g,"\\\\") + '", "metap": "' + objJson.rules[i+1].metap + '", "ignoreparam": "' + objJson.rules[i+1].ignoreparam + '" }';
+			ruleJson += sep + '{ "ope": "' + objJson.rules[i+1].ope + '", "mode": "' + objJson.rules[i+1].mode + '", "pat": "' + objJson.rules[i+1].pat.replace(/\\/g,"\\\\").replace(/"/g, '\\"') + '", "meta": "' + objJson.rules[i+1].meta.replace(/\\/g,"\\\\").replace(/"/g, '\\"').replace(/\n/g,'|') + '", "metap": "' + objJson.rules[i+1].metap + '", "ignoreparam": "' + objJson.rules[i+1].ignoreparam.replace(/\\/g,"\\\\").replace(/"/g, '\\"') + '" }';
 			sep = ",";
-			ruleJson += sep + '{ "ope": "' + objJson.rules[i].ope + '", "mode": "' + objJson.rules[i].mode + '", "pat": "' + objJson.rules[i].pat.replace(/\\/g,"\\\\") + '", "meta": "' + objJson.rules[i].meta.replace(/\\/g,"\\\\") + '", "metap": "' + objJson.rules[i].metap + '", "ignoreparam": "' + objJson.rules[i].ignoreparam + '" }';
+			ruleJson += sep + '{ "ope": "' + objJson.rules[i].ope + '", "mode": "' + objJson.rules[i].mode + '", "pat": "' + objJson.rules[i].pat.replace(/\\/g,"\\\\").replace(/"/g, '\\"') + '", "meta": "' + objJson.rules[i].meta.replace(/\\/g,"\\\\").replace(/"/g, '\\"').replace(/\n/g,'|') + '", "metap": "' + objJson.rules[i].metap + '", "ignoreparam": "' + objJson.rules[i].ignoreparam.replace(/\\/g,"\\\\").replace(/"/g, '\\"') + '" }';
 			sep = ",";	
 			i++;	
 		} else {
-			ruleJson += sep + '{ "ope": "' + objJson.rules[i].ope + '", "mode": "' + objJson.rules[i].mode + '", "pat": "' + objJson.rules[i].pat.replace(/\\/g,"\\\\") + '", "meta": "' + objJson.rules[i].meta.replace(/\\/g,"\\\\") + '", "metap": "' + objJson.rules[i].metap + '", "ignoreparam": "' + objJson.rules[i].ignoreparam + '" }';
+			ruleJson += sep + '{ "ope": "' + objJson.rules[i].ope + '", "mode": "' + objJson.rules[i].mode + '", "pat": "' + objJson.rules[i].pat.replace(/\\/g,"\\\\").replace(/"/g, '\\"') + '", "meta": "' + objJson.rules[i].meta.replace(/\\/g,"\\\\").replace(/"/g, '\\"').replace(/\n/g,'|') + '", "metap": "' + objJson.rules[i].metap + '", "ignoreparam": "' + objJson.rules[i].ignoreparam.replace(/\\/g,"\\\\").replace(/"/g, '\\"') + '" }';
 			sep = ",";	
 		}
 	}
@@ -858,6 +866,45 @@ function moveRule(ndx, offset) {
     ruleDisplay();
 }
 
+function json2xml(o, tab) {
+	   var toXml = function(v, name, ind) {
+	      var xml = "";
+	      if (v instanceof Array) {
+	         for (var i=0, n=v.length; i<n; i++)
+	            xml += ind + toXml(v[i], name, ind+"\t") + "\n";
+	      }
+	      else if (typeof(v) == "object") {
+	         var hasChild = false;
+	         xml += ind + "<" + name;
+	         for (var m in v) {
+	            if (m.charAt(0) == "@")
+	               xml += " " + m.substr(1) + "=\"" + v[m].toString() + "\"";
+	            else
+	               hasChild = true;
+	         }
+	         xml += hasChild ? ">" : "/>";
+	         if (hasChild) {
+	            for (var m in v) {
+	               if (m == "#text")
+	                  xml += v[m];
+	               else if (m == "#cdata")
+	                  xml += "<![CDATA[" + v[m] + "]]>";
+	               else if (m.charAt(0) != "@")
+	                  xml += toXml(v[m], m, ind+"\t");
+	            }
+	            xml += (xml.charAt(xml.length-1)=="\n"?ind:"") + "</" + name + ">";
+	         }
+	      }
+	      else {
+	         xml += ind + "<" + name + ">" + v.toString() +  "</" + name + ">";
+	      }
+	      return xml;
+	   }, xml="";
+	   for (var m in o)
+	      xml += toXml(o[m], m, "");
+	   return tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, "");
+	}
+	
 function json2XmlRule() {	
 	$("#source_crawl_filtering_rules_xml").val("");	
 	var jsonStr = $("#source_crawl_filtering_rules").val();
@@ -875,7 +922,12 @@ function json2XmlRule() {
 			ruleXml += '<rule><ope>' + objJson.rules[i].ope + '</ope><mode>' + objJson.rules[i].mode + '</mode><pat>' + escapeHTML(objJson.rules[i].pat) + '</pat><meta>' + escapeHTML(objJson.rules[i].meta) + '</meta><metap>' + escapeHTML(objJson.rules[i].metap) + '</metap><ignoreparam>' + escapeHTML(objJson.rules[i].ignoreparam) + '</ignoreparam></rule>';
 		}
 	}
-	ruleXml += '</rules>';		
+	ruleXml += '</rules>';	
+
+//alert("1");
+//alert(ruleXml);
+//alert(json2xml(objJson,""));
+
 	$("#source_crawl_filtering_rules_xml").val(ruleXml);	
 	return true;
 }

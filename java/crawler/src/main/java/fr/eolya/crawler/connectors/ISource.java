@@ -68,7 +68,7 @@ public interface ISource {
 	public boolean isCrawlAllowedBySchedule();
 	public String getDescription();
 	
-	public String getParamsAsXml();
+	//public String getParamsAsXml();
 
     public long getProcessingElapsedTime();
     public void setProcessingElapsedTime(long processingElapsedTime);

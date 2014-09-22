@@ -58,16 +58,20 @@ class SourceWeb extends SourceBase implements iSource {
 				$result = $urlXml->xpath('/urls/url');
 				$sep = "";
 				while(list( , $node) = each($result)) {
-					$urlJson .= $sep . '{ "url": "' . (string)$node->url . '", "home": "' . (string)$node->home . '", "mode": "' . (string)$node->mode . '", "allowotherdomain": "' . (string)$node->allowotherdomain . '", "onlyfirstcrawl": "' . (string)$node->onlyfirstcrawl . '" }';
+					$urlitem=(string)$node->url;
+					$urlitem = trim(preg_replace('/"/', '\\"', $urlitem));
+					$urlJson .= $sep . '{ "url": "' . $urlitem . '", "home": "' . (string)$node->home . '", "mode": "' . (string)$node->mode . '", "allowotherdomain": "' . (string)$node->allowotherdomain . '", "onlyfirstcrawl": "' . (string)$node->onlyfirstcrawl . '" }';
 					$sep = ",";
 				}
 			}
 			else {
-				$urlJson .= '{ "url": "' . $url . '",  "home": "", "mode": "s", "allowotherdomain": "0", "onlyfirstcrawl": "0" }';
+				$urlitem=$url;
+				$urlitem = trim(preg_replace('/"/', '\\"', $urlitem));
+				$urlJson .= '{ "url": "' . $urlitem . '",  "home": "", "mode": "s", "allowotherdomain": "0", "onlyfirstcrawl": "0" }';
 			}
 		}
 		$urlJson .= '] }';
-		
+				
 		$res .= "<td><span id='status_source_url_error'><img src='images/error_12.png'>&nbsp;Provide one or more starting url is mandatory !<br></span><span id='status_source_url_ok' style='display: none'><img src='images/ok_12.png'>&nbsp;</span>";
 		$res .= "<div id='url'>";
 		$res .= "</div>";
@@ -136,7 +140,7 @@ class SourceWeb extends SourceBase implements iSource {
 			for ($j=0; $j<=count($aCollections); $j++) {
 				if ($aCollections[$j]!="") {
 					$aCollections[$j] = str_replace("_", " ", $aCollections[$j]);
-					$res .= "<a href='javascript:void(0)' onClick='addCollection(\"" . $aCollections[$j] . "\");'><span class='nobr'><img id='collection_" . $aCollections[$j] . "' src='images/plus_12.png'>&nbsp;<label for='tag_" . $aCollections[$j] . "'>" . $aCollections[$j] . "</label></a>&nbsp;&nbsp;</span> ";
+					$res .= "<a href='javascript:void(0)' onClick='addCollection(\"" . fjsp($aCollections[$j]) . "\");'><span class='nobr'><img id='collection_" . fi($aCollections[$j]) . "' src='images/plus_12.png'>&nbsp;<label for='tag_" . fi($aCollections[$j]) . "'>" . $aCollections[$j] . "</label></a>&nbsp;&nbsp;</span> ";
 				}
 			}
 		}
@@ -152,7 +156,7 @@ class SourceWeb extends SourceBase implements iSource {
 			for ($j=0; $j<=count($aTags); $j++) {
 				if ($aTags[$j]!="") {
 					$aTags[$j] = str_replace("_", " ", $aTags[$j]);
-					$res .= "<a href='javascript:void(0)' onClick='addTag(\"" . $aTags[$j] . "\");'><span class='nobr'><img id='tag_" . $aTags[$j] . "' src='images/plus_12.png'>&nbsp;<label for='tag_" . $aTags[$j] . "'>" . $aTags[$j] . "</label></a>&nbsp;&nbsp;</span> ";
+					$res .= "<a href='javascript:void(0)' onClick='addTag(\"" . fjsp($aTags[$j]) . "\");'><span class='nobr'><img id='tag_" . fi($aTags[$j]) . "' src='images/plus_12.png'>&nbsp;<label for='tag_" . fi($aTags[$j]) . "'>" . $aTags[$j] . "</label></a>&nbsp;&nbsp;</span> ";
 				}
 			}
 		}
@@ -567,7 +571,19 @@ class SourceWeb extends SourceBase implements iSource {
 				$result = $rulesXml->xpath('/rules/rule');
 				$sep = "";
 				while(list( , $node) = each($result)) {
-					$rulesJson .= $sep . '{ "ope": "' . (string)$node->ope . '", "mode": "' . (string)$node->mode . '", "pat": "' . str_replace("\\", "\\\\", (string)$node->pat) . '", "meta": "' . str_replace("\\", "\\\\", (string)$node->meta) . '", "metap": "' . (string)$node->metap . '", "ignoreparam": "' . (string)$node->ignoreparam . '" }';
+					$patitem=(string)$node->pat;
+					$patitem = trim(str_replace("\\", "\\\\", $patitem));
+					$patitem = trim(preg_replace('/"/', '\\"', $patitem));
+
+					$metaitem=(string)$node->meta;
+					$metaitem = trim(str_replace("\\", "\\\\", $metaitem));
+					$metaitem = trim(preg_replace('/"/', '\\"', $metaitem));
+					
+					$ignoreparam=(string)$node->ignoreparam;
+					$ignoreparam = trim(str_replace("\\", "\\\\", $ignoreparam));
+					$ignoreparam = trim(preg_replace('/"/', '\\"', $ignoreparam));
+										
+					$rulesJson .= $sep . '{ "ope": "' . (string)$node->ope . '", "mode": "' . (string)$node->mode . '", "pat": "' . $patitem . '", "meta": "' . $metaitem . '", "metap": "' . (string)$node->metap . '", "ignoreparam": "' . $ignoreparam . '" }';
 					$sep = ",";
 				}
 			}
@@ -577,7 +593,12 @@ class SourceWeb extends SourceBase implements iSource {
 				for ($i=0; $i<count($aRules); $i++) {
 					if ($aRules[$i]!="") {
 						$aItems = explode(":", $aRules[$i]);
-						$rulesJson .= $sep . '{ "ope": "' . $aItems[0] . '", "mode": "' . $aItems[1] . '", "pat": "' . $aItems[3] . '", "meta": "", "metap": "", "ignoreparam": "" }';
+
+						$patitem=$aItems[3];
+						$patitem = trim(preg_replace('/\\/', '\\\\', $patitem));						
+						$patitem = trim(preg_replace('/"/', '\\"', $patitem));
+						
+						$rulesJson .= $sep . '{ "ope": "' . $aItems[0] . '", "mode": "' . $aItems[1] . '", "pat": "' . $patitem . '", "meta": "", "metap": "", "ignoreparam": "" }';
 						$sep = ",";
 					}
 				}
@@ -587,8 +608,8 @@ class SourceWeb extends SourceBase implements iSource {
 
 		$res .= "<div id='rule'>";
 		$res .= "</div>";
-		$res .= "<input type ='hidden' name='source_crawl_filtering_rules' id='source_crawl_filtering_rules' value='" . $rulesJson . "'>";
-		$res .= "<input type ='hidden' name='source_crawl_filtering_rules_xml' id='source_crawl_filtering_rules_xml' value='" . $rules . "'>";
+		$res .= "<input type ='hidden' name='source_crawl_filtering_rules' id='source_crawl_filtering_rules' value='" . fi($rulesJson) . "'>";
+		$res .= "<input type ='hidden' name='source_crawl_filtering_rules_xml' id='source_crawl_filtering_rules_xml' value='" .fi($rules) . "'>";
 		$res .= "<a href='javascript:addRule();'><img src='images/plus_12.png'>&nbsp;Add rule</a>";
 
 		$res .= "<br /><br />Test this URL :<br />";

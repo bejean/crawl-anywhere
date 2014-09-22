@@ -20,9 +20,9 @@ public class LanguageDetect {
     
     private LanguageRecognizerLanguageDetection lrLD;
     
-    //public LanguageDetect (int poolSize) {
-    //    this.poolSize = poolSize;
-    //}
+    public LanguageDetect (int poolSize) {
+        //this.poolSize = poolSize;
+    }
     
     public long getProcessingTime() {
         return processingTime;

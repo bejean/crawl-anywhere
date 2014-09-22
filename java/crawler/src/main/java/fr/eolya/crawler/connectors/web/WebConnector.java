@@ -361,7 +361,7 @@ public class WebConnector extends Connector implements IConnector {
                             SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 							String firstCrawlDate = StringUtils.trimToEmpty(queue.getCreated(itemData));
 							Date d = null;
-                            if ("".equals(firstCrawlDate) ) {
+							if (firstCrawlDate == null || "".equals(firstCrawlDate) ) {
                             	d = new Date();
                             } else {
                             	d = new Date(Long.parseLong(firstCrawlDate));

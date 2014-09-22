@@ -304,7 +304,7 @@ if ($results_img_height>0 && $results_img_width>0) {
 		    	        if (aCol[i]!="") {
 							var items = aCol[i].split(':');
 			    	    	//html += '<div><input type="checkbox" value="' + items[0] + '" name="search_collection[]"/>' + items[0] + ' (' + items[1] + ')' + '</div>';
-			    	    	html += '<span class="option_check"><input type="checkbox" value="' + items[0] + '" name="search_collection[]"';
+			    	    	html += '<span class="option_check"><input class="option_checkbox" type="checkbox" value="' + items[0] + '" name="search_collection[]"';
 			    	    	if (aCols.in_array(items[0])) html += ' checked="checked"';
 			    	    	html += '/>' + items[0] + '</span>';
 		    	        }

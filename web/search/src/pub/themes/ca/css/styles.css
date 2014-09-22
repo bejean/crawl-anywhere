@@ -396,3 +396,10 @@ height: auto;
   border-radius: 1px;
   padding: 0px 6px;
 }
+
+#div_query_collections_values .option_check {
+	margin-right:20px
+}
+#div_query_collections_values .option_checkbox {
+	margin-right:5px
+}

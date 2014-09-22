@@ -360,6 +360,7 @@ public class MongoDBSourceItemsQueue implements ISourceItemsQueue {
 		boolean ret = true;
 
 		BasicDBObject doc = new BasicDBObject(item);
+				
 		String keyValue = doc.getString(uniqueKeyFieldName);
 		String depth = doc.getString(depthFieldName);
 		String sourceId = doc.getString(sourceIdFieldName);
@@ -417,6 +418,12 @@ public class MongoDBSourceItemsQueue implements ISourceItemsQueue {
 				doc.put(referersFieldName, currentReferers);
 			}
 			if (curDoc!=null) {
+				
+				doc.put("content_type", curDoc.get("content_type"));
+				doc.put("crawl_last_time", curDoc.get("crawl_last_time"));
+				doc.put("condget_last_modified", curDoc.get("condget_last_modified"));
+				doc.put("condget_etag", curDoc.get("condget_etag"));
+
 				coll.update(curDoc, doc);	
 				// TODO : decrease done size in some case ???
 			} else {

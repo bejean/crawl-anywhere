@@ -204,8 +204,23 @@ public class WebConnector extends Connector implements IConnector {
 			Links links = null;
 
 			//SourceTasksQueueItemWeb currentUrlItem = SourceTasksQueueItemWeb.fromJson(jsonItem);
-			SourceItemWeb currentUrlItem = new SourceItemWeb(itemData);
-
+			SourceItemWeb currentUrlItem = new SourceItemWeb(itemData);		
+						
+			// isBinary
+			if (currentUrlItem.isBinary()) {
+				int binaryPeriod = Integer.parseInt(config.getProperty("/crawler/param[@name='period_binary_file']", "720"));
+				if (binaryPeriod>0) {
+					long crawlLastTime = currentUrlItem.getCrawlLastTime().getTime();
+					long now = new Date().getTime();
+					long delta = now - crawlLastTime;
+					
+					if (delta > 10000 || delta<(binaryPeriod*60*60*1000)) {
+						if (currentUrlItem.getDepth()<=memlogMaxDepth) src.memLogAppend("    rejected due to binary file period recrawl setting");
+						return 0;		
+					}	
+				}			
+			}
+	
 			/*
 			 * Normalize url and remove parameters to be ignored
 			 * This will avoid duplicate url just due to not used parameters or parameters ordering 

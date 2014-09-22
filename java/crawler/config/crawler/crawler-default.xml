@@ -58,6 +58,10 @@
 <param name="max_page_length">1000000</param>
 <param name="max_redirection">6</param>
 
+<param name="period_binary_file">720</param>
+<param name="period_optimized_source">24</param>
+<param name="period">168</param>
+
 <param name="child_only">0</param>
 
 <param name="extension_exclude">png,gif,jpg,jpeg,jpe,tiff,tif,bmp,mov,mp3,mpeg,mpg,mpe,avi,movie,dwg,mp4,bin,dvi,tar,gtar,zip,gzip,gz,man,ai,eps,ps,aif,aiff,aifc,wave,h264</param>
@@ -68,7 +72,7 @@
 
 <param name="rss_extract">0</param>
 
-<param name="max_simultaneous_source">3</param>
+<param name="max_simultaneous_source">4</param>
 <param name="max_simultaneous_item_per_source">1</param>
 
 <param name="witness_files_path">log</param>

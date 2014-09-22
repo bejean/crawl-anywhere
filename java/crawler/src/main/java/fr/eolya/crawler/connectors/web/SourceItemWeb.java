@@ -169,6 +169,24 @@ public class SourceItemWeb extends SourceItem implements ISourceItem {
 		return StringUtils.trimToEmpty(getString(CONTENT_TYPE));
 	}	
 
+	public boolean isBinary() {
+        boolean bIsBinary = false;
+        String contentType = getContentType();
+        if (contentType!=null && !"".equals(contentType)) {
+            bIsBinary = !(
+                            contentType.toLowerCase().startsWith("text/") 
+                            || contentType.toLowerCase().startsWith("application/x-shockwave-flash") 
+                            || contentType.toLowerCase().startsWith("application/xhtml+xml") 
+                            || contentType.toLowerCase().startsWith("application/rss+xml") 
+                            || contentType.toLowerCase().startsWith("application/xml") 
+                            || contentType.toLowerCase().startsWith("application/atom+xml") 				
+                            || contentType.toLowerCase().startsWith("application/rdf+xml") 
+                            || "".equals(contentType.trim())
+                            );							
+        } 
+        return bIsBinary;
+    }	
+
 	public String getRefererCharSet() {
 		return StringUtils.trimToEmpty(getString(REFERRER_CHARSET));
 	}	

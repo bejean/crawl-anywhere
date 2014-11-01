@@ -23,7 +23,6 @@ abstract public class ControllableThread extends Thread {
 	protected boolean stopThread;
 	protected long lastActivityTimeStamp;
 
-
 	public synchronized void stopThread() {
         this.stopThread = true;
 	}

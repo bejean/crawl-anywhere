@@ -430,9 +430,9 @@ public class WebConnector extends Connector implements IConnector {
 
 									String swfToHtmlPath = Utils.getValidPropertyPath(config.getProperty("/crawler/param[@name='swfToHtmlPath']", ""), null, "HOME");
 
-									TikaWrapper tikaWrapper = new TikaWrapper(TikaWrapper.OUTPUT_FORMAT_HTML, TikaWrapper.CONTENT_TYPE_SWF);
+									TikaWrapper tikaWrapper = new TikaWrapper(TikaWrapper.OUTPUT_FORMAT_HTML);
 									tikaWrapper.setSwfToHtmlPath(swfToHtmlPath);
-									tikaWrapper.process(urlLoader.getStream());
+									tikaWrapper.process(urlLoader.getStream(), TikaWrapper.CONTENT_TYPE_SWF);
 									rawPage = tikaWrapper.getText();
 									
 									//MultiFormatTextExtractor extractor = new MultiFormatTextExtractor();

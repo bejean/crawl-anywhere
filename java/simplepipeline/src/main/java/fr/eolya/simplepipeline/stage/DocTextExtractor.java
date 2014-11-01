@@ -7,6 +7,7 @@ import java.util.HashMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 
+
 //import fr.eolya.extraction.MultiFormatTextExtractor;
 import fr.eolya.extraction.ScriptsWrapper;
 import fr.eolya.simplepipeline.config.PipelineConfig;
@@ -14,7 +15,6 @@ import fr.eolya.simplepipeline.document.Doc;
 import fr.eolya.utils.Base64;
 import fr.eolya.utils.Utils;
 import fr.eolya.utils.http.HttpUtils;
-
 import fr.eolya.extraction.tika.TikaWrapper;
 
 
@@ -329,10 +329,12 @@ public class DocTextExtractor extends Stage {
 			HtmlParser htmlParser = new HtmlParser();
 
 			TikaWrapper wrapper = null;
+			String tikaContentType = null;
 
 			// application/pdf
 			if (contentType.startsWith("application/pdf")) {
-				wrapper = new TikaWrapper(TikaWrapper.OUTPUT_FORMAT_TEXT, TikaWrapper.CONTENT_TYPE_PDF);
+				wrapper = new TikaWrapper(TikaWrapper.OUTPUT_FORMAT_TEXT);
+				tikaContentType = TikaWrapper.CONTENT_TYPE_PDF;
 				wrapper.setPdfToTextPath(pdfToTextPath);
 			} else {
 				// text/html
@@ -356,7 +358,9 @@ public class DocTextExtractor extends Stage {
 					if ("snacktory".equals(cleanMethod)) 
 						outputFormat = TikaWrapper.OUTPUT_FORMAT_TEXT_MAIN_SNACKTORY;
 					
-					wrapper = new TikaWrapper(outputFormat, TikaWrapper.CONTENT_TYPE_HTML);
+					wrapper = new TikaWrapper(outputFormat);
+					tikaContentType = TikaWrapper.CONTENT_TYPE_HTML;
+
 					
 				} else {
 					wrapper = new TikaWrapper(TikaWrapper.OUTPUT_FORMAT_TEXT);
@@ -364,7 +368,7 @@ public class DocTextExtractor extends Stage {
 			}
 			
 			wrapper.setTempPath(tmpPath);
-			wrapper.process(input);
+			wrapper.process(input, tikaContentType);
 			
 			parserText = wrapper.getText();
 			parserContentType = wrapper.getMetaContentType();

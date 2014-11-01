@@ -16,7 +16,6 @@ import javax.script.ScriptException;
 
 import org.apache.commons.io.IOUtils;
 
-
 import fr.eolya.extraction.tika.TikaWrapper;
 import fr.eolya.utils.ScriptSnippet;
 import fr.eolya.utils.http.HttpLoader;
@@ -381,7 +380,7 @@ public class ScriptsWrapper {
                 
                 // Get page text
                 //MultiFormatTextExtractor extractor = new MultiFormatTextExtractor();
-				TikaWrapper tikaWrapper = new TikaWrapper(TikaWrapper.OUTPUT_FORMAT_TEXT, TikaWrapper.CONTENT_TYPE_HTML);
+				TikaWrapper tikaWrapper = new TikaWrapper(TikaWrapper.OUTPUT_FORMAT_TEXT);
 
                 String text = "";
                 InputStream in = null;
@@ -393,7 +392,7 @@ public class ScriptsWrapper {
                 	in = IOUtils.toInputStream(page);
                 }
                 
-				tikaWrapper.process(in);
+				tikaWrapper.process(in, TikaWrapper.CONTENT_TYPE_HTML);
 				text = tikaWrapper.getText();
 				
                 if (title==null || "".equals(title))

@@ -807,22 +807,22 @@ class ConfigTool
 			$this->_toBoolean( $key );
 		}
 		// array must start with a_
-		else if ( $this->AUTOARRAY && preg_match( "/a_/i", $key ) )
+		else if ( $this->AUTOARRAY && preg_match( "/^a_/i", $key ) )
 		{
 			$this->_toArray( $key );
 		}
 		// integer must start with i_
-		else if ( $this->AUTOINTEGER && preg_match( "/i_/i", $key ) )
+		else if ( $this->AUTOINTEGER && preg_match( "/^i_/i", $key ) )
 		{
 			$this->_toInteger( $key );
 		}
 		// double must start with d_
-		else if ( $this->AUTODOUBLE && preg_match( "/d_/i", $key ) )
+		else if ( $this->AUTODOUBLE && preg_match( "/^d_/i", $key ) )
 		{
 			$this->_toDouble( $key );
 		}
 		// string must start with s_
-		else if ( $this->AUTOSTRING && preg_match( "/s_/i", $key ) )
+		else if ( $this->AUTOSTRING && preg_match( "/^s_/i", $key ) )
 		{
 			$this->_toString( $key );
 		}

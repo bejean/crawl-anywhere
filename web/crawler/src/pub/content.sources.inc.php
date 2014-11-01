@@ -7,6 +7,15 @@
 //============================================================================
 ?>
 
+<?php 
+$import_use_custom = $config->getDefault("sources.import_use_custom", "");
+if (!empty($import_use_custom) && file_exists ('../custom/' . $import_use_custom)) 
+	$import_use_custom = true;
+else 
+	$import_use_custom = false;
+?>
+
+
 <script type="text/javascript">
 <!--
 
@@ -1294,6 +1303,15 @@ function importImport () {
 	
 	var reset = $('#import-dialog-form-reset').attr('checked')?"1":"0";
 	url += '&reset=' + reset;
+
+<?php 
+if ($import_use_custom) {
+?>
+var custom = $('#import-dialog-form-usecustom').attr('checked')?"1":"0";
+url += '&custom=' + custom;
+<?php 
+}
+?>
 			
 	$("#import-dialog-message").html("");
 	$("#import-dialog-form-upload").upload(url, 
@@ -1557,72 +1575,72 @@ foreach ($aSourceTypes as $id => $type) {
 						<td><label>Days</label></td>
 						<td><select id="add-schedule-form-day">
 								<option value='all' selected>all</option>
-								<option value='monday' selected>monday</option>
-								<option value='tuesday' selected>tuesday</option>
-								<option value='wednesday' selected>wednesday</option>
-								<option value='thursday' selected>thursday</option>
-								<option value='friday' selected>friday</option>
-								<option value='saturday' selected>saturday</option>
-								<option value='sunday' selected>sunday</option>
+								<option value='monday'>monday</option>
+								<option value='tuesday'>tuesday</option>
+								<option value='wednesday'>wednesday</option>
+								<option value='thursday'>thursday</option>
+								<option value='friday'>friday</option>
+								<option value='saturday'>saturday</option>
+								<option value='sunday'>sunday</option>
 						</select></td>
 						<td><label>Start hour</label></td>
 						<td><select id="add-schedule-form-start">
 								<option value='0' selected>0:00</option>
-								<option value='1' selected>1:00</option>
-								<option value='2' selected>2:00</option>
-								<option value='3' selected>3:00</option>
-								<option value='4' selected>4:00</option>
-								<option value='5' selected>5:00</option>
-								<option value='6' selected>6:00</option>
-								<option value='7' selected>7:00</option>
-								<option value='8' selected>8:00</option>
-								<option value='9' selected>9:00</option>
-								<option value='10' selected>10:00</option>
-								<option value='11' selected>11:00</option>
-								<option value='12' selected>12:00</option>
-								<option value='13' selected>13:00</option>
-								<option value='14' selected>14:00</option>
-								<option value='15' selected>15:00</option>
-								<option value='16' selected>16:00</option>
-								<option value='17' selected>17:00</option>
-								<option value='18' selected>18:00</option>
-								<option value='19' selected>19:00</option>
-								<option value='20' selected>20:00</option>
-								<option value='21' selected>21:00</option>
-								<option value='22' selected>22:00</option>
-								<option value='23' selected>23:00</option>
+								<option value='1'>1:00</option>
+								<option value='2'>2:00</option>
+								<option value='3'>3:00</option>
+								<option value='4'>4:00</option>
+								<option value='5'>5:00</option>
+								<option value='6'>6:00</option>
+								<option value='7'>7:00</option>
+								<option value='8'>8:00</option>
+								<option value='9'>9:00</option>
+								<option value='10'>10:00</option>
+								<option value='11'>11:00</option>
+								<option value='12'>12:00</option>
+								<option value='13'>13:00</option>
+								<option value='14'>14:00</option>
+								<option value='15'>15:00</option>
+								<option value='16'>16:00</option>
+								<option value='17'>17:00</option>
+								<option value='18'>18:00</option>
+								<option value='19'>19:00</option>
+								<option value='20'>20:00</option>
+								<option value='21'>21:00</option>
+								<option value='22'>22:00</option>
+								<option value='23'>23:00</option>
 						</select></td>
 						<td><label>Stop hour</label></td>
 						<td><select id="add-schedule-form-stop">
 								<option value='1' selected>1:00</option>
-								<option value='2' selected>2:00</option>
-								<option value='3' selected>3:00</option>
-								<option value='4' selected>4:00</option>
-								<option value='5' selected>5:00</option>
-								<option value='6' selected>6:00</option>
-								<option value='7' selected>7:00</option>
-								<option value='8' selected>8:00</option>
-								<option value='9' selected>9:00</option>
-								<option value='10' selected>10:00</option>
-								<option value='11' selected>11:00</option>
-								<option value='12' selected>12:00</option>
-								<option value='13' selected>13:00</option>
-								<option value='14' selected>14:00</option>
-								<option value='15' selected>15:00</option>
-								<option value='16' selected>16:00</option>
-								<option value='17' selected>17:00</option>
-								<option value='18' selected>18:00</option>
-								<option value='19' selected>19:00</option>
-								<option value='20' selected>20:00</option>
-								<option value='21' selected>21:00</option>
-								<option value='22' selected>22:00</option>
-								<option value='23' selected>23:00</option>
-								<option value='24' selected>24:00</option>
+								<option value='2'>2:00</option>
+								<option value='3'>3:00</option>
+								<option value='4'>4:00</option>
+								<option value='5'>5:00</option>
+								<option value='6'>6:00</option>
+								<option value='7'>7:00</option>
+								<option value='8'>8:00</option>
+								<option value='9'>9:00</option>
+								<option value='10'>10:00</option>
+								<option value='11'>11:00</option>
+								<option value='12'>12:00</option>
+								<option value='13'>13:00</option>
+								<option value='14'>14:00</option>
+								<option value='15'>15:00</option>
+								<option value='16'>16:00</option>
+								<option value='17'>17:00</option>
+								<option value='18'>18:00</option>
+								<option value='19'>19:00</option>
+								<option value='20'>20:00</option>
+								<option value='21'>21:00</option>
+								<option value='22'>22:00</option>
+								<option value='23'>23:00</option>
+								<option value='24'>24:00</option>
 						</select></td>
 						<td><label>Enabled</label></td>
 						<td><select id="add-schedule-form-enabled">
 								<option value='true' selected>yes</option>
-								<option value='false' selected>no</option>
+								<option value='false'>no</option>
 						</select></td>
 					</tr>
 					<tr>
@@ -1675,7 +1693,7 @@ foreach ($aSourceTypes as $id => $type) {
 							<td><select id="export-dialog-form-mode">
 									<option value='all' selected>all</option>
 									<!-- <option value='current' selected>current (all web sites matching current criteria)</option>  -->
-									<option value='selection' selected>selection (checked web
+									<option value='selection'>selection (checked web
 										sites)</option>
 							</select></td>
 						</tr>
@@ -1699,23 +1717,38 @@ foreach ($aSourceTypes as $id => $type) {
 			<!-- form enctype="multipart/form-data" action="_URL_" method="post"  -->
 			<fieldset>
 				<table border='0' style='margin-left: auto; margin-right: auto;'>
+<?php 
+if ($import_use_custom) {
+?>
 					<tr>
-					
-					
+						<td><label>Use custom import format</label></td>
+						<td><input id="import-dialog-form-usecustom"
+							name="import-dialog-form-usecustom" type="checkbox" value="1" checked="checked"/></td>
+					</tr>
+<?php 
+}
+?>									
 					<tr>
 						<td><label>Check existing web site by</label></td>
 						<td><select id="import-dialog-form-match">
+
 <?php 
-$import_use_custom = $config->getDefault("sources.import_use_custom", "");
-if (empty($import_use_custom) || !file_exists ('../custom/' . $import_use_custom)) {
+if (!$import_use_custom) {
 ?>
-								<option value='id' selected>Id</option>
+								<option value='id'>Id</option>
 <?php 
+} else {
+	$import_id_field = $config->getDefault("sources.import_id_field", "");
+	if (!empty($import_id_field) && strtolower($import_id_field)!='name') {
+?>
+								<option value='<?php print( $import_id_field); ?>' selected="selected"><?php print( ucfirst($import_id_field)); ?></option>
+<?php 
+	}
 }
 ?>
-								<option value='name' selected>Name</option>
+								<option value='name'>Name</option>
 								<!--option value='host' selected>Host</option-->
-								<option value='none' selected>No check</option>
+								<option value='none'>No check</option>
 						</select></td>
 					</tr>
 					<tr>
@@ -1728,9 +1761,9 @@ if (empty($import_use_custom) || !file_exists ('../custom/' . $import_use_custom
 					<tr>
 						<td><label>Create web site with status</label></td>
 						<td><select id="import-dialog-form-status">
-								<option value='0' selected>Disabled</option>
+								<option value='0'>Disabled</option>
 								<option value='1' selected>Enabled</option>
-								<option value='2' selected>Test</option>
+								<option value='2'>Test</option>
 						</select></td>
 					</tr>
 					<tr>
@@ -1741,7 +1774,7 @@ if (empty($import_use_custom) || !file_exists ('../custom/' . $import_use_custom
 					<tr>
 						<td><label>Priority</label></td>
 						<td><select id="import-dialog-form-priority">
-								<option value='0' selected>Normal</option>
+								<option value='0'>Normal</option>
 								<option value='1' selected>High</option>
 						</select></td>
 					</tr>

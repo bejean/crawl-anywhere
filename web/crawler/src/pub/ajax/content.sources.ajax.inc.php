@@ -136,7 +136,6 @@ if ($action=="loadsources")
 	$mg = mg_connect ($config, "", "", "");
 	if ($mg)
 	{
-		
 		$query_id = array ("id_account" => intval($id_account_current));
 
  		if ($suspicious == "1") { 		
@@ -266,7 +265,7 @@ if ($action=="loadsources")
  				if ($aTypes[$j]!="") {
  					$res2 .= "<option value='" . $aTypes[$j] . "'";
  					if ($filter_type==$aTypes[$j]) $res2 .= " selected";
- 					$res2 .= ">" .$aSourceTypes[$aTypes[$j]][name] . "</option>";
+ 					$res2 .= ">" .$aSourceTypes[$aTypes[$j]]['name'] . "</option>";
  				}
  			}
  			$res2 .= "</select></td></tr>";
@@ -496,12 +495,12 @@ if ($action=="loadsources")
 			$res .= "<td width='50px'>";
 			
 			if (!empty($aSourceTypes[$rs["type"]][link])) {
-				$res .= "<a href='" . $aSourceTypes[$rs["type"]][link] . "' target='_blank'>";
+				$res .= "<a href='" . $aSourceTypes[$rs["type"]]['link'] . "' target='_blank'>";
 			}
 			
-			$res .= "<img src='images/" . $aSourceTypes[$rs["type"]][mnemo] . "_icone.png' height='32' width='32'>";
-			$res .= $aSourceTypes[$rs["type"]][name];
-			if (!empty($aSourceTypes[$rs["type"]][link])) {
+			$res .= "<img src='images/" . $aSourceTypes[$rs["type"]]['mnemo'] . "_icone.png' height='32' width='32'>";
+			$res .= $aSourceTypes[$rs["type"]]['name'];
+			if (!empty($aSourceTypes[$rs["type"]]['link'])) {
 				$res .= "</a>";
 			}
 			$res .= "</td>";
@@ -1346,8 +1345,15 @@ if ($action=="importsources")
 	if (file_exists($file_temp)) {
 
 		$import_use_custom = $config->getDefault("sources.import_use_custom", "");
-		
 		if (!empty($import_use_custom) && file_exists ('../../custom/' . $import_use_custom)) {
+			$custom = "0";
+			if (isset($_GET["custom"])) $custom = $_GET["custom"];
+			if ($custom!="1") $import_use_custom = false;
+		} else { 
+			$import_use_custom = false;	
+		}	
+		
+		if ($import_use_custom) {
 			include '../../custom/' . $import_use_custom;
 			$converter = new ImportConvert($file_temp);
 			$xml = $converter->getXml();
@@ -1379,7 +1385,15 @@ if ($action=="importsources")
 						if ($count > 1) continue;
 						if ($count == 1) $mode = "update";
 					}
-
+					
+					$import_id_field = $config->getDefault("sources.import_id_field", "");
+					if (!empty($import_id_field) && strtolower($import_id_field)!='name' && $match==$import_id_field) {
+						$query = array ('$and' => array($query, array ("import_id" => (string) $item->$match)));
+						$count = mg_row_count($mg, "sources", $query);
+						if ($count > 1) continue;
+						if ($count == 1) $mode = "update";
+					}
+												
 // 					if ($match=='host') {
 // 						$query = array ('$and' => array($query, array ("url_host" => (string) $item->url_host)));
 // 						$count = mg_row_count($mg, "sources", $query);
@@ -1399,9 +1413,13 @@ if ($action=="importsources")
 						$stmt = new mg_stmt_update($mg, "sources");
 						$stmt->setQuery($query);
 						$enabled = (string) $item->enabled;
-						$import_update_fields = array_map('trim', explode(',', $config->getDefault("sources.import_update_fields", "")));;
+						$import_update_fields = array_map('trim', explode(',', $config->getDefault("sources.import_update_fields", "")));
 					}
 
+					if (!empty($import_id_field) && strtolower($import_id_field)!='name') {
+						$stmt->addColumnValue("import_id", (string) $item->$match);
+					}
+					
 					if (update_field("deleted", $import_update_fields)) $stmt->addColumnValue("deleted", "0");
 					if (update_field("enabled", $import_update_fields)) $stmt->addColumnValue("enabled", $enabled);
 

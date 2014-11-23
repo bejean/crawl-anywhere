@@ -182,11 +182,8 @@ $solr_version = getSolrVersion($theme->getSolrHost(), $theme->getSolrPort(), $th
 //
 $usecollections = $config->get("search.use_collections");
 $usetags = $config->get("search.use_tags");
-$usecollections = false;
-$usetags = false;
 
 $usetagcloud = $config->get("search.use_tagcloud");
-//if (!empty($solr_version) && $solr_version{0}!='4') $usetagcloud = 0;
 if (!empty($solr_version) && solrVersionAsANumber($solr_version) < 430) $usetagcloud = 0;
 
 $useadvanced = $config->get("search.use_advanced");
@@ -197,7 +194,6 @@ $usesourcename = $config->get("search.use_sourcename");
 $uselocation = $config->get("search.use_location");
 
 $facet_union = ($config->getDefault("facet.mode_union", "0", false)=="1");
-//$facet_union = false;
 $facetuse = $theme->getFacet($config->get("facet.use"));
 $facetlimit = $config->get("facet.limit", "10");
 
@@ -454,11 +450,9 @@ function loadFacetOneQuery($config, $field) {
 	return $aQuery;
 }
 
-
 function solrVersionAsANumber($solr_version) {
 	$solr_version = str_replace('.', '', $solr_version);
-	return intval(substr($solr_version, 0,3));
+	return intval($solr_version);
 }
-
 
 ?>

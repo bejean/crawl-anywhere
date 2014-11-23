@@ -601,37 +601,69 @@ class Solr {
 			$finalqry .= " AND source_text:(" . $filter_source . ")";
 		}
 
-		$params['fq'] = $fq;
 
 		$collection = "";
 		if (!empty($filter_collection)) {
-			for ($i=0; $i<count($filter_collection); $i++) {
-				if ($collection!="")
-				$collection .= " OR ";
-				//$collection .= "collection:". strtolower($filter_collection[$i]) . " OR collection:" . strtoupper($filter_collection[$i]) ;
-				$collection .= "collection:\"". strtolower($filter_collection[$i])."\"";
+			if (!$dismax) {
+				for ($i=0; $i<count($filter_collection); $i++) {
+					if ($collection!="") {
+						$collection .= " OR ";
+						//$collection .= "collection:". strtolower($filter_collection[$i]) . " OR collection:" . strtoupper($filter_collection[$i]) ;
+						$collection .= "collection:\"". strtolower($filter_collection[$i])."\"";
+					}
+				}
+				if ($collection!="") {
+					$finalqry = $finalqry . " AND (" . $collection . ")";
+				}				
+			} else {
+				for ($i=0; $i<count($filter_collection); $i++) {
+					if ($collection!="") $collection .= " OR ";
+					$collection .= "\"". strtolower($filter_collection[$i])."\"";						
+				}
+				if ($collection!="") {
+					array_push($fq, "collection:(" . $collection . ")");
+				}				
 			}
 		}
 
-		if ($collection!="" && !$dismax) {
-			$finalqry = $finalqry . " AND (" . $collection . ")";
-		}
+// 		if ($collection!="") {
+// 			if (!$dismax) {
+// 				$finalqry = $finalqry . " AND (" . $collection . ")";
+// 			} else {
+// 				array_push($fq, "collection:" . urlencode($filter_country));
+// 			}
+// 		}
 
 		$tag = "";
 		if (!empty($filter_tag)) {
-			for ($i=0; $i<count($filter_tag); $i++) {
-				if ($tag!="")
-				$tag .= " OR ";
-				//$tag .= "tag:". strtolower($filter_tag[$i]) . " OR tag:" . strtoupper($filter_tag[$i]);
-				$tag .= "tag:\"". strtolower($filter_tag[$i])."\"";
-
+			if (!$dismax) {
+				for ($i=0; $i<count($filter_tag); $i++) {
+					if ($tag!="")
+					$tag .= " OR ";
+					//$tag .= "tag:". strtolower($filter_tag[$i]) . " OR tag:" . strtoupper($filter_tag[$i]);
+					$tag .= "tag:\"". strtolower($filter_tag[$i])."\"";
+	
+				}
+				if ($tag!="") {
+					$finalqry = $finalqry . " AND (" . $tag . ")";
+				}
+			} else {
+				for ($i=0; $i<count($filter_tag); $i++) {
+					if ($tag!="") $tag .= " OR ";
+					$tag .= "\"". strtolower($filter_tag[$i])."\"";						
+				}
+				if ($tag!="") {
+					array_push($fq, "tag:(" . $tag . ")");
+				}				
 			}
 		}
 
-		if ($tag!="" && !$dismax) {
-			$finalqry = $finalqry . " AND (" . $tag . ")";
-		}
+// 		if ($tag!="" && !$dismax) {
+// 			$finalqry = $finalqry . " AND (" . $tag . ")";
+// 		}
 
+		$params['fq'] = $fq;
+		
 		//$finalqry .= $queryField . ':'
 		//$finalqry = 'tagssrch:' . $qry . '^4 title:' . $qry . '^3 categoriessrch:' . $qry . '^1.2 text:' . $qry . '^1';
 

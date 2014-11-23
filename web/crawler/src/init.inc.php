@@ -445,7 +445,10 @@ function getStartingUrls($url) {
 ///////////////////////////////////////////////////////////
 function getStartingUrlsAsString($url, $sep) {
 	if (substr($url, 0, 1) == "<") {
+		$url = str_replace('&amp;', '&', $url);
+		$url = str_replace('&', '&amp;', $url);
 		$urlXml = simplexml_load_string($url);
+		if ($urlXml===False) return "";
 		$result = $urlXml->xpath('/urls/url');
 		$ret = "";
 		while(list( , $node) = each($result)) {

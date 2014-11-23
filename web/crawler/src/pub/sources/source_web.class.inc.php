@@ -54,6 +54,8 @@ class SourceWeb extends SourceBase implements iSource {
 		$urlJson = '{ "urls": [';
 		if (!empty($url)) {
 			if (substr($url, 0, 1) == "<") {
+				$url = str_replace('&amp;', '&', $url);
+				$url = str_replace('&', '&amp;', $url);
 				$urlXml = simplexml_load_string($url);
 				$result = $urlXml->xpath('/urls/url');
 				$sep = "";

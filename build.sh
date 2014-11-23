@@ -35,6 +35,10 @@ cp -r $DEV/external $DISTRIB/.
 # scripts
 #============================================
 cp -r $DEV/scripts $DISTRIB/.
+rm -rf $DISTRIB/scripts/mysolrserver
+rm -rf $DISTRIB/scripts/linux/deprecated
+rm -rf $DISTRIB/scripts/win/deprecated
+
 
 #=============================================
 # crawler
@@ -91,55 +95,6 @@ rm -rf $DEV/java/indexer/dependency
 #mvn dependency:copy-dependencies
 cp target/indexer-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-indexer-$VERSION.jar
 
-## solr
-cd $DEV/java/solr
-#mvn clean
-#mvn package -Dmaven.test.skip=true
-rm -rf $DEV/java/solr/target/dependency
-#mvn dependency:copy-dependencies
-#rm target/dependency/*lucene*
-#rm target/dependency/*solr*
-
-mkdir $DISTRIB/install/solr/solr430/lib
-cp target/solr-0.0.1-SNAPSHOT.jar $DISTRIB/install/solr/solr430/lib/eolya-solr4.jar
-#cp target/dependency/*.jar $DISTRIB/install/solr/solr430/lib/.
-
-
-## solr3
-#cd $DEV/java/solr
-#mvn clean
-#mvn package -Dmaven.test.skip=true
-#rm -rf $DEV/java/solr/target/dependency
-#mvn dependency:copy-dependencies
-#rm target/dependency/*lucene*
-#rm target/dependency/*solr*
-#
-##rm $DEV/install/bin/solr3/*
-#
-#mkdir $DISTRIB/install/solr/solr310/crawler/lib
-#cp target/solr-0.0.1-SNAPSHOT.jar $DISTRIB/install/solr/solr310/crawler/lib/eolya-solr3.jar
-#cp target/dependency/*.jar $DISTRIB/install/solr/solr310/crawler/lib/.
-#
-#mkdir $DISTRIB/install/solr/solr350/crawler/lib
-#cp target/solr-0.0.1-SNAPSHOT.jar $DISTRIB/install/solr/solr350/crawler/lib/eolya-solr3.jar
-#cp target/dependency/*.jar $DISTRIB/install/solr/solr350/crawler/lib/.
-#
-## solr4
-#cd $DEV/java/solr4
-#mvn clean
-#mvn package -Dmaven.test.skip=true
-#rm -rf $DEV/java/solr4/target/dependency
-#mvn dependency:copy-dependencies
-#rm target/dependency/*lucene*
-#rm target/dependency/*solr*
-#
-##rm $DEV/install/bin/solr4/*
-#
-#mkdir $DISTRIB/install/solr/solr400/crawler/lib
-#cp target/solr4-0.0.1-SNAPSHOT.jar $DISTRIB/install/solr/solr400/crawler/lib/eolya-solr4.jar
-#cp target/dependency/*.jar $DISTRIB/install/solr/solr400/crawler/lib/.
-
-
 #=============================================
 # crawler WS
 #=============================================
@@ -160,7 +115,6 @@ cd $DEV/java
 mvn install:install-file -DgroupId=fr.eolya -DartifactId=utils -Dversion=0.0.1-SNAPSHOT -Dpackaging=jar -Dfile=utils/target/utils-0.0.1-SNAPSHOT.jar
 mvn dependency:copy-dependencies
 
-rm $DISTRIB/lib/*
 cp -r $DEV/java/crawler/target/dependency/* $DISTRIB/lib/.
 cp -r $DEV/java/simplepipeline/target/dependency/* $DISTRIB/lib/.
 cp -r $DEV/java/indexer/target/dependency/* $DISTRIB/lib/.

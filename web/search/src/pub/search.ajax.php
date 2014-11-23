@@ -219,23 +219,16 @@ if ($action=="autocomplete" || $action=="fiedvalues" || $action=="gettext" || $a
 				if ($fqitem) {
 					if ($fqstr!="") $fqstr .= urlencode('||');
 
-					if ($facet_union || true) {
+					if ($facet_union) {
 						$fqitem_parts = explode(':', $fqitem);
-						//if ($fqstr=="") {
-						//	array_push($fqsearch, "(" . $fqitem);
-						//} else {
 							if ($fqitem_field_prev != $fqitem_parts[0]) {
 								if (!empty($fqitem_field_prev)) {
 									$fqsearch[$fqcount] = '(' . $fqsearch[$fqcount] . ')';
 									$fqcount++;
 								}
-								//$fqsearch[0] .= ") AND (" . $fqitem;
 							} 
-							//else {
 							if (!empty($fqsearch[$fqcount])) $fqsearch[$fqcount] .= " OR ";
 								$fqsearch[$fqcount] .= $fqitem;
-							//}
-						//}
 						$fqitem_field_prev = $fqitem_parts[0];
 					}
 					$splititm = explode(':', $fqitem, 2);
@@ -247,9 +240,8 @@ if ($action=="autocomplete" || $action=="fiedvalues" || $action=="gettext" || $a
 			if (count($fqsearch) > 0) {
 				$fqsearch[$fqcount] = '(' . $fqsearch[$fqcount] . ')';
 			}
-			//if (count($fqsearch) > 0 && $fqsearch[0]!="") $fqsearch[0] .= ")";
 
-			//if (!$facet_union) $fqsearch = $fqitms;
+			if (!$facet_union) $fqsearch = $fqitms;
 
 			$queryField = getQueryField($search_multilingual, $search_language_code);
 

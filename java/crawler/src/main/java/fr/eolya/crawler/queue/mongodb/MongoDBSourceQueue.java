@@ -167,10 +167,10 @@ public class MongoDBSourceQueue implements ISourceQueue {
 		} else {
 			String qAccountIds;
 			if ("".equals(engineId)) {
-				qAccountIds = "{\"deleted\": \"0\"}";
+				qAccountIds = "{\"deleted\": { \"$ne\": \"1\"}}";
 				// sqlStatement += " (id_account in (select id from accounts where deleted = 0)) and " ;
 			} else {
-				qAccountIds = String.format("{\"$and\": [{\"deleted\": \"0\"}, {\"id_engine\": %1$s}]}",
+				qAccountIds = String.format("{\"$and\": [{\"deleted\": { \"$ne\": \"1\"}}, {\"id_engine\": %1$s}]}",
 						engineId);
 				// sqlStatement += " (id_account in (select id from accounts where id_engine = " + engineId + " and deleted = 0)) and " ;	
 			}

@@ -48,6 +48,7 @@ import fr.eolya.utils.Logger;
 import fr.eolya.utils.ScriptSnippet;
 import fr.eolya.utils.Utils;
 import fr.eolya.utils.XMLConfig;
+import fr.eolya.utils.http.HttpLoader;
 import fr.eolya.utils.http.HttpUtils;
 import fr.eolya.utils.nosql.IDBConnection;
 
@@ -84,7 +85,7 @@ public class WebConnector extends Connector implements IConnector {
 					authBasicLogin.put("login",this.src.getAuthLogin());
 					authBasicLogin.put("password",this.src.getAuthPasswd());					
 				} else {
-					authCookies = HttpUtils.getAuthCookies(this.src.getAuthMode(), this.src.getAuthLogin(), this.src.getAuthPasswd(), this.src.getAuthParam(), 
+					authCookies = HttpLoader.getAuthCookies(this.src.getAuthMode(), this.src.getAuthLogin(), this.src.getAuthPasswd(), this.src.getAuthParam(), 
 							config.getProperty("/crawler/proxy/param[@name='host']", ""),
 							config.getProperty("/crawler/proxy/param[@name='port']", ""),
 							config.getProperty("/crawler/proxy/param[@name='exclude']", ""),

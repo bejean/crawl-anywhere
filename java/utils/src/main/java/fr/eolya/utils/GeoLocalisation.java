@@ -31,7 +31,7 @@ public class GeoLocalisation {
 		httpLoader = new HttpLoader();
 		if (prop!=null && !"".equals(prop.getProperty("proxy.host", "")) && !"".equals(prop.getProperty("proxy.port", ""))) {
 			httpLoader.setProxyHost(prop.getProperty("proxy.host", ""));
-			httpLoader.setProxyPort(Integer.parseInt(prop.getProperty("proxy.port", "")));
+			httpLoader.setProxyPort(prop.getProperty("proxy.port", ""));
 			if (!"".equals(prop.getProperty("proxy.exclude", ""))) httpLoader.setProxyExclude(prop.getProperty("proxy.exclude", ""));
 			if (!"".equals(prop.getProperty("proxy.username", "")) && !"".equals(prop.getProperty("proxy.password", ""))) {
 				httpLoader.setProxyUserName(prop.getProperty("proxy.username", ""));

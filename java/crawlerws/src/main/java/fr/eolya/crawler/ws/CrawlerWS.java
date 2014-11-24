@@ -26,7 +26,6 @@ import fr.eolya.extraction.tika.TikaWrapper;
 import fr.eolya.utils.*;
 import fr.eolya.utils.http.HttpLoader;
 import fr.eolya.utils.http.HttpStream;
-import fr.eolya.utils.http.HttpUtils;
 import fr.eolya.utils.servlet.*;
 
 
@@ -132,7 +131,7 @@ public class CrawlerWS extends HttpServlet {
 					authBasicLogin.put("password",authPasswd);		
                     urlLoader.setBasicLogin(authBasicLogin);
                 } else {
-                    authCookies = HttpUtils.getAuthCookies(Integer.parseInt(authMode), authLogin, authPasswd, authParam,
+                    authCookies = HttpLoader.getAuthCookies(Integer.parseInt(authMode), authLogin, authPasswd, authParam,
                             ServletUtils.getSetting(this, xmlConfig, "proxy_host", ""), ServletUtils.getSetting(this, xmlConfig, "proxy_port", ""), ServletUtils.getSetting(this, xmlConfig, "proxy_exclude", ""), ServletUtils.getSetting(this, xmlConfig, "proxy_username", ""), ServletUtils.getSetting(this, xmlConfig, "proxy_password", ""));                	
                     if (authCookies!=null)
                         urlLoader.setCookies(authCookies);

@@ -47,7 +47,7 @@ public class WebPageLoader {
 		if (httpLoader!=null){
 			httpLoader.setProxyExclude(proxyExclude);
 			httpLoader.setProxyHost(proxyHost);
-			httpLoader.setProxyPort(Integer.valueOf(proxyPort));
+			httpLoader.setProxyPort(proxyPort);
 			httpLoader.setProxyUserName(proxyUser);
 			httpLoader.setProxyPassword(proxyPassword);
 		}

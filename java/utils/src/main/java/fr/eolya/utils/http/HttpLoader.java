@@ -27,8 +27,11 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -66,6 +69,17 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.util.EntityUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
@@ -87,7 +101,7 @@ public class HttpLoader {
 	private HttpResponse response;
 
 	private String proxyHost;
-	private int proxyPort;
+	private String proxyPort;
 	private String proxyExclude;
 	private String proxyUserName;
 	private String proxyPassword;
@@ -141,7 +155,7 @@ public class HttpLoader {
 		this.proxyHost = proxyHost;
 	}
 
-	public void setProxyPort(int proxyPort) {
+	public void setProxyPort(String proxyPort) {
 		this.proxyPort = proxyPort;
 	}
 
@@ -251,7 +265,7 @@ public class HttpLoader {
 			close();
 
 			// HttpClient
-			client = getHttpClient();
+			client = getHttpClient(url);
 			if (client == null) throw new IOException("HttpClient object creation failed");
 
 			// HttpGet
@@ -373,7 +387,7 @@ public class HttpLoader {
 			close();
 
 			// HttpClient
-			client = getHttpClient();
+			client = getHttpClient(url);
 			if (client == null) throw new IOException("HttpClient object creation failed");
 
 			// HttpGet
@@ -473,7 +487,7 @@ public class HttpLoader {
 	 * @param 
 	 * @return
 	 */
-	private HttpClient getHttpClient() {
+	private HttpClient getHttpClient(String url) {
 		try {
 			// ClientConnectionManager
 			SSLSocketFactory sf = new SSLSocketFactory(new TrustStrategy() {
@@ -495,17 +509,19 @@ public class HttpLoader {
 			DefaultHttpClient httpClient = new DefaultHttpClient(ccm, httpParams);
 			
 			// Proxy
-			if (StringUtils.isNotEmpty(proxyHost)) {
-				if (StringUtils.isNotEmpty(proxyUserName) && StringUtils.isNotEmpty(proxyPassword)) {
-					httpClient.getCredentialsProvider().setCredentials(
-						    new AuthScope(proxyHost,Integer.valueOf(proxyPort)),
-						    new UsernamePasswordCredentials(proxyUserName, proxyPassword));
-				}
-				HttpHost proxy = new HttpHost(proxyHost,Integer.valueOf(proxyPort));
-				httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,proxy);
-			} else {
-				httpClient.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
-			}
+			setProxy(httpClient, url, proxyHost, proxyPort, proxyExclude, proxyUserName, proxyPassword);
+
+//			if (StringUtils.isNotEmpty(proxyHost)) {
+//				if (StringUtils.isNotEmpty(proxyUserName) && StringUtils.isNotEmpty(proxyPassword)) {
+//					httpClient.getCredentialsProvider().setCredentials(
+//						    new AuthScope(proxyHost,Integer.valueOf(proxyPort)),
+//						    new UsernamePasswordCredentials(proxyUserName, proxyPassword));
+//				}
+//				HttpHost proxy = new HttpHost(proxyHost,Integer.valueOf(proxyPort));
+//				httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,proxy);
+//			} else {
+//				httpClient.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
+//			}
 
 			// Cookies
 			if (cookies!=null) {
@@ -552,13 +568,6 @@ public class HttpLoader {
 		// connection
 		HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeOut);
 		HttpConnectionParams.setSoTimeout(httpParams, sockeTimeOut);
-
-//		// proxy
-//		if (!StringUtils.isEmpty(proxyHost)) {
-//			HttpHost proxy = new HttpHost(proxyHost, proxyPort);
-//			httpParams.setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
-//			// TODO: add proxy exclude support
-//		}  
 
 		// protocol
 		HttpProtocolParams.setVersion(httpParams, HttpVersion.HTTP_1_1);
@@ -646,4 +655,94 @@ public class HttpLoader {
     public String getErrorMessage() {
         return errorMessage;
     }
+    
+	public static Map<String, String> getAuthCookies(int authMode, String authLogin, String authPasswd, String authParam, String proxyHost, String proxyPort, String proxyExclude, String proxyUser, String proxyPassword) {
+		
+		if (authMode == 0) return null;
+
+		Map<String, String> authCookies = null;
+		String[] aAuthParam = authParam.split("\\|");
+
+		// http://www.java-tips.org/other-api-tips/httpclient/how-to-use-http-cookies.html
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		
+		// Proxy
+		setProxy(httpClient, aAuthParam[0], proxyHost, proxyPort, proxyExclude, proxyUser, proxyPassword);
+
+		HttpPost httpPost = new HttpPost(aAuthParam[0]);
+		httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+		httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
+
+		CookieStore cookieStore = new BasicCookieStore();
+		HttpContext localContext = new BasicHttpContext();
+		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+
+		try
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+			for (int i = 1; i < aAuthParam.length; i++) {
+				String[] aPair = aAuthParam[i].split("=");
+				aPair[1] = aPair[1].replaceAll("\\$\\$auth_login\\$\\$", authLogin);
+				aPair[1] = aPair[1].replaceAll("\\$\\$auth_passwd\\$\\$", authPasswd);
+				nameValuePairs.add(new BasicNameValuePair(aPair[0], aPair[1]));
+			}
+			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			httpPost.setHeader("ContentType", "application/x-www-form-urlencoded");
+			HttpResponse response = httpClient.execute(httpPost, localContext);
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				entity.consumeContent();
+			}
+
+			List<Cookie> cookies = httpClient.getCookieStore().getCookies();
+			if (!cookies.isEmpty()) {
+				authCookies = new HashMap<String, String>();
+				for (Cookie c : cookies) {
+					// TODO: What about the path, the domain ???
+					authCookies.put(c.getName(), c.getValue());
+				}
+			}		
+			httpPost.abort();
+		}
+		catch (ClientProtocolException e) {
+			return null;
+		}
+		catch (IOException e) {
+			return null;
+		}		
+		return authCookies;
+	}
+	
+	private static HttpClient setProxy(DefaultHttpClient httpClient, String url, String proxyHost, String proxyPort, String proxyExclude, String proxyUser, String proxyPassword) {
+		
+		boolean exclude = false;
+		
+		if (StringUtils.isNotEmpty(proxyExclude)) {
+			String[] aProxyExclude = proxyExclude.split(",");
+			for (int i = 0; i < aProxyExclude.length; i++)
+				aProxyExclude[i] = aProxyExclude[i].trim();
+
+			try {
+				URL u = new URL(url);
+				if (Arrays.asList(aProxyExclude).contains(u.getHost())) {
+					exclude = true;
+				}
+			} catch (MalformedURLException e) {
+				exclude = true;
+			}			
+		}
+		
+		if (!exclude && StringUtils.isNotEmpty(proxyHost) && StringUtils.isNotEmpty(proxyPort)) {
+			if (StringUtils.isNotEmpty(proxyUser) && StringUtils.isNotEmpty(proxyPassword)) {
+				httpClient.getCredentialsProvider().setCredentials(
+					    new AuthScope(proxyHost,Integer.valueOf(proxyPort)),
+					    new UsernamePasswordCredentials(proxyUser, proxyPassword));
+			}
+			HttpHost proxy = new HttpHost(proxyHost,Integer.valueOf(proxyPort));
+			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,proxy);
+		} else {
+			httpClient.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
+		}
+		return httpClient;
+	}
 }

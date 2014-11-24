@@ -250,6 +250,7 @@ public class HttpUtils {
 		// http://www.java-tips.org/other-api-tips/httpclient/how-to-use-http-cookies.html
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		
+		// Proxy
 		if (StringUtils.isNotEmpty(proxyHost) && StringUtils.isNotEmpty(proxyPort)) {
 			if (StringUtils.isNotEmpty(proxyUser) && StringUtils.isNotEmpty(proxyPassword)) {
 				httpClient.getCredentialsProvider().setCredentials(
@@ -258,6 +259,8 @@ public class HttpUtils {
 			}
 			HttpHost proxy = new HttpHost(proxyHost,Integer.valueOf(proxyPort));
 			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,proxy);
+		} else {
+			httpClient.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
 		}
 
 		HttpPost httpPost = new HttpPost(aAuthParam[0]);

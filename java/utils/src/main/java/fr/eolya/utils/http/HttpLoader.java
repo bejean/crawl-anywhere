@@ -494,6 +494,7 @@ public class HttpLoader {
 			// DefaultHttpClient
 			DefaultHttpClient httpClient = new DefaultHttpClient(ccm, httpParams);
 			
+			// Proxy
 			if (StringUtils.isNotEmpty(proxyHost)) {
 				if (StringUtils.isNotEmpty(proxyUserName) && StringUtils.isNotEmpty(proxyPassword)) {
 					httpClient.getCredentialsProvider().setCredentials(
@@ -502,6 +503,8 @@ public class HttpLoader {
 				}
 				HttpHost proxy = new HttpHost(proxyHost,Integer.valueOf(proxyPort));
 				httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,proxy);
+			} else {
+				httpClient.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
 			}
 
 			// Cookies
@@ -550,12 +553,12 @@ public class HttpLoader {
 		HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeOut);
 		HttpConnectionParams.setSoTimeout(httpParams, sockeTimeOut);
 
-		// proxy
-		if (!StringUtils.isEmpty(proxyHost)) {
-			HttpHost proxy = new HttpHost(proxyHost, proxyPort);
-			httpParams.setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
-			// TODO: add proxy exclude support
-		}  
+//		// proxy
+//		if (!StringUtils.isEmpty(proxyHost)) {
+//			HttpHost proxy = new HttpHost(proxyHost, proxyPort);
+//			httpParams.setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+//			// TODO: add proxy exclude support
+//		}  
 
 		// protocol
 		HttpProtocolParams.setVersion(httpParams, HttpVersion.HTTP_1_1);

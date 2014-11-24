@@ -42,6 +42,16 @@ public class WebPageLoader {
 	public WebPageLoader() {
 		this(CACHE_NONE, null, null, null, null, null);
 	}
+	
+	public void setProxy(String proxyHost, String proxyPort, String proxyExclude, String proxyUser, String proxyPassword) {
+		if (httpLoader!=null){
+			httpLoader.setProxyExclude(proxyExclude);
+			httpLoader.setProxyHost(proxyHost);
+			httpLoader.setProxyPort(Integer.valueOf(proxyPort));
+			httpLoader.setProxyUserName(proxyUser);
+			httpLoader.setProxyPassword(proxyPassword);
+		}
+	}
 
 	public void setSimulateHttps(boolean simulate) {
 		if (httpLoader!=null) httpLoader.setSimulateHttps(simulate);

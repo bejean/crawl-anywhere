@@ -20,8 +20,10 @@ package fr.eolya.utils.http;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -491,10 +493,15 @@ public class HttpLoader {
 
 			// DefaultHttpClient
 			DefaultHttpClient httpClient = new DefaultHttpClient(ccm, httpParams);
-			if (!StringUtils.isEmpty(proxyUserName)) {
-				httpClient.getCredentialsProvider().setCredentials(
-						new AuthScope(proxyHost, proxyPort),
-						new UsernamePasswordCredentials(proxyUserName, proxyPassword));
+			
+			if (StringUtils.isNotEmpty(proxyHost)) {
+				if (StringUtils.isNotEmpty(proxyUserName) && StringUtils.isNotEmpty(proxyPassword)) {
+					httpClient.getCredentialsProvider().setCredentials(
+						    new AuthScope(proxyHost,Integer.valueOf(proxyPort)),
+						    new UsernamePasswordCredentials(proxyUserName, proxyPassword));
+				}
+				HttpHost proxy = new HttpHost(proxyHost,Integer.valueOf(proxyPort));
+				httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,proxy);
 			}
 
 			// Cookies
@@ -636,5 +643,4 @@ public class HttpLoader {
     public String getErrorMessage() {
         return errorMessage;
     }
-
 }

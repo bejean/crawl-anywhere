@@ -256,6 +256,14 @@ public class WebConnector extends Connector implements IConnector {
 				String alternateUrl = getAlternateProtocolUrl(pageURL.toExternalForm());
 				if (alternateUrl!=null) {
 					WebPageLoader urlLoader = new WebPageLoader();
+					
+					urlLoader.setProxy( 
+							config.getProperty("/crawler/proxy/param[@name='host']", ""),
+							config.getProperty("/crawler/proxy/param[@name='port']", ""),
+							config.getProperty("/crawler/proxy/param[@name='exclude']", ""),
+							config.getProperty("/crawler/proxy/param[@name='username']", ""),
+							config.getProperty("/crawler/proxy/param[@name='password']", ""));
+					
 					if (simulateHttps) urlLoader.setSimulateHttps(simulateHttps);
 					int statusCode = urlLoader.getHeadStatusCode(alternateUrl);
 					write = (statusCode!=200);
@@ -272,6 +280,12 @@ public class WebConnector extends Connector implements IConnector {
 				String dbCacheType = config.getProperty("/crawler/cache/param[@name='dbtype']", "");
 				String dbCacheName = config.getProperty("/crawler/cache/param[@name='dbname']", "");
 				urlLoader = new WebPageLoader(WebPageLoader.CACHE_ONLY, dbCacheType, crawlerController.getDBConnection(false), dbCacheName, "pages_cache", String.valueOf(src.getId()));
+				urlLoader.setProxy( 
+						config.getProperty("/crawler/proxy/param[@name='host']", ""),
+						config.getProperty("/crawler/proxy/param[@name='port']", ""),
+						config.getProperty("/crawler/proxy/param[@name='exclude']", ""),
+						config.getProperty("/crawler/proxy/param[@name='username']", ""),
+						config.getProperty("/crawler/proxy/param[@name='password']", ""));
 			} else {
 				if (!"0".equals(src.getUrlPerMinute())) {
 					synchronized (monitor) {
@@ -286,6 +300,12 @@ public class WebConnector extends Connector implements IConnector {
 					}
 				}
 				urlLoader = new WebPageLoader();
+				urlLoader.setProxy( 
+						config.getProperty("/crawler/proxy/param[@name='host']", ""),
+						config.getProperty("/crawler/proxy/param[@name='port']", ""),
+						config.getProperty("/crawler/proxy/param[@name='exclude']", ""),
+						config.getProperty("/crawler/proxy/param[@name='username']", ""),
+						config.getProperty("/crawler/proxy/param[@name='password']", ""));
 				if (simulateHttps) urlLoader.setSimulateHttps(simulateHttps);
 			}
 			
@@ -606,6 +626,12 @@ public class WebConnector extends Connector implements IConnector {
 						// check 
 						String startUrl = currentUrlItem.getUrlStart();
 						WebPageLoader urlLoaderCheck = new WebPageLoader();
+						urlLoader.setProxy( 
+								config.getProperty("/crawler/proxy/param[@name='host']", ""),
+								config.getProperty("/crawler/proxy/param[@name='port']", ""),
+								config.getProperty("/crawler/proxy/param[@name='exclude']", ""),
+								config.getProperty("/crawler/proxy/param[@name='username']", ""),
+								config.getProperty("/crawler/proxy/param[@name='password']", ""));
 						if (simulateHttps) urlLoader.setSimulateHttps(simulateHttps);
 						try {
 							// load page

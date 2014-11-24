@@ -28,9 +28,12 @@ import net.htmlparser.jericho.Source;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -38,6 +41,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -231,18 +235,34 @@ public class HttpUtils {
 
 	public static Map<String, String> getAuthCookies(int authMode, String authLogin, String authPasswd, String authParam, String proxyHost, String proxyPort, String proxyExclude, String proxyUser, String proxyPassword) {
 
+		
+//		HttpHost proxy = new HttpHost("someproxy", 8080);
+//		DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+//		CloseableHttpClient httpclient = HttpClients.custom()
+//		        .setRoutePlanner(routePlanner)
+//		        .build();
+		
 		if (authMode == 0) return null;
 
 		Map<String, String> authCookies = null;
 		String[] aAuthParam = authParam.split("\\|");
 
 		// http://www.java-tips.org/other-api-tips/httpclient/how-to-use-http-cookies.html
-		DefaultHttpClient httpclient = new DefaultHttpClient();
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		
+		if (StringUtils.isNotEmpty(proxyHost) && StringUtils.isNotEmpty(proxyPort)) {
+			if (StringUtils.isNotEmpty(proxyUser) && StringUtils.isNotEmpty(proxyPassword)) {
+				httpClient.getCredentialsProvider().setCredentials(
+					    new AuthScope(proxyHost,Integer.valueOf(proxyPort)),
+					    new UsernamePasswordCredentials(proxyUser, proxyPassword));
+			}
+			HttpHost proxy = new HttpHost(proxyHost,Integer.valueOf(proxyPort));
+			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,proxy);
+		}
 
-		HttpPost httppost = new HttpPost(aAuthParam[0]);
-		//httpclient.getParams().setParameter("http.useragent", "Custom Browser");
-		httpclient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
-		httpclient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
+		HttpPost httpPost = new HttpPost(aAuthParam[0]);
+		httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+		httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
 
 		CookieStore cookieStore = new BasicCookieStore();
 		HttpContext localContext = new BasicHttpContext();
@@ -257,32 +277,28 @@ public class HttpUtils {
 				aPair[1] = aPair[1].replaceAll("\\$\\$auth_passwd\\$\\$", authPasswd);
 				nameValuePairs.add(new BasicNameValuePair(aPair[0], aPair[1]));
 			}
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			httppost.setHeader("ContentType", "application/x-www-form-urlencoded");
-			HttpResponse response = httpclient.execute(httppost, localContext);
+			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			httpPost.setHeader("ContentType", "application/x-www-form-urlencoded");
+			HttpResponse response = httpClient.execute(httpPost, localContext);
 			HttpEntity entity = response.getEntity();
-			if (entity != null)
-			{
+			if (entity != null) {
 				entity.consumeContent();
 			}
 
-			List<Cookie> cookies = httpclient.getCookieStore().getCookies();
+			List<Cookie> cookies = httpClient.getCookieStore().getCookies();
 			if (!cookies.isEmpty()) {
 				authCookies = new HashMap<String, String>();
-				for (Cookie c : cookies)
-				{
+				for (Cookie c : cookies) {
 					// TODO: What about the path, the domain ???
 					authCookies.put(c.getName(), c.getValue());
 				}
 			}		
-			httppost.abort();
+			httpPost.abort();
 		}
-		catch (ClientProtocolException e)
-		{
+		catch (ClientProtocolException e) {
 			return null;
 		}
-		catch (IOException e)
-		{
+		catch (IOException e) {
 			return null;
 		}		
 		return authCookies;

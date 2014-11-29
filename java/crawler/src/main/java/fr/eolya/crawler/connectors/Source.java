@@ -110,29 +110,6 @@ abstract public class Source {
 		if (srcData.containsKey(name)) return (Date)srcData.get(name);
 		return null;
 	}
-
-//	protected int getSrcDataInt(String name) {
-//		if (srcData.containsKey(name)) {
-//			Object o = srcData.get(name);
-//			try {
-//				if (o instanceof String) {  
-//					return Integer.parseInt((String) o);
-//				} 
-//				if (o instanceof Integer) {  
-//					return ((Integer) o).intValue();
-//				}
-//				if (o instanceof Long) {  
-//					return ((Long) o).intValue();
-//				}
-//				return 0;
-//			} 
-//			catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		return 0;
-//	}
-	
 	
 	protected int getSrcDataInt(String name) throws IOException {
 		if (srcData.containsKey(name)) {
@@ -152,7 +129,6 @@ abstract public class Source {
 		}
 		throw new IOException();
 	}
-
 
 	protected int getSrcDataInt(String name, int defaultValue) {
 		try {

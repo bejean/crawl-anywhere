@@ -1,8 +1,10 @@
 package fr.eolya.utils;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 
 /**
  * <p>Encodes and decodes to and from Base64 notation.</p>
@@ -2095,5 +2097,8 @@ public class Base64
 		}
 	}
 
+	static public String stringToStringBase64(String str) throws IOException {
+		return inputStreamToStringBase64(new ByteArrayInputStream(str.getBytes()));
+	}
     
 }   // end class Base64

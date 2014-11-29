@@ -39,19 +39,6 @@ rm -rf $DISTRIB/scripts/mysolrserver
 rm -rf $DISTRIB/scripts/linux/deprecated
 rm -rf $DISTRIB/scripts/win/deprecated
 
-
-#=============================================
-# crawler
-#=============================================
-
-#=============================================
-# simplepipeline
-#=============================================
-
-#=============================================
-# indexer
-#=============================================
-
 #=============================================
 # jar
 #=============================================
@@ -98,19 +85,23 @@ cp target/indexer-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-indexer-$VERSION.jar
 #=============================================
 # crawler WS
 #=============================================
-mkdir -p $DISTRIB/install/crawler/tomcat
-cd $DEV/java/crawlerws
-#mvn clean
-#mvn package -Dmaven.test.skip=true
-cp target/crawlerws-0.0.1-SNAPSHOT.war $DISTRIB/install/crawler/tomcat/crawlerws-$VERSION.war
-#cp $DEV/install/bin/tomcat/crawlerws-jndi*.xml $DISTRIB/install/crawler/tomcat/.
-cp config/crawlerws/crawlerws-default.xml $DISTRIB/install/crawler/tomcat/.
-#cp target/crawlerws-0.0.1-SNAPSHOT.war $DEV/install/bin/tomcat/crawlerws-$VERSION.war
+#mkdir -p $DISTRIB/install/crawler/tomcat
+#cd $DEV/java/crawlerws
+##mvn clean
+##mvn package -Dmaven.test.skip=true
+#cp target/crawlerws-0.0.1-SNAPSHOT.war $DISTRIB/install/crawler/tomcat/crawlerws-$VERSION.war
+##cp $DEV/install/bin/tomcat/crawlerws-jndi*.xml $DISTRIB/install/crawler/tomcat/.
+#cp config/crawlerws/crawlerws-default.xml $DISTRIB/install/crawler/tomcat/.
+##cp target/crawlerws-0.0.1-SNAPSHOT.war $DEV/install/bin/tomcat/crawlerws-$VERSION.war
+
+mkdir $DISTRIB/bin/ws
+cd $DEV/java/crawlerws2
+cp target/crawlerws2-0.0.1-SNAPSHOT.jar $DISTRIB/bin/ws/eolya-crawlerws-$VERSION.jar
+
 
 #=============================================
 # lib
 #=============================================
-
 cd $DEV/java
 mvn install:install-file -DgroupId=fr.eolya -DartifactId=utils -Dversion=0.0.1-SNAPSHOT -Dpackaging=jar -Dfile=utils/target/utils-0.0.1-SNAPSHOT.jar
 mvn dependency:copy-dependencies
@@ -120,7 +111,6 @@ cp -r $DEV/java/simplepipeline/target/dependency/* $DISTRIB/lib/.
 cp -r $DEV/java/indexer/target/dependency/* $DISTRIB/lib/.
 cp -r $DEV/java/utils/target/dependency/* $DISTRIB/lib/.
 rm $DISTRIB/lib/utils-0.0.1-SNAPSHOT.jar
-rm $DISTRIB/lib/commons-lang-*.jar
 
 #=============================================
 # web
@@ -129,7 +119,7 @@ mkdir $DISTRIB/web
 
 cp -r $DEV/web/crawler/src $DISTRIB/web/crawler
 rm -rf $DISTRIB/web/crawler/config/*
-cp $DEV/web/crawler/src/config/config-default.ini $DISTRIB/web/crawler/config/.
+cp $DEV/web/crawler/src/config/config-default.ini $DISTRIB/web/crawler/config/config.ini
 
 sed -e "s/#version#/$VERSION/" $DISTRIB/web/crawler/pub/ressources/mongodb/init_db-infos.json > $DISTRIB/web/crawler/pub/ressources/mongodb/init_db-infos.json.2
 rm $DISTRIB/web/crawler/pub/ressources/mongodb/init_db-infos.json
@@ -137,7 +127,7 @@ mv $DISTRIB/web/crawler/pub/ressources/mongodb/init_db-infos.json.2 $DISTRIB/web
 
 cp -r $DEV/web/search/src $DISTRIB/web/search
 rm -rf $DISTRIB/web/search/config/*
-cp $DEV/web/search/src/config/config-default.ini $DISTRIB/web/search/config/.
+cp $DEV/web/search/src/config/config-default.ini $DISTRIB/web/search/config/config.ini
 #perl -pi -e 's/\r\n/\n/g' $DISTRIB/web/search/config/config-default.ini
 
 find $DISTRIB/web -name '.svn' -exec rm -rf {} \;
@@ -146,11 +136,11 @@ find $DISTRIB/web -name '.svn' -exec rm -rf {} \;
 # bin / config
 #=============================================
 mkdir -p $DISTRIB/config/crawler
-cp $DEV/java/crawler/config/crawler/crawler-default.xml $DISTRIB/config/crawler/.
+cp $DEV/java/crawler/config/crawler/crawler-default.xml $DISTRIB/config/crawler/crawler.xml
 cp -r $DEV/java/crawler/config/crawler/scripts $DISTRIB/config/crawler/.
 
 mkdir -p $DISTRIB/config/pipeline
-cp $DEV/java/simplepipeline/config/pipeline/simplepipeline-default.xml $DISTRIB/config/pipeline/.
+cp $DEV/java/simplepipeline/config/pipeline/simplepipeline-default.xml $DISTRIB/config/pipeline/simplepipeline.xml
 cp $DEV/java/simplepipeline/config/pipeline/solrmapping.xml $DISTRIB/config/pipeline/.
 cp $DEV/java/simplepipeline/config/pipeline/solrboost.xml $DISTRIB/config/pipeline/.
 cp $DEV/java/simplepipeline/config/pipeline/contenttypemapping.txt $DISTRIB/config/pipeline/.
@@ -158,9 +148,12 @@ cp $DEV/java/simplepipeline/config/pipeline/countrymapping.txt $DISTRIB/config/p
 cp -r $DEV/java/simplepipeline/config/pipeline/scripts $DISTRIB/config/pipeline/.
 
 mkdir -p $DISTRIB/config/indexer
-cp $DEV/java/indexer/config/indexer/indexer-default.xml $DISTRIB/config/indexer/.
+cp $DEV/java/indexer/config/indexer/indexer-default.xml $DISTRIB/config/indexer/indexer.xml
 
 cp -r $DEV/java/utils/config/* $DISTRIB/config/.
+
+mkdir -p $DISTRIB/config/crawlerws
+cp -r $DEV/java/crawlerws2/settings-default.yml $DISTRIB/config/crawlerws/settings.yml
 
 #=============================================
 # tar

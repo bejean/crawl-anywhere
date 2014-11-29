@@ -40,13 +40,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.solr</groupId>
-			<artifactId>solr-core</artifactId>
-			<version>4.3.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-solrj</artifactId>
-			<version>4.3.0</version>
+			<version>4.10.0</version>
 		</dependency>
 		<dependency>
 			<groupId>dom4j</groupId>
@@ -82,6 +77,11 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>xml-apis</groupId>

@@ -14,5 +14,6 @@
 		<module>simplepipeline</module>
 		<module>indexer</module>
 		<module>crawlerws</module>
+		<module>crawlerws2</module>
 	</modules>
 </project>

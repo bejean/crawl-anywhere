@@ -128,6 +128,8 @@
    <dynamicField name="*_th"  type="text_th"  indexed="true" stored="true"/>
    <dynamicField name="*_tr"  type="text_tr"  indexed="true" stored="true"/>
    
+    <dynamicField name="*_ntoken" 	type="term_ntoken" indexed="true" stored="false" multiValued="true"/>
+
  </fields>
 
    <uniqueKey>id</uniqueKey>
@@ -135,6 +137,7 @@
    <copyField source="author" dest="author_s"/>
    <copyField source="title_dis" dest="tag_cloud"/> 
    <copyField source="content_*" dest="spell"/>
+   <copyField source="content_*" dest="content_ntoken"/>
 
  <types>
     <fieldtype name="ignored" stored="false" indexed="false" multiValued="true" class="solr.StrField" />
@@ -653,5 +656,23 @@
         </analyzer>
     </fieldType>
 
+    <fieldType name="term_ntoken" class="solr.TextField">
+      <analyzer type="index">
+ 		<charFilter class="solr.MappingCharFilterFactory" mapping="mapping-spell.txt"/>
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.ASCIIFoldingFilterFactory"/>
+        <filter class="solr.ElisionFilterFactory" ignoreCase="true" articles="contractions.txt"/>
+        <filter class="solr.LowerCaseFilterFactory" />
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" format="snowball" enablePositionIncrements="true"/>
+        <filter class="solr.ShingleFilterFactory" maxShingleSize="4" outputUnigrams="true"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.ASCIIFoldingFilterFactory"/>
+        <filter class="solr.ElisionFilterFactory" ignoreCase="true" articles="contractions.txt"/>
+        <filter class="solr.LowerCaseFilterFactory" />
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" format="snowball" enablePositionIncrements="true"/>
+      </analyzer>
+    </fieldType>
  </types>
 </schema>

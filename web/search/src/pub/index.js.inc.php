@@ -175,17 +175,16 @@ if ($results_img_height>0 && $results_img_width>0) {
 		    }
 		});
  
-	/*
- 
-		$('.input').keypress(function (e) {
-			  if (e.which == 13) {
-				  if (e.preventDefault)
-						e.preventDefault();
-			    $('form#search_form').submit();
-			    return false;    
-			  }
-		});
-*/
+		/*
+				$('.input').keypress(function (e) {
+					  if (e.which == 13) {
+						  if (e.preventDefault)
+								e.preventDefault();
+					    $('form#search_form').submit();
+					    return false;    
+					  }
+				});
+		*/
 	});  	
 	
 	function doBookmark(a)
@@ -215,7 +214,6 @@ if ($results_img_height>0 && $results_img_width>0) {
 
 	$(document).ready(function(){
 
-<?php if ($theme->useTwitterBootstrap()) { ?>
 		$('#search_crit').typeahead({
 		    source: function(query, process) {
 		        return $.ajax({
@@ -230,15 +228,26 @@ if ($results_img_height>0 && $results_img_width>0) {
 		        });
 		    }
 		});
-<?php } else { ?>
-		$("#search_crit").suggest(getAjaxUrl() + "&action=autocomplete",{});
-<?php } ?>
+	
+// 		$('a[data-toggle="modal"]').click(function(e) {
+// 				e.preventDefault();
+// 				var params = $(this).attr('params');
+// 				$.ajax({
+// 					type: "post",
+// 					data: params, 
+// 					url: getAjaxUrl(),
+// 					success: function(data) {
+// 						$("#modal-reader-body").html(data);
+// 					}
+// 				});	    
+// 		});	
 	});
+
 	
 	$(window).load(function(){
 		// Le code placé ici sera déclenché
 		// au chargement complet de la page.
-
+		
 		var cols = "";
 		var tags = "";		
 
@@ -351,7 +360,6 @@ if ($results_img_height>0 && $results_img_width>0) {
 	function doReader(id, crit, lang)
 	{
 		readerShowDialog ();	
-
 		$.ajax({
 			type: "post",
 			data: {action: 'gettext', id: id, search_crit: crit, search_querylanguage: lang}, 
@@ -380,53 +388,53 @@ if ($results_img_height>0 && $results_img_width>0) {
 		}); 
 	}
 
-	// Preferences dialog =====================================
-	function doPreferences()
-	{
-		preferencesShowDialog ();	
-
-		$.ajax({
-			type: "post",
-			data: {action: 'preferences_display'}, 
-			url: getAjaxUrl(),
-			success: function(data) {
-				$("#preferences-dialog-text").html(data);
-			}
-		});
-			    
-	}
-
-	function preferencesShowDialog () {
-		//$("#reader-dialog-text").html("<center><img src='images/ajax-loader.gif'></center>");
-		$.blockUI({ 
-				message: $('#preferences-dialog'), 
-				overlayCSS:  { 
-	        		backgroundColor: '#000', 
-	        		opacity:         0.2 
-	    		}, 
-			    css: { 
-			        width:          '400px', 
-			        top:            '10%', 
-			        left:           '30%',
-			        margin:   		'auto',
-			        cursor:         'wait' 
-			    }
-		}); 
-	}
-
-	function preferencesCloseDialog() {
-
-		var facet_union = $('#config_facet_union').prop('checked')?1:0;
-		
-		$.ajax({
-			type: "post",
-			data: {action: 'preferences_save', facet_union: facet_union}, 
-			url: getAjaxUrl(),
-			success: function(data) {
-			}
-		});
-		
+	function readerCloseDialog() {
 	 	$.unblockUI()
 	}
+
+	// Preferences dialog =====================================
+// 	function doPreferences()
+// 	{
+// 		preferencesShowDialog ();	
+// 		$.ajax({
+// 			type: "post",
+// 			data: {action: 'preferences_display'}, 
+// 			url: getAjaxUrl(),
+// 			success: function(data) {
+// 				$("#preferences-dialog-text").html(data);
+// 			}
+// 		});
+// 	}
+
+// 	function preferencesShowDialog () {
+// 		//$("#reader-dialog-text").html("<center><img src='images/ajax-loader.gif'></center>");
+// 		$.blockUI({ 
+// 				message: $('#preferences-dialog'), 
+// 				overlayCSS:  { 
+// 	        		backgroundColor: '#000', 
+// 	        		opacity:         0.2 
+// 	    		}, 
+// 			    css: { 
+// 			        width:          '400px', 
+// 			        top:            '10%', 
+// 			        left:           '30%',
+// 			        margin:   		'auto',
+// 			        cursor:         'wait' 
+// 			    }
+// 		}); 
+// 	}
+
+// 	function preferencesCloseDialog() {
+// 		var facet_union = $('#config_facet_union').prop('checked')?1:0;
+// 		$.ajax({
+// 			type: "post",
+// 			data: {action: 'preferences_save', facet_union: facet_union}, 
+// 			url: getAjaxUrl(),
+// 			success: function(data) {
+// 			}
+// 		});
+// 	 	$.unblockUI()
+// 	}
+
 	//-->
 	</script>

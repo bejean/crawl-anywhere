@@ -1049,14 +1049,14 @@ if ($action == "testfilteringrules")
 	}
 
 	$url = $config->get("crawlerws.rooturl");
-	$url .= "?action=" . $action;
-	$url .= "&page=" . urlencode($page);
+    $url .= 'testfilteringrules/';
+	$url .= "?page=" . urlencode($page);
 	$url .= "&rules=" . urlencode($flatrules);;
-	$xmlstr = readurl($url);
+	$jsonstr = readurl($url);
 
-	$xml = new SimpleXMLElement($xmlstr);
-	$content = $xml->status;
-
+	$arr = json_decode($jsonstr, true);
+	$content = $arr['mode'];
+	
 	if ($content=="a") $content = "Get page and extract links";
 	if ($content=="l") $content = "Extract links only";
 	if ($content=="s") $content = "Ignore";
@@ -1079,28 +1079,30 @@ if ($action == "testcleaning")
 	}
 
 	$url = $config->get("crawlerws.rooturl");
-	$url .= "?action=" . $action;
-	$url .= "&page=" . urlencode($page);
+    $url .= 'testcleaning/';
+	$url .= "?page=" . urlencode($page);
 	$url .= "&method=" . $cleaningMethod;
-	$xmlstr = readurl($url);
+	$jsonstr = readurl($url);
 
-	$xml = new SimpleXMLElement($xmlstr, LIBXML_NOCDATA);
+	$arr = json_decode($jsonstr, true);
+	
+// 	$xml = new SimpleXMLElement($xmlstr, LIBXML_NOCDATA);
 
-	if (isset($xml->errno)) {
-		print("err=" . $xml->errno . " " . $xml->errmsg);
-		exit();
-	}
+// 	if (isset($xml->errno)) {
+// 		print("err=" . $xml->errno . " " . $xml->errmsg);
+// 		exit();
+// 	}
 
 	$content = "<html><head><title>Automatic HTML page cleaning</title>";
 	$content .= "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>";
 	$content .= "<link href='themes/ca/styles.css' rel='stylesheet' type='text/css' />";
 	$content .= "</head><body>\n";
 	$content .= "<table>\n";
-	$content .= "<tr><td>\nNo cleaning\n</td><td>\n" . $xml->title_0 . "<br/><br/>" . $xml->page_0 . "\n</td></tr>\n";
-	$content .= "<tr><td>\nBoilerpipe arcticle extractor\n</td><td>\n" . $xml->title_1 . "<br/><br/>" . $xml->page_1 . "\n</td></tr>\n";
-	$content .= "<tr><td>\nBoilerpipe default extractor\n</td><td>\n" . $xml->title_2 . "<br/><br/>" . $xml->page_2 . "\n</td></tr>\n";
-	$content .= "<tr><td>\nBoilerpipe canola extractor\n</td><td>\n" . $xml->title_3 . "<br/><br/>" . $xml->page_3 . "\n</td></tr>\n";
-	$content .= "<tr><td>\nSnacktory extractor\n</td><td>\n" . $xml->title_4 . "<br/><br/>" . $xml->page_4 . "\n</td></tr>\n";
+	//$content .= "<tr><td>\nNo cleaning\n</td><td>\n" . $arr['title0'] . "<br/><br/>" . base64_decode ($arr['page0']) . "\n</td></tr>\n";
+	$content .= "<tr><td>\nBoilerpipe arcticle extractor\n</td><td>\n" . $arr['title1'] . "<br/><br/>" . base64_decode ($arr['page1']) . "\n</td></tr>\n";
+	$content .= "<tr><td>\nBoilerpipe default extractor\n</td><td>\n" . $arr['title2'] . "<br/><br/>" . base64_decode ($arr['page2']) . "\n</td></tr>\n";
+	$content .= "<tr><td>\nBoilerpipe canola extractor\n</td><td>\n" . $arr['title3'] . "<br/><br/>" . base64_decode ($arr['page3']) . "\n</td></tr>\n";
+	$content .= "<tr><td>\nSnacktory extractor\n</td><td>\n" . $arr['title4'] . "<br/><br/>" . base64_decode ($arr['page4']) . "\n</td></tr>\n";
 	$content .= "</table>";
 	$content .= "</body></html>";
 

@@ -3,6 +3,30 @@ $rootpath = dirname(__FILE__);
 require_once("../init.inc.php");
 require_once("../lib/cloud_tag.inc.php");
 
+/**
+ * Nettoie et normalise la query utilisateur
+ * @param String $q la query
+ * @return string la query normalisée.
+ */
+function cleanUpQ($q) {
+	$q = preg_replace('/(\s+)/', ' ', $q);
+	$q = preg_replace('/"/', '', $q);
+	$q = str_replace('*', '', $q);
+	return $q;
+}
+/**
+ * Suppression des accents dans une chaine
+ */
+function accentsReplace($string) {
+	return str_replace( array('à','á','â','ã','ä', 'ç', 'è','é','ê','ë', 'ì','í','î','ï', 'ñ', 'ò','ó','ô','õ','ö', 'ù','ú','û','ü', 'ý','ÿ', 'À','Á','Â','Ã','Ä', 'Ç', 'È','É','Ê','Ë', 'Ì','Í','Î','Ï', 'Ñ', 'Ò','Ó','Ô','Õ','Ö', 'Ù','Ú','Û','Ü', 'Ý'), array('a','a','a','a','a', 'c', 'e','e','e','e', 'i','i','i','i', 'n', 'o','o','o','o','o', 'u','u','u','u', 'y','y', 'A','A','A','A','A', 'C', 'E','E','E','E', 'I','I','I','I', 'N', 'O','O','O','O','O', 'U','U','U','U', 'Y'), $string);
+}
+
+function getQueryField($search_language_code) {
+	return "content_" . $search_language_code;
+}
+
+
+
 $action = getRequestParam("action");
 $mode = getRequestParam("mode"); // mode = tb means "twitter bootstrap"
 
@@ -16,23 +40,33 @@ if ($action=="autocomplete" || $action=="fiedvalues" || $action=="gettext" || $a
 		if ($action=="autocomplete")
 		{
 			$q = $_GET['q'];
-			$limit = '5';
-			$res=$solr->getSuggestion($q, $limit);
-			if ($mode=='tb') {
-				$items = explode("\n", $res);
-				$res = '{"options": [';
-				$res2 = '';
-				foreach($items as $item) {
-					if (trim($item)!='') {
-						if (!empty($res2)) $res2 .= ',';
-						$res2 .= '"' . $item . '"';
-					}
-				}
-				$res .= $res2 . ']}';
-			}
+			$q = cleanUpQ($q);
+			$q = accentsReplace($q);
+			$q = strtolower($q);
+							
+			$res = '';
 			
+			$values=$solr->getTerms($q, 'content_ntoken', 0, 5);
+			if (!empty($values)) {
+				$pattern = "/(_|\(|\.|\/|\-|\[|'|,)/";
+				$values =  array_values(preg_grep ($pattern , $values, PREG_GREP_INVERT));
+		
+				$q_terms_count = count(explode(' ', $q));
+				$pattern1 = '[^\s]*';
+				for ($i=0; $i<$q_terms_count-1; $i++) {
+					$pattern1 .= '\s[^\s]*';
+				}
+				$pattern2 = $pattern1 . '\s[^\s]*';
+		
+				$pattern = '/^(' . $pattern1 . '|' . $pattern2 . ')$/';
+				$values =  array_values(preg_grep ($pattern , $values));
+		
+				$arr = array();
+				$arr["options"] = $values;
+				$res = json_encode($arr);
+			}
 		}
-
+		
 		if ($action=="fiedvalues")
 		{
 			$field = getRequestParam("field");
@@ -97,7 +131,7 @@ if ($action=="autocomplete" || $action=="fiedvalues" || $action=="gettext" || $a
 			$word_variations = true;
 			$query_lang = getRequestParam("search_querylanguage");
 
-			$queryField = getQueryField($search_multilingual, $search_language_code);
+			$queryField = getQueryField($search_language_code);
 			$debug=false;
 			$solr->setDebug($debug);
 
@@ -243,7 +277,7 @@ if ($action=="autocomplete" || $action=="fiedvalues" || $action=="gettext" || $a
 
 			if (!$facet_union) $fqsearch = $fqitms;
 
-			$queryField = getQueryField($search_multilingual, $search_language_code);
+			$queryField = getQueryField($search_language_code);
 
 			if ($groupsize>0)
 			$item_per_page = intval($item_per_page / $groupdisplaysize);
@@ -292,16 +326,6 @@ EOD;
 //$res = $_SERVER["QUERY_STRING"] . "<br/>" . $res;
 print ($res);
 
-
-function getQueryField($search_multilingual, $search_language_code) {
-	if ($search_multilingual) {
-		$field_sufix = 'ml';
-	}
-	else {
-		$field_sufix = $search_language_code;
-	}
-	return "content_" . $field_sufix;
-}
 
 
 

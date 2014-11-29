@@ -48,38 +48,43 @@ class Theme extends ThemeBase implements iTheme {
 		$res .= '<meta name="robots" content="index, nofollow" />' . "\n";
 
 		$res .= '<script type="text/javascript" src="' . $this->getJsPath() . 'jquery-1.9.1.min.js"></script>' . "\n";
-		//$res .= '<script type="text/javascript" src="https://www.google.com/jsapi"></script>' . "\n";
-		$res .= '<script type="text/javascript" src="js/jquery.ae.image.resize.min.js"></script>';
-				
-		/*
-		 $res .= '<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>';
-		$res .= '<script type="text/javascript" src="js/autocomplete.js"></script>';
-		$res .= '<script type="text/javascript" src="js/jquery.blockUI.js"></script>';
-		$res .= '<script type="text/javascript" src="js/jquery.ae.image.resize.min.js"></script>';
+		
+		// TODO: not working anymore with IE11
+		// http://stackoverflow.com/questions/14923301/uncaught-typeerror-cannot-read-property-msie-of-undefined-jquery-tools
+		$res .= <<<EOD
+		<script type='text/javascript'>
+	 		$.browser = {};
+			(function () {
+				$.browser.msie = false;
+				$.browser.version = 0;
+				if (navigator.userAgent.match(/MSIE ([0-9]+)\./)) {
+					$.browser.msie = true;
+					$.browser.version = RegExp.$1;
+				}
+			})();
+		</script>
+EOD;
 
-		$res .= '<link rel="stylesheet" type="text/css" href="css/reset.css" media="screen" />';
-		$res .= '<link rel="stylesheet" type="text/css" href="' . $this->getCssPath() . 'autocomplete.css" media="screen" />';
-		$res .= '<link rel="stylesheet" type="text/css" href="' . $this->getCssPath() . 'styles.css" media="screen" />';
-		*/
-
-		$res .= '<link rel="stylesheet" type="text/css" href="flags/flags.css" media="screen" />';
+		$res .= '<script type="text/javascript" src="' . $this->getJsPath() . 'jquery.ae.image.resize.min.js"></script>';
+		$res .= '<script type="text/javascript" src="' . $this->getJsPath() . 'jquery.blockUI-2.7.0.js"></script>';
+		
+		$res .= '<link rel="stylesheet" type="text/css" href="flags/flags.css" media="screen" />' . "\n";
 
 		$res .= '<!-- Bootstrap -->' . "\n";
-
 		$res .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
-
 		$res .= '<link rel="stylesheet" type="text/css" href="' . $this->getBootStrapPath() . 'css/bootstrap.css" media="screen" />' . "\n";
 		$res .= '<link rel="stylesheet" type="text/css" href="' . $this->getBootStrapPath() . 'css/bootstrap-responsive.css" media="screen" />' . "\n";
 
-		$res .= '<link rel="stylesheet" type="text/css" href="' . $this->getCssPath() . 'styles.css" media="screen" />';
-		$res .= '<link rel="stylesheet" type="text/css" href="' . $this->getCssPath() . 'tagcloud.css" media="screen" />';
+		$res .= '<link rel="stylesheet" type="text/css" href="' . $this->getCssPath() . 'styles.css" media="screen" />' . "\n";
+		$res .= '<link rel="stylesheet" type="text/css" href="' . $this->getCssPath() . 'tagcloud.css" media="screen" />' . "\n";
 		
 		return $res;
 	}
 
 	function generateBodyEnd() {
 
-		$res = '<script type="text/javascript" src="' . $this->getBootStrapPath() . 'js/bootstrap.min.js"></script>' . "\n";
+		$res = '';
+		$res .= '<script type="text/javascript" src="' . $this->getBootStrapPath() . 'js/bootstrap.min.js"></script>' . "\n";
 		return $res;
 	}
 
@@ -145,10 +150,6 @@ EOD;
 		return $res;
 	}
 
-	function useTwitterBootstrap() {
-		return true;
-	}
-
 	public function generateBody() {
 
 		$res = '';
@@ -181,6 +182,19 @@ EOD;
 
 		$res .= $this->generateFooter();
 
+		$res .= <<<EOD
+		<div id="reader-dialog" style="display: none; cursor: default">
+			<div id="reader-dialog-title"
+			style="padding: 10px; text-align: left; background-color: #808080;"><?php echo _('Reader'); ?><input style="float: right;" type="button" onClick='$.unblockUI()' value="<?php echo _('Close'); ?>" /></div>
+			<div id="reader-dialog-text" style="padding: 10px; text-align: left; overflow: auto; max-height: 400px;"></div>
+		</div>
+	
+		<div id="preferences-dialog" style="display: none; cursor: default">
+			<div id="preferences-dialog-title"
+			style="padding: 10px; text-align: left; background-color: #808080;"><?php echo _('Preferences'); ?><input style="float: right;" type="button" onClick='preferencesCloseDialog();' value="<?php echo _('Close'); ?>" /></div>
+			<div id="preferences-dialog-text" style="padding: 10px; text-align: left; overflow: auto; max-height: 400px;"></div>
+		</div>
+EOD;
 		$res .= $this->generateBodyEnd();
 
 		return $res;

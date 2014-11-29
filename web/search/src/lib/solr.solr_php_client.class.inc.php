@@ -60,46 +60,41 @@ class Solr {
 		return $ar["lucene"]["solr-spec-version"];
 	}
 
-	public function getSuggestion($q, $limit) {
 
+	/**
+	 * Récupération des terms de l'index Solr pour un champs donnée
+	 * et une requête donnée
+	 */
+	public function getTerms($qry, $queryField, $limit, $mincount=0) {
+	
 		if ($this->_solr==null) return "";
-
-		global $search_multilingual, $search_language_code;
-
-		if ($search_multilingual) {
-			$field_sufix = 'ml';
-		}
-		else {
-			$field_sufix = $search_language_code;
-		}
-		$queryField = "content_" . $field_sufix;
-
+	
+		if ($limit==0) $limit=1000;
+	
 		$params = array();
 		$params['terms'] = 'true';
 		$params['terms.fl'] = $queryField;
-		$params['terms.lower'] = $q;
-		$params['terms.prefix'] = $q;
+		$params['terms.lower'] = $qry;
+		$params['terms.prefix'] = $qry;
 		$params['terms.lower.incl'] = 'true';
 		$params['terms.limit'] = $limit;
-		$params['qt'] = '/terms';
-
-		$response = $this->_solr->search($q, 0, $limit, $params);
+		$params['terms.sort'] = 'count';
+		$params['terms.mincount'] = '0';
+		$params['qt'] = 'terms';
+	
+		$response = $this->_solr->search($qry, 0, $limit, $params);
 		if ( ! $response->getHttpStatus() == 200 ) {
 			return "";
 		}
-
+	
 		$q = $response->getRawResponse();
-
+	
 		$ret = "";
 		if (is_object ( $response->terms )) {
-			if ($search_multilingual) {
-				$terms = get_object_vars($response->terms->content_ml);
-			}
-			else {
-				$terms = get_object_vars($response->terms->content_fr);
-			}
+			$terms = get_object_vars($response->terms->$queryField);
+			$ret = array();
 			foreach($terms as $term => $count) {
-				$ret .= sprintf("%s\n", $term);
+				$ret[] = $term;
 			}
 		}
 		return $ret;
@@ -271,20 +266,13 @@ class Solr {
 		return $ret;
 	}
 
-	function buildQuery($dismax, $queryField, $query_lang, $qry, $word_variations, $search_multilingual) {
+	function buildQuery($dismax, $queryField, $query_lang, $qry, $word_variations) {
 
 		if (empty($qry) || $qry=='*' || $qry=='*:*') {
 			return '*:*';
 		}
 		
 		if ($dismax) {
-			/*
-			if ($word_variations) $queryField = $queryField . 's';
-			if ($search_multilingual)
-			$finalqry = '[' . $query_lang .  ']' . $qry ;
-			else
-			$finalqry = $qry ;
-			*/
 			$finalqry = $qry ;
 		}
 		else {
@@ -292,38 +280,12 @@ class Solr {
 			//	$queryField = $queryField . 's';
 
 			// excape query
-			//$qry = trim($solr->escape($qry));
 			$qry = trim($this->escapeQuery($qry));
 			//$params['df'] = $queryField;
 
-			/*
-			 $aCrit = preg_split( "/\s+/", $qry, -1, PREG_SPLIT_NO_EMPTY);
-			$finalqry = "";
-			foreach ( $aCrit as $crit)
-			{
-			$finalqry .= $queryField . ':' . '\[' . $query_lang .  '\]' . $crit . " ";
-			}
-			*/
-			if ($search_multilingual) {
-				$solr_version = $this->getVersion();
-
-				if ($solr_version{0}!='4') {
-					$query_lang = '\[' . $query_lang . '\]';
-				}
-				else {
-					$query_lang = '\{' . $query_lang . '\}';
-				}
-
-				$finalqry = $queryField . ':(' . $query_lang . $qry . ")";
-				if ($word_variations) {
-					$finalqry = '(' . $finalqry . ') OR (' . $queryField . 's:(' . $query_lang . $qry . '))';
-					//$finalqry = $queryField . 's:(' . '\[' . $query_lang . '\]' . $qry . ')';
-				}
-			} else{
-				$finalqry = $queryField . ':(' . $qry . ")";
-				if ($word_variations)
-				$finalqry = '(' . $finalqry . ') OR (' . $queryField . 's:(' . $qry . '))';
-			}
+			$finalqry = $queryField . ':(' . $qry . ")";
+			if ($word_variations)
+			$finalqry = '(' . $finalqry . ') OR (' . $queryField . 's:(' . $qry . '))';
 		}
 
 		return $finalqry;
@@ -337,8 +299,6 @@ class Solr {
 	$word_variations,
 	$debug=false) {
 
-		global $search_multilingual, $search_language_code;
-
 		if ($this->_solr==null) return "";
 
 		$this->_response = null;
@@ -349,7 +309,7 @@ class Solr {
 
 		$dismax=false;
 		if ($dismax) $params['defType'] = "dismax";
-		$finalqry = $this->buildQuery($dismax, $queryField, $query_lang, $qry, $word_variations, $search_multilingual);
+		$finalqry = $this->buildQuery($dismax, $queryField, $query_lang, $qry, $word_variations);
 		$finalqry = "(" . $finalqry . ")" . " AND (uid:\"" . $id . "\")";
 
 		$params['facet'] = 'false';
@@ -419,8 +379,7 @@ class Solr {
 	$rss,
 	$debug=false) {
 
-		//global $search_multilingual, $search_language_code, $facetcollections, $facettags, $facetcountry, $facetlanguage, $facetcontenttype, $facetsourcename, $facetextra;
-		global $search_multilingual, $search_language_code, $facetuse, $facetextra, $facetqueries, $facetlimit, $search_requesthandler;
+		global $facetuse, $facetextra, $facetqueries, $facetlimit, $search_requesthandler;
 		
 		if ($this->_solr==null) return "";
 
@@ -440,7 +399,7 @@ class Solr {
 		}
 		//if ($dismax) $params['defType'] = "dismax";
 		
-		$finalqry = $this->buildQuery($dismax, $queryField, $query_lang, $qry, $word_variations, $search_multilingual);
+		$finalqry = $this->buildQuery($dismax, $queryField, $query_lang, $qry, $word_variations);
 		if (!$dismax) $finalqry = "(" . $finalqry . ")";
 
 		// params facet

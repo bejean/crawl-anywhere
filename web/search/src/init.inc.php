@@ -211,7 +211,6 @@ $results_img_width=$config->getDefault("results.img_width", "0");
 
 $search_requesthandler = $config->getDefault("search.requesthandler", "");
 
-$search_multilingual = ($config->get("search.multilingual")=='1');
 $search_language_code = $config->get("search.language_code");
 
 $groupsize = $config->getDefault("results.groupsize", "0");

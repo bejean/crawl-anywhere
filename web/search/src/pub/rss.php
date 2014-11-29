@@ -25,7 +25,7 @@ if ($solr->connect($theme->getSolrHost(), $theme->getSolrPort(), $theme->getSolr
 	else
 		$mode = "simple";
 		
-	$queryField = getQueryField($search_multilingual, $search_language_code);
+	$queryField = getQueryField($search_language_code);
 	
 	$response = $solr->query($crit, $queryField, $querylang, '', 0, 0, 100, $fqitms, $word_variations, $filter_lang, $filter_country, $filter_mimetype, $filter_source, $filter_collection, $filter_tag, '', '', '', '', '', true, false);
 	if ( $response->getHttpStatus() == 200 ) {
@@ -54,13 +54,7 @@ if ($solr->connect($theme->getSolrHost(), $theme->getSolrPort(), $theme->getSolr
 	}	
 }
 
-function getQueryField($search_multilingual, $search_language_code) {
-	if ($search_multilingual) {
-		$field_sufix = 'ml';
-	}
-	else {
-		$field_sufix = $search_language_code;
-	}
-	return "content_" . $field_sufix;
+function getQueryField($search_language_code) {
+	return "content_" . $search_language_code;
 }
 ?>

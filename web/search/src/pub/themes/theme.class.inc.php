@@ -12,7 +12,6 @@ interface iTheme {
 	function getCssPath();
 	function getJsPath();
 
-	public function useTwitterBootstrap();
 	public function getSolrFields();
 	public function getSolrHost();
 	public function getSolrPort();
@@ -56,10 +55,6 @@ abstract class ThemeBase {
 
 	function getJsPath() {
 		return 'themes/' . $this->name . '/js/';
-	}
-
-	function useTwitterBootstrap() {
-		return false;
 	}
 	
 	function getSolrFields() {
@@ -122,9 +117,6 @@ abstract class ThemeBase {
 
 			$key = base64_encode ($doc->sourceid . "|" . $id);
 			$res2 .= '<dt><a href="getdropbox.php?id=' . $key .'"  target="_blank">' . $title;
-
-			//$res2 .= '<dt><a href="getdropbox.php?idsrc=' . $doc->sourceid . '&id=' . $id .'"  target="_blank">' . $title;
-			//$res2 .= '<dt><a href="' . $doc->id . '"  target="_blank">' . $title;
 		} else {
 			$title = "";
 			if (isset($doc->title_dis))
@@ -141,21 +133,18 @@ abstract class ThemeBase {
 
 		if ($t=='text/html' && $solr_host = $config->getDefault("results.showfastread", "0")) {
 			$res2 .= '<a class="ovalbutton" href="javascript:void(0);" onclick="doReader(\'' . $doc->uid . '\', \'' . $query . '\', \'' . $querylang . '\');"><span>' . _('Reader') . '</span></a>';
+			//$res2 .= '<a class="ovalbutton"  params="{ action: \'gettext\', id: ' . $doc->uid . ', search_crit: ' . $query . ', search_querylanguage: ' . $querylang . ' }) }" data-toggle="modal"><span>' . _('Reader') . '</span></a>';									
 		}
 
 		$res2 .= "</dt>";
-
-		//$res .= $tmp;
 
 		$summary = '';
 		if (isset($teasers)) {
 			$docid = strval($doc->id);
 			$docteaser = get_object_vars($teasers[$docid]);
-			//if (isset($docteaser->content_ml))
 			if (isset($docteaser[$queryField]))
 			{
 				$summary = "";
-				//foreach($docteaser->content_ml as $value)
 				foreach($docteaser[$queryField] as $value)
 				{
 					if ($summary!="") $summary .= "...";
@@ -223,8 +212,6 @@ abstract class ThemeBase {
 		$aContent = explode("\n", $content);
 		foreach ($aContent as $line)  $summary .= "<p>" . $line . "</p>";
 
-		//if (false) {
-
 		$aMatches = Array();
 
 		if (isset($teasers)) {
@@ -250,7 +237,6 @@ abstract class ThemeBase {
 
 		$res2 .= "<dd>" . $summary . "</dd>";
 
-		// 	if ($resultshowsource) {
 		if (startsWith($doc->id,'http://',false) || startsWith($doc->id,'https://',false)) {
 			$parseUrl = parse_url($doc->id);
 			$homeUrl = $parseUrl["scheme"] . "://" . $parseUrl["host"];
@@ -258,16 +244,12 @@ abstract class ThemeBase {
 		}
 		$res2 .= "<dd><span class='mnemo'>Date&nbsp;:</span>&nbsp;" . $this->getHumanDate($doc->publishtime) . "</dd>";
 
-		// 	}
-
-		// 	if ($resultshowmeta) {
 		if (count($doc->tag) > 0) {
 			$res2 .= "<dd>";
 			$temp = implode(', ', $doc->tag);
 			$res2 .= "<span class='mnemo'>Tags&nbsp;:</span>&nbsp;" . $temp;
 			$res2 .= "</dd>";
 		}
-		// 	}
 		$res2 .= "</dl>";
 
 		return $res2;
@@ -294,7 +276,6 @@ abstract class ThemeBase {
 			return $search[strtolower($key)];
 		return $key;
 	}
-
 	function getImageNameForContentType($search, $key) {
 		if ($search=="") return "";
 		if ($key=='text/html' || $key=='text/plain') return '';
@@ -302,7 +283,6 @@ abstract class ThemeBase {
 			return $search[$key];
 		return "";
 	}
-
 	function getHumanDate($date, $format = 'd/m/Y H:i:s') {
 		return date_format(date_create($date), $format);
 		//2012-03-28T13:21:48Z

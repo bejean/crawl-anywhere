@@ -13,22 +13,6 @@ if ($use_sts && isset($_SERVER['HTTPS'])) {
 }
 
 /*
- * Login ?
- */
-$login = ($config->getDefault("login", "0")=="1");
-if ($login && $user->getName()=="")
-{
-	$login_page = $config->getDefault("login.page", "");
-	if (!empty($login_page)) {
-		//ob_clean();
-		header("Status: 301 Moved Permanently", false, 301);
-		header("Location: " . $login_page);
-		//ob_end_flush();
-		exit();	
-	}
-}
-
-/*
  * Some variables used as global by themes
  */
 /*

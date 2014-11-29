@@ -111,30 +111,48 @@ abstract public class Source {
 		return null;
 	}
 
-	protected int getSrcDataInt(String name) {
+//	protected int getSrcDataInt(String name) {
+//		if (srcData.containsKey(name)) {
+//			Object o = srcData.get(name);
+//			try {
+//				if (o instanceof String) {  
+//					return Integer.parseInt((String) o);
+//				} 
+//				if (o instanceof Integer) {  
+//					return ((Integer) o).intValue();
+//				}
+//				if (o instanceof Long) {  
+//					return ((Long) o).intValue();
+//				}
+//				return 0;
+//			} 
+//			catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return 0;
+//	}
+	
+	
+	protected int getSrcDataInt(String name) throws IOException {
 		if (srcData.containsKey(name)) {
 			Object o = srcData.get(name);
-			try {
-				if (o instanceof String) {  
-					return Integer.parseInt((String) o);
-				} 
-				if (o instanceof Integer) {  
-					return ((Integer) o).intValue();
+			if (o instanceof String) { 
+				if ("".equals((String) o)) {
+					throw new IOException();
 				}
-				if (o instanceof Long) {  
-					return ((Long) o).intValue();
-				}
-				return 0;
+				return Integer.parseInt((String) o);
 			} 
-			catch (Exception e) {
-				e.printStackTrace();
+			if (o instanceof Integer) {  
+				return ((Integer) o).intValue();
 			}
-			//return ((Integer)srcData.get(name)).intValue();
+			if (o instanceof Long) {  
+				return ((Long) o).intValue();
+			}
 		}
-		return 0;
-		//String value = getSrcDataString(name); //.replace(".0", "");
-		//return Integer.parseInt(value);
+		throw new IOException();
 	}
+
 
 	protected int getSrcDataInt(String name, int defaultValue) {
 		try {
@@ -209,11 +227,11 @@ abstract public class Source {
 	}
 
 	public int getAccountId(){
-		return getSrcDataInt("id_account");
+		return getSrcDataInt("id_account", 1);
 	}
 
 	public int getTargetId() {
-		return getSrcDataInt("id_target");
+		return getSrcDataInt("id_target", 1);
 	}
 
 	public boolean isRescan() {
@@ -242,11 +260,10 @@ abstract public class Source {
 //	}
 
 	public int getType(){
-		return getSrcDataInt("type");
+		return getSrcDataInt("type", 1);
 	}
 
 	public boolean isTest(){
-		//return (getSrcDataInt("enabled") == 2);
 		return ("2".equals(getSrcDataString("enabled")));
 	}
 
@@ -342,7 +359,7 @@ abstract public class Source {
 	}
 
 	public int getAuthMode() {
-		return getSrcDataInt("auth_mode");
+		return getSrcDataInt("auth_mode", 0);
 	}
 
 	public String getAuthLogin() {

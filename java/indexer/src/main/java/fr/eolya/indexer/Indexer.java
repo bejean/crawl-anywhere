@@ -1,6 +1,7 @@
 package fr.eolya.indexer;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.util.*;
 
 import org.apache.commons.io.FileUtils;
@@ -566,7 +567,13 @@ public class Indexer {
     
     private SolrCore createSolrCore(String solrUrl, String corename, int commitWithin, int commitEach, int optimizeEach, Logger logger, boolean verbose, String requestHandler, boolean solrUseJavaBin) {
         logger.log("Create new Solr core connection : " + solrUrl);
-        SolrCore solrCore = new SolrCore(solrUrl, corename, commitWithin, commitEach, optimizeEach, logger, requestHandler, solrUseJavaBin);        
+        SolrCore solrCore;
+		try {
+			solrCore = new SolrCore(solrUrl, corename, commitWithin, commitEach, optimizeEach, logger, requestHandler, solrUseJavaBin);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return null;
+		}        
         solrCore.setOutputStackTrace(verbose);
         
         if (!solrCore.connect())

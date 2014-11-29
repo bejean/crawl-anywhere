@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <indexer>
 	<solr>
-		<param name="baseurl">http://localhost:8180/solr/</param>
+		<param name="baseurl">http://localhost:8983/solr/</param>
 		<param name="corename">crawler</param>
 		<!--param name="requesthandler">/updatex</param-->
 		<param name="commitwithin">60000</param>

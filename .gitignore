@@ -94,3 +94,4 @@ java/simplepipeline/config/pipeline/scripts/pipeline/doctextextractor/www_dokter
 web/crawler/src/pub/ajax/import-convert.class.php
 web/search/src/config/config-amnesty.ini
 java/simple-http-client
+indexer.log

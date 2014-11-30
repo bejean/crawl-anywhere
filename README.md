@@ -85,11 +85,8 @@ History
 * release 4.0.0-alpha-4 : June, 23 2013
 * release 4.0.0-beta-1 : August, 6 2013
 * release 4.0.0-release-candidate : October, 20 2013
+* release 4.0.0 final : December, 1, 2014
 
 
-Roadmap
--------
-
-* release 4.0.0 final : 2014
 
 

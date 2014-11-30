@@ -1,6 +1,6 @@
 ![Crawl-Anywhere](http://www.crawl-anywhere.com/logo.png "Crawl-Anywhere")
 
-<strong>April 2013 - Starting version 4.0, Crawl-Anywhere becomes an open-source project. Current version is 4.0.0 release candidate</strong>
+<strong>April 2013 - Starting version 4.0, Crawl-Anywhere becomes an open-source project. Current version is 4.0.0</strong>
 
 Stable version 3.0.x is still available at http://www.crawl-anywhere.com/
 
@@ -37,7 +37,7 @@ Build distribution
 Pre-requisites : 
 
 * Maven 3.0.0 or > 
-* Oracle Java 6 or >
+* Oracle Java 7 or >
 
 Steps :
 
@@ -56,11 +56,10 @@ Installation
 Pre-requisites : 
 
 * Oracle Java 7 or >
-* Tomcat 5.5 or >
 * Apache 2.0 or >
 * PHP 5.2.x or 5.3.x or 5.4.x
 * MongoDB 64 bits 2.2 or >
-* Solr 3.x or > (configuration files provided for Solr 4.3.0)
+* Solr 4.3.0 or > (configuration files provided for Solr 4.3.0 and 4.10.0)
 
 
 Steps :

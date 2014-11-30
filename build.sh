@@ -95,8 +95,8 @@ cp target/indexer-0.0.1-SNAPSHOT.jar $DISTRIB/bin/eolya-indexer-$VERSION.jar
 ##cp target/crawlerws-0.0.1-SNAPSHOT.war $DEV/install/bin/tomcat/crawlerws-$VERSION.war
 
 mkdir $DISTRIB/bin/ws
-cd $DEV/java/crawlerws2
-cp target/crawlerws2-0.0.1-SNAPSHOT.jar $DISTRIB/bin/ws/eolya-crawlerws-$VERSION.jar
+cd $DEV/java/crawlerws
+cp target/crawlerws-0.0.1-SNAPSHOT.jar $DISTRIB/bin/ws/eolya-crawlerws-$VERSION.jar
 
 
 #=============================================
@@ -153,7 +153,7 @@ cp $DEV/java/indexer/config/indexer/indexer-default.xml $DISTRIB/config/indexer/
 cp -r $DEV/java/utils/config/* $DISTRIB/config/.
 
 mkdir -p $DISTRIB/config/crawlerws
-cp -r $DEV/java/crawlerws2/settings-default.yml $DISTRIB/config/crawlerws/settings.yml
+cp -r $DEV/java/crawlerws/settings-default.yml $DISTRIB/config/crawlerws/settings.yml
 
 #=============================================
 # tar

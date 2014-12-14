@@ -66,16 +66,14 @@ if ($action=="showstatus")
 	}
 	$res .= "</td></tr>";
 	*/
-	if (!$_SESSION["mysolrserver_url"]) {
 		if ($user->getLevel()==2) {
 			$res .= "<tr><td class='head'>Crawler DB</td><td>";
 			$res .= $config->get("database.dbname");
 			$res .= "</td></tr>";
 		}
 
-		$crawler_witness_files_path = $config->get("crawler.witness_files_path");
-		if ($crawler_witness_files_path!="")
-		{
+	$crawler_witness_files_path = $config->get("crawler.witness_files_path");
+	if ($crawler_witness_files_path!=""){
 			// Crawler state
 // 			$res .= "<tr><td class='head'>Crawler state</td><td>";
 // 			//$filecount = count(glob($crawler_witness_files_path . "/crawler*.pid"));
@@ -86,33 +84,32 @@ if ($action=="showstatus")
 // 				$res .= "Crawler is not running";
 // 			$res .= "</td></tr>";
 
-			$ndx = 0;
-			$monitor = trim($config->get("monitor.process_".$ndx));
-			while ($monitor!="" &&  $monitor!="undefined") {
-				$aItems = explode("|", $monitor);
-				if (count($aItems)==2 || count($aItems)==3) {
-					$res .= "<tr><td class='head'>" . $aItems[0] . " state</td>";
-					$msg = "";
-					if (count($aItems)==3) {
-						$filecount = count(glob($aItems[2] . "/j*.xml"));
-						$msg = " - queue size = " . $filecount . " item(s)";
-					}
-					if (file_exists ($crawler_witness_files_path . "/" . $aItems[1]))
-						$res .= "<td class='ok'>" . $aItems[0] . " is running";
-					else
-						$res .= "<td class='warning'>" . $aItems[0] . " is not running";
-					$res .= $msg . "</td></tr>";
+		$ndx = 0;
+		$monitor = trim($config->get("monitor.process_".$ndx));
+		while ($monitor!="" &&  $monitor!="undefined") {
+			$aItems = explode("|", $monitor);
+			if (count($aItems)==2 || count($aItems)==3) {
+				$res .= "<tr><td class='head'>" . $aItems[0] . " state</td>";
+				$msg = "";
+				if (count($aItems)==3) {
+					$filecount = count(glob($aItems[2] . "/j*.xml"));
+					$msg = " - queue size = " . $filecount . " item(s)";
 				}
-				$ndx++;
-				$monitor = trim($config->get("monitor.process_".$ndx));
+				if (file_exists ($crawler_witness_files_path . "/" . $aItems[1]))
+					$res .= "<td class='ok'>" . $aItems[0] . " is running";
+				else
+					$res .= "<td class='warning'>" . $aItems[0] . " is not running";
+				$res .= $msg . "</td></tr>";
 			}
+			$ndx++;
+			$monitor = trim($config->get("monitor.process_".$ndx));
 		}
-		else
-		{
-			$res .= "<tr><td class='head'>Crawler state</td><td>";
-			$res .= "Unable to provide crawler state";
-			$res .= "</td></tr>";
-		}
+	}
+	else
+	{
+		$res .= "<tr><td class='head'>Crawler state</td><td>";
+		$res .= "Unable to provide crawler state";
+		$res .= "</td></tr>";
 	}
 
 	$mg = mg_connect ($config, "", "", "");
@@ -206,7 +203,7 @@ if ($action=="showrunning")
 		
 		$res .= "<center><table>";
 		$res .= "<tr><th style='width:25%;'>Title</th><th>Start crawl date</th><th style='width: 70px;'>Processed<br/>pages</th><th style='width: 70px;'>Remaining<br/>pages</th><th style='width: 30px;'>Status</th><th style='width: 30px;'>Action</th>";
-		if (!$_SESSION["mysolrserver_url"] && $cache_enabled  && $rs["type"]=='1') {
+		if ($cache_enabled  && $rs["type"]=='1') {
 			$res .= "<th style='width: 30px; text-align: center;'>Status</th><th style='width: 30px; text-align: center;'>Action</th>";
 		}
 		$res .= "</tr><tbody>";
@@ -215,42 +212,41 @@ if ($action=="showrunning")
 		{
 			$rs = $cursor->getNext();
 			$processing_info = "";
-			if (!$_SESSION["mysolrserver_url"]) {
-				$processing_info = $rs["processing_info"];
-		
-				if (startswith($processing_info, "<")) {
-					$xml_processing_info = simplexml_load_string($processing_info);
-					$elapsedtime = (string)$xml_processing_info->elapsedtime;
-					$elapsedtime = $elapsedtime / 1000;
-					$currentspeed = (string)$xml_processing_info->currentspeed;
-					$averagespeed = $rs["running_crawl_item_processed"] / $elapsedtime;
-					$estimatedtime = $rs["running_crawl_item_to_process"] / $averagespeed;
-										
-					$estimatedtime_unit = "sec";
-					if ($estimatedtime>=3600) {
-						$estimatedtime = $estimatedtime / 3600;
-						$estimatedtime_unit = "h";
-					} else {
-						if ($estimatedtime>=60) {
-							$estimatedtime = $estimatedtime / 60;
-							$estimatedtime_unit = "mn";
-						}
+			
+			$processing_info = $rs["processing_info"];
+	
+			if (startswith($processing_info, "<")) {
+				$xml_processing_info = simplexml_load_string($processing_info);
+				$elapsedtime = (string)$xml_processing_info->elapsedtime;
+				$elapsedtime = $elapsedtime / 1000;
+				$currentspeed = (string)$xml_processing_info->currentspeed;
+				$averagespeed = $rs["running_crawl_item_processed"] / $elapsedtime;
+				$estimatedtime = $rs["running_crawl_item_to_process"] / $averagespeed;
+									
+				$estimatedtime_unit = "sec";
+				if ($estimatedtime>=3600) {
+					$estimatedtime = $estimatedtime / 3600;
+					$estimatedtime_unit = "h";
+				} else {
+					if ($estimatedtime>=60) {
+						$estimatedtime = $estimatedtime / 60;
+						$estimatedtime_unit = "mn";
 					}
+				}
 
-					$elapsedtime_unit = "sec";
-					if ($elapsedtime>=3600) {
-						$elapsedtime = $elapsedtime / 3600;
-						$elapsedtime_unit = "h";
-					} else {
-						if ($elapsedtime>=60) {
-							$elapsedtime = $elapsedtime / 60;
-							$elapsedtime_unit = "mn";
-						}
+				$elapsedtime_unit = "sec";
+				if ($elapsedtime>=3600) {
+					$elapsedtime = $elapsedtime / 3600;
+					$elapsedtime_unit = "h";
+				} else {
+					if ($elapsedtime>=60) {
+						$elapsedtime = $elapsedtime / 60;
+						$elapsedtime_unit = "mn";
 					}
 				}
-				else {
-					$processing_info = "";
-				}
+			}
+			else {
+				$processing_info = "";
 			}
 			
 			$res .= "<tr>";
@@ -290,7 +286,7 @@ if ($action=="showrunning")
 			}
 			$res .= "</td>";
 
-			if (!$_SESSION["mysolrserver_url"] && $cache_enabled && $rs["type"]=='1') {
+			if ($cache_enabled && $rs["type"]=='1') {
 
 				if ($rs["crawl_process_status"] == "5") {
 					$res .= "<td style='background-color: orange; text-align: center; vertical-align:middle'>";

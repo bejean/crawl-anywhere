@@ -1126,13 +1126,6 @@ function addScheduleShowDialog (day, start, stop, enabled, ndx) {
 }
 
 function scheduleDisplay() {
-<?php 
-if ($_SESSION["mysolrserver_url"]) {
-?>	
-	return true;
-<?php 
-}		
-?>	
 	var source_schedule = jQuery.trim($("#source_schedule").val());
 	if (source_schedule == "") {
 		source_schedule = '{ "schedules": [] }';
@@ -1185,14 +1178,7 @@ function editSchedule(ndx) {
     scheduleDisplay();
 }
 
-function json2XmlSchedule() {
-<?php 
-if ($_SESSION["mysolrserver_url"]) {
-?>	
-	return true;
-<?php 
-}		
-?>	
+function json2XmlSchedule() {	
 	$("#source_schedule_xml").val("");	
 
 	var jsonStr = $("#source_schedule").val();

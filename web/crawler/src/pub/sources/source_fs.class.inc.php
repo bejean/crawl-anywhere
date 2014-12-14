@@ -60,28 +60,20 @@ class SourceFS extends SourceBase implements iSource {
 		$res .= "</tr>";
 
 		$target = $this->getValue('id_target', '');
-		if (!$_SESSION["mysolrserver_url"]) {
-			$aTargets = getAvailableTargets($this->config, $this->id_account_current);
-			if ($aTargets!=null) {
-				$res .= "<tr>";
-				$res .= "<td class='head'>Target</td>";
-				$res .= "<td>";
-				$res .= "<select id='id_target' name='id_target' style='editInputSelect'>";
-				foreach ($aTargets as $key => $value) {
-					$res .= "<option value='" . $key . "'";
-					if (!empty($target) && $target==strtolower(trim($key))) $res .= " selected";
-					$res .= ">" . $value . "</option>";
-				}
-				$res .= "</select>";
-				$res .= "</td>";
-				$res .= "</tr>";
+		$aTargets = getAvailableTargets($this->config, $this->id_account_current);
+		if ($aTargets!=null) {
+			$res .= "<tr>";
+			$res .= "<td class='head'>Target</td>";
+			$res .= "<td>";
+			$res .= "<select id='id_target' name='id_target' style='editInputSelect'>";
+			foreach ($aTargets as $key => $value) {
+				$res .= "<option value='" . $key . "'";
+				if (!empty($target) && $target==strtolower(trim($key))) $res .= " selected";
+				$res .= ">" . $value . "</option>";
 			}
-		} else {
-			if (empty($target)) {
-				mg_get_value($this->mg, "accounts", "id_target", array("id" => intval($this->id_account_current)), $defaultTargetId);
-				$target = $defaultTargetId;
-			}
-			$res .= "<input type='hidden' id='id_target' name='id_target' value='" . $target . "'>";
+			$res .= "</select>";
+			$res .= "</td>";
+			$res .= "</tr>";
 		}
 		
 		$res .= "<tr>";
@@ -317,33 +309,31 @@ class SourceFS extends SourceBase implements iSource {
 		$res .= "</td>";
 		$res .= "</tr>";
 
-		if (!$_SESSION["mysolrserver_url"]) {
-			$res .= "<tr>";
-			$res .= "<td class='head'>Schedules</td>";
+		$res .= "<tr>";
+		$res .= "<td class='head'>Schedules</td>";
 
-			$scheduleJson = '{ "schedules": [';
-			$schedule = $this->getValue('crawl_schedule', '');
-			if (isset($schedule) && $schedule!="") {
-				$scheduleXml = simplexml_load_string($schedule);
-				$result = $scheduleXml->xpath('/schedules/schedule');
-				$sep = "";
-				while(list( , $node) = each($result)) {
-					$scheduleJson .= $sep . '{ "day": "' . (string)$node->day . '", "start": "' . (string)$node->start . '", "stop": "' . (string)$node->stop . '", "enabled": "' . (string)$node->enabled . '" }';
-					$sep = ",";
-				}
+		$scheduleJson = '{ "schedules": [';
+		$schedule = $this->getValue('crawl_schedule', '');
+		if (isset($schedule) && $schedule!="") {
+			$scheduleXml = simplexml_load_string($schedule);
+			$result = $scheduleXml->xpath('/schedules/schedule');
+			$sep = "";
+			while(list( , $node) = each($result)) {
+				$scheduleJson .= $sep . '{ "day": "' . (string)$node->day . '", "start": "' . (string)$node->start . '", "stop": "' . (string)$node->stop . '", "enabled": "' . (string)$node->enabled . '" }';
+				$sep = ",";
 			}
-			$scheduleJson .= '] }';
-
-			$res .= "<td>";
-			$res .= "<div id='schedule'>";
-			$res .= "</div>";
-			$res .= "<input type='hidden' name='source_schedule' id='source_schedule' value='" . $scheduleJson . "'>";
-			$res .= "<input type='hidden' name='source_schedule_xml' id='source_schedule_xml' value='" . $schedule . "'>";
-			$res .= "<a href='javascript:addSchedule();'><img src='images/plus_12.png'>&nbsp;Add schedule</a>";
-			$res .= "<br /><span class='help'>This parameter requieres MongoDB to be configured</span>";
-			$res .= "</td>";
-			$res .= "</tr>";
 		}
+		$scheduleJson .= '] }';
+
+		$res .= "<td>";
+		$res .= "<div id='schedule'>";
+		$res .= "</div>";
+		$res .= "<input type='hidden' name='source_schedule' id='source_schedule' value='" . $scheduleJson . "'>";
+		$res .= "<input type='hidden' name='source_schedule_xml' id='source_schedule_xml' value='" . $schedule . "'>";
+		$res .= "<a href='javascript:addSchedule();'><img src='images/plus_12.png'>&nbsp;Add schedule</a>";
+		$res .= "<br /><span class='help'>This parameter requieres MongoDB to be configured</span>";
+		$res .= "</td>";
+		$res .= "</tr>";
 		$res .= "<tr>";
 		$res .= "<td class='head'>Crawl rules by url</td>";
 		$res .= "<td>";

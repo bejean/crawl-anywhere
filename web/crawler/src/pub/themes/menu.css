@@ -25,14 +25,6 @@ ul#menu li.active
     background: #A0A0A0;
 }
 
-/*
-ul#menu li.mnu_mysolrserver
-{
-    width: 200px ;
-	float: left ;
-    text-align: center ;
-}
-*/
 
 ul#menu li.large
 {
@@ -40,14 +32,6 @@ ul#menu li.large
 	float: left ;
     text-align: center ;
 }
-
-/*
-ul#menu li.mnu_mysolrserver_active
-{
-    width: 200px ;
-    background: #A0A0A0;
-}
-*/
 
 ul#menu li a
 {

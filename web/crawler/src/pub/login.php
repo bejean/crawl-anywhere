@@ -35,25 +35,7 @@ if (isset($_POST["action"]))
 
 	if ($action=="login")
 	{
-		if (isset($_POST["param"])) {
-			// 	var param = $.base64.encode(user + '|' + name + '|' + plugins + '|' + document.location);
-			$param=explode("|",base64_decode($_POST["param"]));
-			$username = trim($param[0]);
-			$_SESSION["mysolrserver_instance_name"] = trim($param[1]);
-			$_SESSION["mysolrserver_url"] = trim($param[3]);
-		}
-		else {
-			if (isset($_POST["back_url"])) $_SESSION["mysolrserver_url"] = $_POST["back_url"];
-			if (isset($_POST["instance_name"])) $_SESSION["mysolrserver_instance_name"] = $_POST["instance_name"];
-			$username = $_POST["user_name"];
-		}
-		if ($_SESSION["mysolrserver_url"]) 
-		{
-			$login = $user->loginAs($config, $username);
-		}
-		else {
-			$login = $user->login($config, $username, $_POST["user_password"]);
-		}
+		$login = $user->login($config, $_POST["user_name"], $_POST["user_password"]);
 		
 		if ($login)
 		{
@@ -84,8 +66,6 @@ if (isset($_POST["action"]))
 			} else {
 				$id_account_current = $user->getIdAccount();
 			}
-			if (isset($_POST["back_url"])) $_SESSION["mysolrserver_url"] = $_POST["back_url"];
-			if (isset($_POST["instance_name"])) $_SESSION["mysolrserver_instance_name"] = $_POST["instance_name"];
 
 			header("Status: 301 Moved Permanently", false, 301);
 			header("Location: index.php");

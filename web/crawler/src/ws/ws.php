@@ -11,18 +11,7 @@ require_once("../init.inc.php");
 $action = POSTGET("action");
 
 //TODO: V4
-if (($action=="get_available_tags") || ($action=="get_available_collections")) {
-	$id = "1";
-	if (isset($_GET["uuid"]) && $_GET["uuid"]!="") {
-		$uuid = $_GET["uuid"];
-		$db = db_connect ($config, "", "", "");
-		if ($db)
-		{
-			$ret = db_get_value($db, "accounts", "id", "id_mysolrserver_instance='" . $uuid . "'", $id);
-			if ($ret==-1) $id = "1";
-		}
-	}
-}
+$id = "1";
 
 //TODO: V4
 if ($action=="get_available_tags")

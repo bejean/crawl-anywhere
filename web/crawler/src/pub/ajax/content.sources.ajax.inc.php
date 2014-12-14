@@ -443,6 +443,7 @@ if ($action=="loadsources")
 				$res .= "Export&nbsp;<a href='#' onClick='exportSources(); return false;'><img src='images/export_32.png'></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 				$res .= "Import&nbsp;<a href='#' onClick='importSources(); return false;'><img src='images/import_32.png'></a>&nbsp;&nbsp;";
 			}
+			$res .= "Delete&nbsp;All<a href='#' onClick='deleteAllSource(); return false;'><img src='images/trash_32.png'></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 			$res .= "</div>";
 		}
 
@@ -571,6 +572,7 @@ if ($action=="loadsources")
 					$res .= "&nbsp;<a href='#' onClick='rescanSource(" . $rs["id"] . ");return false;' title='Rescan'><img src='images/rescan.png'></a>";
 					$res .= "&nbsp;<a href='#' onClick='deeperSource(" . $rs["id"] . ");return false;' title='Deeper'><img src='images/deeper.png'></a>";
 					$res .= "&nbsp;<a href='log.php?id=" . $rs["id"] . "' title='Log' target='log'><img src='images/log_16.png'></a>";
+					$res .= "&nbsp;<a href='#' onClick='deleteSource(" . $rs["id"] . ");return false;' title='Delete'><img src='images/trash_16.png'></a>";
 				} else {
 					if ($cache_enabled && $rs["type"]=='1') {
 						if ($crawl_status == "2") {
@@ -841,11 +843,22 @@ if ($action=="updatesource")
 
 if ($action=="deletesource")
 {
+	$id = $_POST["source_id"];
+	if (empty($id)) {
+		$res = "Error&nbsp;&nbsp;&nbsp;";
+		print ($res);
+		exit();
+	}
+	
 	$mg = mg_connect ($config, "", "", "");
 	if ($mg)
 	{
-		$stmt = new mg_stmt_update($mg, "sources");
-		$query = array("id" => intval($_POST["source_id"]));
+		$stmt = new mg_stmt_update($mg, "sources", NULL, TRUE);
+		if ($id=='all') {
+			$query = array ("deleted" => "0");
+		} else {
+			$query = array("id" => intval($id));
+		}
 		$stmt->setQuery ($query);
 		
 		$stmt->addColumnValue("deleted", "1");
@@ -854,20 +867,7 @@ if ($action=="deletesource")
 		$stmt->addColumnValueDate("crawl_nexttime");
 
 		$stmt->execute();		
-		/*	
-		$s = $stmt->getStatement();
-		$rs = $db->Execute($s);
-		if (!$rs)
-		{
-			$res = "Error&nbsp;&nbsp;&nbsp;" . $s;
-		}
-		else
-		{
-		*/
-			$res = "Success&nbsp;&nbsp;&nbsp;";
-		/*
-		}
-		*/
+		$res = "Success&nbsp;&nbsp;&nbsp;";
 	}
 
 	print ($res);

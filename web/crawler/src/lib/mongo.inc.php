@@ -288,9 +288,11 @@ class mg_stmt_update
 	var $collection;
 	var $query;
 	var $data;
+	var $multiple;
 
-	function mg_stmt_update($mg, $collectionname, $defaults=NULL)
+	function mg_stmt_update($mg, $collectionname, $defaults=NULL, $multiple=FALSE)
 	{
+		$this->multiple = multiple;
 		try {
 			$this->collection = $mg->selectCollection ( $collectionname );
 
@@ -335,7 +337,12 @@ class mg_stmt_update
 	
 	function execute()
 	{
-		$this->collection->update($this->query, array ('$set' => $this->data));
+		if ($this->multiple) {
+			$this->collection->update($this->query, array ('$set' => $this->data), array("multiple" => true));
+		}
+		else {
+			$this->collection->update($this->query, array ('$set' => $this->data));
+		}
 	}
 }
 

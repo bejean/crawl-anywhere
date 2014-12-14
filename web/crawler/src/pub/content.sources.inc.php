@@ -230,23 +230,54 @@ function saveSource(mode)
 			});
 }
 
-function deleteSource()
+function deleteAllSource() {
+	var answer = confirm ("Do you really want to delete all sources ?");
+	if (!answer)
+		return;
+
+	var answer = confirm ("Last chance ! Do you really want to delete all sources ?");
+	if (!answer)
+		return;
+
+	$.ajax({
+		  type: "post",
+		  data: "action=deletesource&source_id=all",
+		  url: ajax_url,
+		  success: function(data) {
+			   	loadSources('', 1);
+				}
+			});
+}
+
+function deleteSource(id)
 {
 	var answer = confirm ("Do you really want to delete this source ?");
 	if (!answer)
 		return;
 
-	$("#action").val("deletesource");
-	$.ajax({
-		  type: "post",
-		  data: $("#source_edit").serialize(), // assuming this == the form
-		  url: ajax_url,
-		  success: function(data) {
-				$("#source_save_result").html(data);
-				cancelSource();
-			   	loadSources('', 1);
-				}
-			});
+	if (id) {
+		$.ajax({
+			  type: "post",
+			  data: "action=deletesource&source_id="+id,
+			  url: ajax_url,
+			  success: function(data) {
+				   	loadSources('', 1);
+					}
+				});
+	} else {
+	
+		$("#action").val("deletesource");
+		$.ajax({
+			  type: "post",
+			  data: $("#source_edit").serialize(), // assuming this == the form
+			  url: ajax_url,
+			  success: function(data) {
+					$("#source_save_result").html(data);
+					cancelSource();
+				   	loadSources('', 1);
+					}
+				});
+	}
 }
 
 function resumeSource(id)

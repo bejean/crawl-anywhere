@@ -34,9 +34,14 @@ div#source_details table
     width: 95%;
 }
 
+.menu_button_on_left 
+{
+    text-align: left ;   
+}
+
 .menu_button_on_right 
 {
-    text-align: right ;       
+    text-align: right ;   
 }
 
 input.input_text_small

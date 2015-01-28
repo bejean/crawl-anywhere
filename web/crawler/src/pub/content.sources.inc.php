@@ -117,12 +117,12 @@ function editSource(id, type_mnemo)
     });    
 }
 
-function indexnow(id)
+function crawlNowSource(id)
 {
 	var answer = confirm ("Do you really want to crawl this source now ?");
 	if (!answer)
 		return;
-    $.get(ajax_url, {action: 'indexnow', id: id}, function(data) {
+    $.get(ajax_url, {action: 'crawlnow', id: id}, function(data) {
         alert(data);;
     });
 }
@@ -240,8 +240,46 @@ function deleteAllSource() {
 		return;
 
 	$.ajax({
-		  type: "post",
-		  data: "action=deletesource&source_id=all",
+		  type: "get",
+		  data: "action=deletesource&id=all",
+		  url: ajax_url,
+		  success: function(data) {
+			   	loadSources('', 1);
+				}
+			});
+}
+
+function resetAllSource() {
+	var answer = confirm ("Do you really want to reset all sources ?");
+	if (!answer)
+		return;
+
+	var answer = confirm ("Last chance ! Do you really want to reset all sources ?");
+	if (!answer)
+		return;
+
+	$.ajax({
+		  type: "get",
+		  data: "action=resetsource&id=all",
+		  url: ajax_url,
+		  success: function(data) {
+			   	loadSources('', 1);
+				}
+			});
+}
+
+function crawlNowAllSource() {
+	var answer = confirm ("Do you really want to craw now all sources ?");
+	if (!answer)
+		return;
+
+	var answer = confirm ("Last chance ! Do you really want to craw now all sources ?");
+	if (!answer)
+		return;
+
+	$.ajax({
+		  type: "get",
+		  data: "action=crawlnow&id=all",
 		  url: ajax_url,
 		  success: function(data) {
 			   	loadSources('', 1);
@@ -257,8 +295,8 @@ function deleteSource(id)
 
 	if (id) {
 		$.ajax({
-			  type: "post",
-			  data: "action=deletesource&source_id="+id,
+			  type: "get",
+			  data: "action=deletesource&id="+id,
 			  url: ajax_url,
 			  success: function(data) {
 				   	loadSources('', 1);

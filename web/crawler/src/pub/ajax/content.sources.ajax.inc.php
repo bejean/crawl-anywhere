@@ -436,15 +436,27 @@ if ($action=="loadsources")
 				$sources_max_number_reached = 'true';
 			else
 				$sources_max_number_reached = 'false';
-				
-			$res .= "<div class='menu_button_on_right'>";
+
+			
+			$res .= "<div style='width: 100%; overflow: hidden;'>";
+			
+			
+			$res .= "<div style='width: 300px; float: left;' class='menu_button_on_left'>";
 			$res .= "Add new&nbsp;<a href='#' onClick='showSelectSourceType(" . $sources_max_number_reached . "); return false;'><img src='images/edit_add_32.png'></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 			if ($sources_export_import) {
 				$res .= "Export&nbsp;<a href='#' onClick='exportSources(); return false;'><img src='images/export_32.png'></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-				$res .= "Import&nbsp;<a href='#' onClick='importSources(); return false;'><img src='images/import_32.png'></a>&nbsp;&nbsp;";
+				$res .= "Import&nbsp;<a href='#' onClick='importSources(); return false;'><img src='images/import_32.png'></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 			}
-			$res .= "Delete&nbsp;All<a href='#' onClick='deleteAllSource(); return false;'><img src='images/trash_32.png'></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 			$res .= "</div>";
+			
+			$res .= "<div style='margin-left: 320px;' class='menu_button_on_right'>";
+			$res .= "Crawl Now&nbsp;All<a href='#' onClick='crawlNowAllSource(); return false;'><img src='images/timer_32.png'></a>";
+			$res .= "Reset&nbsp;All<a href='#' onClick='resetAllSource(); return false;'><img src='images/reset_32.png'></a>";
+			$res .= "Delete&nbsp;All<a href='#' onClick='deleteAllSource(); return false;'><img src='images/trash_32.png'></a>";
+			$res .= "</div>";
+			
+			$res .= "</div>";
+				
 		}
 
 		if ($onepage!="1")
@@ -563,8 +575,8 @@ if ($action=="loadsources")
 			$res .= "<a href='#' onClick='editSource(" . $rs["id"] . ",\"" . $aSourceTypes[$rs["type"]]['mnemo'] . "\"); return false;' title='Edit'><img src='images/button_edit.png'></a>";
 			if ($user->getLevel()>0 && $crawl_status != "3" && $crawl_status != "5") {
 				if ($crawl_status != "1" && $crawl_status != "2") {
-					$res .= "&nbsp;<a href='#' onClick='indexnow(" . $rs["id"] . ");return false;' title='Crawl now'><img src='images/timer.png'></a>";
-					$res .= "&nbsp;<a href='#' onClick='resetSource(" . $rs["id"] . ");return false;' title='Reset'><img src='images/reset.png'></a>";
+					$res .= "&nbsp;<a href='#' onClick='crawlNowSource(" . $rs["id"] . ");return false;' title='Crawl now'><img src='images/timer.png'></a>";
+					$res .= "&nbsp;<a href='#' onClick='resetSource(" . $rs["id"] . ");return false;' title='Reset'><img src='images/reset_16.png'></a>";
 					// TODO: V4 - reactivate all these features
 					$res .= "&nbsp;<a href='#' onClick='clearSource(" . $rs["id"] . ");return false;' title='Clear'><img src='images/clear.png'></a>";
 					//$res .= "&nbsp;<a href='#' onClick='cleanSource(" . $rs["id"] . ");return false;' title='Clean'><img src='images/clean.png'></a>";
@@ -587,7 +599,7 @@ if ($action=="loadsources")
 				}
 			} else {
 				if ($user->getLevel()>0 && $crawl_status == "5") {
-					$res .= "&nbsp;<a href='#' onClick='resetSource(" . $rs["id"] . ");return false;' title='Reset'><img src='images/reset.png'></a>";
+					$res .= "&nbsp;<a href='#' onClick='resetSource(" . $rs["id"] . ");return false;' title='Reset'><img src='images/reset_16.png'></a>";
 				}
 			}
 			$res .= "</td>";
@@ -843,7 +855,7 @@ if ($action=="updatesource")
 
 if ($action=="deletesource")
 {
-	$id = $_POST["source_id"];
+	$id = $_GET["id"];
 	if (empty($id)) {
 		$res = "Error&nbsp;&nbsp;&nbsp;";
 		print ($res);
@@ -874,13 +886,26 @@ if ($action=="deletesource")
 	exit();
 }
 
-if ($action=="resetsource" || $action=="resetcachesource" || $action=="rescansource" || $action=="deepersource" || $action=="indexnow" || $action=="clearsource") // || $action=="cleansource")
+if ($action=="resetsource" || $action=="resetcachesource" || $action=="rescansource" || $action=="deepersource" || $action=="crawlnow" || $action=="clearsource") // || $action=="cleansource")
 {
 	$mg = mg_connect ($config, "", "", "");
 	if ($mg)
 	{
+		$id = $_GET["id"];
+		if (empty($id)) {
+			$res = "Error&nbsp;&nbsp;&nbsp;";
+			print ($res);
+			exit();
+		}
+		
 		$stmt = new mg_stmt_update($mg, "sources");
-		$query = array("id" => intval($_GET["id"]));
+	
+		if (($action=="resetsource" || $action=="crawlnow") && ($id=='all')) {
+			$query = array ("deleted" => "0");
+		} else {
+			$query = array("id" => intval($id));
+		}
+		
 		$stmt->setQuery ($query);
 
 		if ($action=="rescansource") {
@@ -902,7 +927,7 @@ if ($action=="resetsource" || $action=="resetcachesource" || $action=="rescansou
 		if ($action=="cleansource") {
 			$stmt->addColumnValue("crawl_mode", "6");
 		}
-		//if ($action=="indexnow") {
+		//if ($action=="crawlnow") {
 		//	$stmt->addColumnValue("crawl_priority", "2");
 		//} else {
 			$stmt->addColumnValue("crawl_priority", "1");
@@ -1378,7 +1403,9 @@ if ($action=="importsources")
 
 					$mode = "insert";
 
-					$query = array ("id_account" => intval($id_account_current));
+					//$query = array ("id_account" => intval($id_account_current));
+					$query = array ('$and' => array(array ("id_account" => intval($id_account_current)), array ("deleted" => "0")));
+						
 					if ($match=='id') {
 						$query = array ('$and' => array($query, array ("id" => intval((string) $item->id))));
 						$count = mg_row_count($mg, "sources", $query);
@@ -1397,8 +1424,12 @@ if ($action=="importsources")
 					if (!empty($import_id_field) && strtolower($import_id_field)!='name' && $match==$import_id_field) {
 						$query = array ('$and' => array($query, array ("import_id" => (string) $item->$match)));
 						$count = mg_row_count($mg, "sources", $query);
-						if ($count > 1) continue;
-						if ($count == 1) $mode = "update";
+						if ($count > 1) {
+							continue;
+						}
+						if ($count == 1) {
+							$mode = "update";
+						}
 					}
 												
 // 					if ($match=='host') {
@@ -1465,7 +1496,12 @@ if ($action=="importsources")
 					$ignore[]='crawl_pagecount_success';
 					$ignore[]='running_crawl_item_processed';
 					$ignore[]='running_crawl_item_to_process';
-																	
+
+					$xml_items = array();
+					$xml_items[]='url';
+					$xml_items[]='crawl_filtering_rules';
+					$xml_items[]='crawl_schedule';
+						
 					//$c = $item->children();
 					
 					foreach($item->children() as $name => $data) {
@@ -1473,13 +1509,20 @@ if ($action=="importsources")
 						
 						if (!in_array($name,$ignore)) {
 							$d = (String)$data;
-							if ($name=='params') {
-								$stmt->addColumnValue($name, base64_decode($d));
-							} else {									
-								if ($name=='name') {
-									$stmt->addColumnValue('name_sort', strtolower(remove_leading_empty_words(remove_accents($d))));
-								}
+							if (empty($d) && in_array($name,$xml_items)) {
+								$x = $data->children();
+								$d = $x[0]->asXML();
 								$stmt->addColumnValue($name, $d);
+							} else {
+								$d = (String)$data;
+								if ($name=='params') {
+									$stmt->addColumnValue($name, base64_decode($d));
+								} else {									
+									if ($name=='name') {
+										$stmt->addColumnValue('name_sort', strtolower(remove_leading_empty_words(remove_accents($d))));
+									}
+									$stmt->addColumnValue($name, $d);
+								}
 							}
 						}
 					}

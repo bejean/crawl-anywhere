@@ -529,7 +529,7 @@ class SourceWeb extends SourceBase implements iSource {
 
 		$scheduleJson = '{ "schedules": [';
 		$schedule = $this->getValue('crawl_schedule', '');
-		if (isset($schedule) && $schedule!="") {
+		if (!empty(trim($schedule))) {
 			$scheduleXml = simplexml_load_string($schedule);
 			$result = $scheduleXml->xpath('/schedules/schedule');
 			$sep = "";
@@ -558,7 +558,7 @@ class SourceWeb extends SourceBase implements iSource {
 		$rules = $this->getValue('crawl_filtering_rules', '');
 
 		$rulesJson = '{ "rules": [';
-		if (!empty($rules)) {
+		if (!empty(trim($rules))) {
 			if (substr($rules, 0, 1) == "<") {
 				$rulesXml = simplexml_load_string($rules);
 				$result = $rulesXml->xpath('/rules/rule');

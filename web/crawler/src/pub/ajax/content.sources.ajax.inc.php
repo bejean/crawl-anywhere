@@ -1508,8 +1508,8 @@ if ($action=="importsources")
 						if (!update_field($name, $import_update_fields)) continue;
 						
 						if (!in_array($name,$ignore)) {
-							$d = (String)$data;
-							if (empty($d) && in_array($name,$xml_items)) {
+							$d = (String)$data;							
+							if (empty(trim($d)) && in_array($name,$xml_items)) {
 								$x = $data->children();
 								$d = $x[0]->asXML();
 								$stmt->addColumnValue($name, $d);

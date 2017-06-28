@@ -528,11 +528,16 @@ public class HttpLoader {
 				CookieStore cookieStore = new BasicCookieStore(); 
 				Iterator<Entry<String, String>> it = cookies.entrySet().iterator();
 				while (it.hasNext()) {
-					Map.Entry<String, String> pairs = (Map.Entry<String, String>)it.next();
-					BasicClientCookie cookie = new BasicClientCookie(pairs.getKey(), pairs.getValue());
-					//cookie.setDomain("your domain");
-					cookie.setPath("/");
-					cookieStore.addCookie(cookie); 
+					Map.Entry<String, String> pairs = it.next();
+					String cookieValue = pairs.getValue();
+					if (cookieValue != null && CookieHelper.isSerializedCookie(cookieValue)) {
+						cookieStore.addCookie(CookieHelper.deserialize(pairs.getKey(), cookieValue));
+					} else {
+						BasicClientCookie cookie = new BasicClientCookie(pairs.getKey(), pairs.getValue());
+						//cookie.setDomain("your domain");
+						cookie.setPath("/");
+						cookieStore.addCookie(cookie);
+					}
 				}
 				httpClient.setCookieStore(cookieStore); 		
 			}
@@ -676,6 +681,7 @@ public class HttpLoader {
 		CookieStore cookieStore = new BasicCookieStore();
 		HttpContext localContext = new BasicHttpContext();
 		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+		httpClient.setCookieStore(cookieStore);
 
 		try
 		{
@@ -691,15 +697,14 @@ public class HttpLoader {
 			HttpResponse response = httpClient.execute(httpPost, localContext);
 			HttpEntity entity = response.getEntity();
 			if (entity != null) {
-				entity.consumeContent();
+				EntityUtils.consume(entity);
 			}
 
 			List<Cookie> cookies = httpClient.getCookieStore().getCookies();
 			if (!cookies.isEmpty()) {
-				authCookies = new HashMap<String, String>();
+				authCookies = new HashMap<>();
 				for (Cookie c : cookies) {
-					// TODO: What about the path, the domain ???
-					authCookies.put(c.getName(), c.getValue());
+					authCookies.put(c.getName(), CookieHelper.serialize(c));
 				}
 			}		
 			httpPost.abort();

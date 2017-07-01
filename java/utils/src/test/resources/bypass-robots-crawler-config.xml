@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crawler>
+
+<param name="bypass_robots_file">0</param>
+
+<bypassRobotsFile>
+	<param name="bypass-robots-for-this.com">1</param>
+</bypassRobotsFile>
+
+</crawler>
+	

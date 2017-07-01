@@ -26,6 +26,8 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
+import fr.eolya.utils.ConfigHelper;
+
 import crawlercommons.sitemaps.AbstractSiteMap;
 import crawlercommons.sitemaps.SiteMap;
 import crawlercommons.sitemaps.SiteMapIndex;
@@ -238,7 +240,7 @@ public class WebConnector extends Connector implements IConnector {
 			/*
 			 * Ignore this page if robots.txt ask it
 			 */
-			if (robots!=null && !"1".equals(config.getProperty("/crawler/param[@name='bypass_robots_file']", "0")) && !robots.isUrlAllowed(pageURL)) return 0;
+			if (robots!=null && !ConfigHelper.isBypassRobotsFile(config, pageURL) && !robots.isUrlAllowed(pageURL)) return 0;
 
 			int maxCrawlDepth = src.getDepth();
 			if (maxCrawlDepth==0) maxCrawlDepth = Integer.parseInt(config.getProperty("/crawler/param[@name='max_depth']", "2"));
@@ -1398,7 +1400,7 @@ public class WebConnector extends Connector implements IConnector {
 			 */
 
 			// Filtre l'url par rapport aux règles du fichier robots.txt
-			if (robots!=null && !isStartingUrl(strLink) && !"1".equals(config.getProperty("/crawler/param[@name='bypass_robots_file']", "0")) && !robots.isUrlAllowed(urlLink)) 						
+			if (robots!=null && !isStartingUrl(strLink) && !ConfigHelper.isBypassRobotsFile(config, pageURL) && !robots.isUrlAllowed(urlLink)) 						
 			{
 				logger.log("[" + String.valueOf(threadId) + "] " + strLink + " rejected due to robots.txt exclusion rules");
 				if (depth<=memlogMaxDepth) src.memLogAppend("        " + strLink + " rejected due to robots.txt exclusion rules");
